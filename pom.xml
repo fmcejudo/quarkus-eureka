@@ -30,6 +30,12 @@
 
             <dependency>
                 <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-arc-deployment</artifactId>
+                <version>${quarkus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-core</artifactId>
                 <version>${quarkus.version}</version>
             </dependency>
@@ -54,6 +60,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemProperties>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        </systemProperties>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

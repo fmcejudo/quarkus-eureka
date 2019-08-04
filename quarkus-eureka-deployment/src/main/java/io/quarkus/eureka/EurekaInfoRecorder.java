@@ -5,7 +5,7 @@ import org.jboss.logging.Logger;
 
 
 @Recorder
-class EurekaInfoRecorder {
+public class EurekaInfoRecorder {
 
     private Logger logger = Logger.getLogger(this.getClass().getName());
 

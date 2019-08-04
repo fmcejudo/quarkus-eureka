@@ -1,31 +1,34 @@
 package io.quarkus.eureka;
 
-import io.quarkus.eureka.config.EurekaConfiguration;
+import io.quarkus.eureka.config.Client;
+import io.quarkus.eureka.config.EurekaRecorder;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
 
-class EurekaConfigTest {
+public class EurekaConfigurationTest {
+
+
+    @Inject
+    Client client;
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap
                     .create(JavaArchive.class)
-                    .addAsResource("application.properties")
+                    .addAsResource("eureka-config.properties","application.properties")
             );
 
-    @Inject
-    EurekaConfiguration eurekaConfiguration;
-
     @Test
-    void shouldFindEurekaConfig() {
-        Assertions.assertNotNull(eurekaConfiguration);
+    @DisplayName(value = "reading configuration properties for eureka")
+    public void shouldFindEurekaConfig() {
+        Assertions.assertNotNull(client);
     }
-
 
 }
