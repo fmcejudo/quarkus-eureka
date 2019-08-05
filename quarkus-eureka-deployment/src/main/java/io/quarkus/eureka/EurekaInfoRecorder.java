@@ -3,7 +3,6 @@ package io.quarkus.eureka;
 import io.quarkus.runtime.annotations.Recorder;
 import org.jboss.logging.Logger;
 
-
 @Recorder
 public class EurekaInfoRecorder {
 

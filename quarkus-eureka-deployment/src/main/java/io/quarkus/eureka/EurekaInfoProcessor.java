@@ -9,8 +9,6 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.eureka.config.EurekaConfiguration;
-import io.quarkus.eureka.config.EurekaProducer;
-import io.quarkus.eureka.config.EurekaRecorder;
 
 
 public class EurekaInfoProcessor {
@@ -27,16 +25,15 @@ public class EurekaInfoProcessor {
                                    final EurekaConfiguration eurekaConfiguration,
                                    final BeanContainerBuildItem beanContainer) {
         eurekaRecorder.configureProperties(eurekaConfiguration, beanContainer.getValue());
+        eurekaRecorder.registerServiceInEureka(eurekaConfiguration);
     }
 
     @Record(ExecutionTime.STATIC_INIT)
     @BuildStep(providesCapabilities = "io.quarkus.eureka")
     public void stepConfiguration(BuildProducer<AdditionalBeanBuildItem> additionalBeanProducer,
                                   BuildProducer<BeanContainerListenerBuildItem> containerListenerProducer,
-                                  BuildProducer<FeatureBuildItem> featureProducer,
-                                  final EurekaRecorder eurekaRecorder) {
+                                  BuildProducer<FeatureBuildItem> featureProducer) {
 
-        System.out.println("client bean is being created...");
         featureProducer.produce(new FeatureBuildItem("eureka"));
 
         AdditionalBeanBuildItem eurekaBuildItem = AdditionalBeanBuildItem.unremovableOf(EurekaProducer.class);

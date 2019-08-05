@@ -1,8 +1,10 @@
-package io.quarkus.eureka.config;
+package io.quarkus.eureka;
+
+import io.quarkus.eureka.config.EurekaConfiguration;
+import io.quarkus.eureka.config.UrlEurekaClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 
 @ApplicationScoped
@@ -12,12 +14,11 @@ public class EurekaProducer {
 
     @Produces
     @Dependent
-    public Client client() {
-        return new Client(eurekaConfiguration);
+    public UrlEurekaClient client() {
+        return new UrlEurekaClient(eurekaConfiguration);
     }
 
-
-    public void setConfiguration(EurekaConfiguration eurekaConfiguration) {
+    void setConfiguration(EurekaConfiguration eurekaConfiguration) {
         this.eurekaConfiguration = eurekaConfiguration;
     }
 }
