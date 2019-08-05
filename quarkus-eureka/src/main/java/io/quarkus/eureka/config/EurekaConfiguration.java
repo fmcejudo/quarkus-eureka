@@ -45,9 +45,63 @@ public class EurekaConfiguration {
     @ConfigItem(defaultValue = "true")
     boolean preferSameZone;
 
+    /**
+     * default page
+     */
+    @ConfigItem(defaultValue = "/")
+    String homePageUrl;
+
+    /**
+     * Check the application state
+     */
+    @ConfigItem(defaultValue = "/info/status")
+    String statusPageUrl;
+
+    /**
+     * Heartbeats which ensure the application is alive
+     */
+    @ConfigItem(defaultValue = "/info/health")
+    String healthCheckUrl;
+
     public String info() {
         return new StringBuilder().append("port: ").append(port)
                 .append("\nname: ").append(name).toString();
 
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getVipAddress() {
+        return vipAddress;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public Map<String, String> getServiceUrl() {
+        return serviceUrl;
+    }
+
+    public boolean isPreferSameZone() {
+        return preferSameZone;
+    }
+
+    public String getHomePageUrl() {
+        return homePageUrl;
+    }
+
+    public String getStatusPageUrl() {
+        return statusPageUrl;
+    }
+
+    public String getHealthCheckUrl() {
+        return healthCheckUrl;
     }
 }
