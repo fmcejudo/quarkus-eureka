@@ -7,6 +7,7 @@ public class Client {
     public Client(EurekaConfiguration eurekaConfiguration) {
         this.eurekaConfiguration = eurekaConfiguration;
     }
+
     public Integer getPort() {
         return eurekaConfiguration.port;
     }

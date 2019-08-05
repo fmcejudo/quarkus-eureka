@@ -1,15 +1,12 @@
 package io.quarkus.eureka.config;
 
-import io.quarkus.arc.runtime.BeanContainerListener;
+import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.annotations.Recorder;
 
 @Recorder
 public class EurekaRecorder {
 
-    public BeanContainerListener createEurekaProducer(final EurekaConfiguration eurekaConfiguration) {
-        return beanContainer -> {
-            EurekaProducer eurekaProducer = new EurekaProducer();
-            eurekaProducer.setConfiguration(eurekaConfiguration);
-        };
+    public void configureProperties(final EurekaConfiguration eurekaConfiguration, final BeanContainer container) {
+        container.instance(EurekaProducer.class).setConfiguration(eurekaConfiguration);
     }
 }

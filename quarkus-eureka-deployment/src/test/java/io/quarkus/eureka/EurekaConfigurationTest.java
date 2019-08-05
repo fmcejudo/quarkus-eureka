@@ -1,7 +1,6 @@
 package io.quarkus.eureka;
 
 import io.quarkus.eureka.config.Client;
-import io.quarkus.eureka.config.EurekaRecorder;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import javax.inject.Inject;
 
 public class EurekaConfigurationTest {
-
 
     @Inject
     Client client;
@@ -29,6 +27,8 @@ public class EurekaConfigurationTest {
     @DisplayName(value = "reading configuration properties for eureka")
     public void shouldFindEurekaConfig() {
         Assertions.assertNotNull(client);
+        Assertions.assertEquals("quarkus-eureka",client.getName());
+        Assertions.assertEquals(8001, client.getPort());
     }
 
 }
