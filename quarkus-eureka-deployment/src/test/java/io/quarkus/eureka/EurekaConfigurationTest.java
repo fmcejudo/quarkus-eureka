@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EurekaConfigurationTest {
@@ -37,7 +36,7 @@ public class EurekaConfigurationTest {
         assertThat(instanceInfo)
                 .isNotNull()
                 .extracting("app", "vipAddress", "secureVipAddress", "status")
-                .containsExactly("QUARKUS-EUREKA", "quarkus-eureka", "quarkus-eureka", Status.UP);
+                .containsExactly("QUARKUS-EUREKA", "quarkus-eureka", "quarkus-eureka", Status.STARTING);
 
         assertThat(instanceInfo.getPort()).extracting("port", "enabled").containsExactly("8001", "true");
         assertThat(instanceInfo.getSecurePort()).extracting("port", "enabled").containsExactly("8001", "false");

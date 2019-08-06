@@ -2,11 +2,27 @@ package io.quarkus.eureka.client;
 
 import io.quarkus.eureka.config.InstanceInfoContext;
 
+import javax.json.bind.annotation.JsonbPropertyOrder;
 import java.util.function.Function;
 
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 
+@JsonbPropertyOrder({
+        "hostName",
+        "app",
+        "vipAddress",
+        "secureVipAddress",
+        "ipAddr",
+        "status",
+        "homePageUrl",
+        "statusPageUrl",
+        "healthCheckUrl",
+        "secureHealthCheckUrl",
+        "port",
+        "securePort",
+        "dataCenterInfo"
+})
 public final class InstanceInfo {
 
     private final String hostName;
@@ -29,7 +45,7 @@ public final class InstanceInfo {
         this.vipAddress = instanceInfoCtx.getVipAddress();
         this.secureVipAddress = instanceInfoCtx.getVipAddress();
         this.ipAddr = getHostname();
-        this.status = Status.UP;
+        this.status = Status.STARTING;
         this.homePageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHomePageUrl());
         this.statusPageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getStatusPageUrl());
         this.healthCheckUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHealthCheckUrl());
@@ -37,6 +53,22 @@ public final class InstanceInfo {
         this.port = PortEnableInfo.of(instanceInfoCtx.getPort(), true);
         this.securePort = PortEnableInfo.of(instanceInfoCtx.getPort(), false);
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
+    }
+
+    private InstanceInfo(final InstanceInfo instanceInfo, final Status status) {
+        this.hostName = getHostname();
+        this.app = instanceInfo.getApp();
+        this.vipAddress = instanceInfo.getVipAddress();
+        this.secureVipAddress = instanceInfo.getSecureVipAddress();
+        this.ipAddr = instanceInfo.getIpAddr();
+        this.status = status;
+        this.homePageUrl = instanceInfo.getHomePageUrl();
+        this.statusPageUrl = instanceInfo.getStatusPageUrl();
+        this.healthCheckUrl = instanceInfo.getHealthCheckUrl();
+        this.secureHealthCheckUrl = instanceInfo.getSecureHealthCheckUrl();
+        this.port = instanceInfo.getPort();
+        this.securePort = instanceInfo.getSecurePort();
+        this.dataCenterInfo = instanceInfo.getDataCenterInfo();
     }
 
     private String buildUrl(final int port, final String resourcePath) {
@@ -102,4 +134,7 @@ public final class InstanceInfo {
         return dataCenterInfo;
     }
 
+    public InstanceInfo withStatus(final Status newStatus) {
+        return new InstanceInfo(this, newStatus);
+    }
 }
