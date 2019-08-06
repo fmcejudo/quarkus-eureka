@@ -25,7 +25,7 @@ public class EurekaInfoProcessor {
                                    final EurekaConfiguration eurekaConfiguration,
                                    final BeanContainerBuildItem beanContainer) {
         eurekaRecorder.configureProperties(eurekaConfiguration, beanContainer.getValue());
-        eurekaRecorder.registerServiceInEureka(eurekaConfiguration);
+        eurekaRecorder.registerServiceInEureka(beanContainer.getValue());
     }
 
     @Record(ExecutionTime.STATIC_INIT)

@@ -1,6 +1,6 @@
 package io.quarkus.eureka.client;
 
-public interface DataCenterInfo {
+interface DataCenterInfo {
 
     enum Name {
         MyOwn

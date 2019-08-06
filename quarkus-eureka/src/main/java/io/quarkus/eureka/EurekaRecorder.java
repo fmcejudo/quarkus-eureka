@@ -2,12 +2,11 @@ package io.quarkus.eureka;
 
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.eureka.config.EurekaConfiguration;
-import io.quarkus.eureka.config.UrlEurekaClient;
+import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
 import org.jboss.logging.Logger;
 
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
 
 
 @Recorder
@@ -19,12 +18,14 @@ public class EurekaRecorder {
         container.instance(EurekaProducer.class).setConfiguration(eurekaConfiguration);
     }
 
-    public void registerServiceInEureka(final EurekaConfiguration eurekaConfiguration) {
+    public void registerServiceInEureka(final BeanContainer beanContainer) {
         try {
-            UrlEurekaClient urlEurekaClient = new UrlEurekaClient(eurekaConfiguration);
-            Response responseRegister = urlEurekaClient.register();
-            logger.info(urlEurekaClient.getInfo());
-            logger.info(String.format("response with status %d", responseRegister.getStatus()));
+            logger.info("registering eurekaService");
+            EurekaProducer eurekaProducer = beanContainer.instance(EurekaProducer.class);
+            new EurekaRegistrationService(
+                    eurekaProducer.serviceLocationConfig(), eurekaProducer.instanceInfo()
+            ).register();
+
         } catch (ProcessingException ex) {
             logger.error("error connecting with eureka registry service", ex.getCause());
         }

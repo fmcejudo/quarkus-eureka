@@ -1,11 +1,13 @@
 package io.quarkus.eureka.client;
 
-import io.quarkus.eureka.config.EurekaConfiguration;
+import io.quarkus.eureka.config.InstanceInfoContext;
+
+import java.util.function.Function;
 
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 
-public class InstanceInfo {
+public final class InstanceInfo {
 
     private final String hostName;
     private final String app;
@@ -21,35 +23,31 @@ public class InstanceInfo {
     private final PortEnableInfo securePort;
     private final DataCenterInfo dataCenterInfo;
 
-    public InstanceInfo(final EurekaConfiguration eurekaConfiguration) {
+    private InstanceInfo(final InstanceInfoContext instanceInfoCtx) {
         this.hostName = getHostname();
-        this.app = eurekaConfiguration.getName().toUpperCase();
-        this.vipAddress = eurekaConfiguration.getVipAddress();
-        this.secureVipAddress = eurekaConfiguration.getVipAddress();
+        this.app = instanceInfoCtx.getName().toUpperCase();
+        this.vipAddress = instanceInfoCtx.getVipAddress();
+        this.secureVipAddress = instanceInfoCtx.getVipAddress();
         this.ipAddr = getHostname();
         this.status = Status.UP;
-        this.homePageUrl = format(
-                "http://%s:%d/%s",
-                getHostname(),
-                eurekaConfiguration.getPort(),
-                eurekaConfiguration.getHomePageUrl()
-        );
-        this.statusPageUrl = format(
-                "http://%s:%d/%s",
-                getHostname(),
-                eurekaConfiguration.getPort(),
-                eurekaConfiguration.getStatusPageUrl()
-        );
-        this.healthCheckUrl = format(
-                "http://%s:%d/%s",
-                getHostname(),
-                eurekaConfiguration.getPort(),
-                eurekaConfiguration.getHealthCheckUrl()
-        );
-        this.secureHealthCheckUrl = this.healthCheckUrl;
-        this.port = PortEnableInfo.of(eurekaConfiguration.getPort(), true);
-        this.securePort = PortEnableInfo.of(eurekaConfiguration.getPort(), false);
+        this.homePageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHomePageUrl());
+        this.statusPageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getStatusPageUrl());
+        this.healthCheckUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHealthCheckUrl());
+        this.secureHealthCheckUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHealthCheckUrl());
+        this.port = PortEnableInfo.of(instanceInfoCtx.getPort(), true);
+        this.securePort = PortEnableInfo.of(instanceInfoCtx.getPort(), false);
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
+    }
+
+    private String buildUrl(final int port, final String resourcePath) {
+        return Function.<String>identity()
+                .andThen(path -> path.startsWith("/") ? path.substring(1) : path)
+                .andThen(path -> format("http://%s:%d/%s", getHostname(), port, path))
+                .apply(resourcePath);
+    }
+
+    public static InstanceInfo of(final InstanceInfoContext instanceInfoContext) {
+        return new InstanceInfo(instanceInfoContext);
     }
 
     public String getHostName() {
@@ -103,4 +101,5 @@ public class InstanceInfo {
     public DataCenterInfo getDataCenterInfo() {
         return dataCenterInfo;
     }
+
 }

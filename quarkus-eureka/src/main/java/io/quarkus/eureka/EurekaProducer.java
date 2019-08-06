@@ -1,7 +1,9 @@
 package io.quarkus.eureka;
 
+import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.EurekaConfiguration;
-import io.quarkus.eureka.config.UrlEurekaClient;
+import io.quarkus.eureka.config.InstanceInfoBuilder;
+import io.quarkus.eureka.config.ServiceLocationConfig;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
@@ -14,8 +16,14 @@ public class EurekaProducer {
 
     @Produces
     @Dependent
-    public UrlEurekaClient client() {
-        return new UrlEurekaClient(eurekaConfiguration);
+    public InstanceInfo instanceInfo() {
+        return InstanceInfoBuilder.fromConfig(eurekaConfiguration).build();
+    }
+
+    @Produces
+    @Dependent
+    public ServiceLocationConfig serviceLocationConfig() {
+        return new ServiceLocationConfig(eurekaConfiguration);
     }
 
     void setConfiguration(EurekaConfiguration eurekaConfiguration) {

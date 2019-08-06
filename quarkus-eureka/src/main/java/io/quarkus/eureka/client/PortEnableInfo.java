@@ -1,8 +1,12 @@
 package io.quarkus.eureka.client;
 
+import javax.json.bind.annotation.JsonbProperty;
+
 public class PortEnableInfo {
 
+    @JsonbProperty("$")
     private final String port;
+    @JsonbProperty("@enabled")
     private final boolean enabled;
 
     private PortEnableInfo(String port, boolean enabled) {
@@ -10,7 +14,7 @@ public class PortEnableInfo {
         this.enabled = enabled;
     }
 
-    public static PortEnableInfo of(final int port, final boolean enabled) {
+    static PortEnableInfo of(final int port, final boolean enabled) {
         return new PortEnableInfo(String.valueOf(port), enabled);
     }
 
