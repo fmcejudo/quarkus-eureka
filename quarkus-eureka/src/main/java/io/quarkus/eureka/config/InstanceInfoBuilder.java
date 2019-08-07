@@ -15,6 +15,6 @@ public final class InstanceInfoBuilder {
     }
 
     public InstanceInfo build() {
-        return InstanceInfo.of(new InstanceInfoContext(eurekaConfiguration));
+        return InstanceInfo.of(new DefaultInstanceInfoContext(eurekaConfiguration));
     }
 }

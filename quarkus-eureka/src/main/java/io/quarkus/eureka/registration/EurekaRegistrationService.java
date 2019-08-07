@@ -3,32 +3,31 @@ package io.quarkus.eureka.registration;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.config.ServiceLocationConfig;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
-import static io.quarkus.eureka.client.Status.UP;
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
+import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
+import static javax.ws.rs.core.Response.Status.Family.SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 public class EurekaRegistrationService {
 
-
     private final InstanceInfo instanceInfo;
+
+    private final ScheduledExecutorService executorService;
 
     private final ServiceLocationConfig serviceLocationConfig;
 
@@ -36,68 +35,40 @@ public class EurekaRegistrationService {
                                      final InstanceInfo instanceInfo) {
         this.instanceInfo = instanceInfo;
         this.serviceLocationConfig = serviceLocationConfig;
+        this.executorService = Executors.newScheduledThreadPool(3);
+    }
+
+    public EurekaRegistrationService(final ServiceLocationConfig serviceLocationConfig,
+                                     final InstanceInfo instanceInfo,
+                                     final ScheduledExecutorService executorService) {
+        this.instanceInfo = instanceInfo;
+        this.serviceLocationConfig = serviceLocationConfig;
+        this.executorService = executorService;
     }
 
     public void register() {
-        serviceLocationConfig.getLocations().forEach(location -> this.register(location, instanceInfo));
+        serviceLocationConfig.getLocations()
+                .forEach(location -> executorService.scheduleWithFixedDelay(
+                        new RegisterService(location, instanceInfo), 2L, 40L, TimeUnit.SECONDS
+                ));
     }
 
-    private void register(final String location, final InstanceInfo instanceInfo) {
-        new HeartBeat(instanceInfo).addRegisterService(new RegisterService(location));
-    }
+    static class RegisterService implements Runnable {
 
-    static class HeartBeat implements Runnable {
-
+        private Logger logger = Logger.getLogger(this.getClass());
+        private final String location;
         private final InstanceInfo instanceInfo;
+        private Status lastStatus;
 
-        private PropertyChangeSupport propertyChangeSupport;
-
-        private HeartBeat(InstanceInfo instanceInfo) {
+        RegisterService(final String location, final InstanceInfo instanceInfo) {
+            this.location = location;
             this.instanceInfo = instanceInfo;
-            this.propertyChangeSupport = new PropertyChangeSupport(this);
-        }
-
-        void addRegisterService(RegisterService registerService) {
-            propertyChangeSupport.addPropertyChangeListener(registerService);
-            checkHealthy();
-        }
-
-        private void checkHealthy() {
-            Thread thread = new Thread(this);
-            thread.start();
         }
 
         @Override
         public void run() {
-            while (true) {
-                propertyChangeSupport.firePropertyChange("checkHealth", null, instanceInfo);
-                try {
-                    TimeUnit.SECONDS.sleep(40L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    static class RegisterService implements PropertyChangeListener {
-
-        private Logger logger = Logger.getLogger(this.getClass());
-        private final String location;
-        private Status lastStatus;
-
-        RegisterService(final String location) {
-            this.location = location;
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            InstanceInfo instanceInfo = (InstanceInfo) evt.getNewValue();
-            Response response = ClientBuilder.newClient()
-                    .target(instanceInfo.getHealthCheckUrl())
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-            Status newStatus = getStatusFromReponse(response);
+            logger.info("checking heart beat for location " + location);
+            Status newStatus = requestHealthCheck(instanceInfo.getHealthCheckUrl());
             if (!newStatus.equals(lastStatus)) {
                 logger.info(format("last time had status %s and it became %s", lastStatus, newStatus));
                 lastStatus = newStatus;
@@ -105,53 +76,51 @@ public class EurekaRegistrationService {
             }
         }
 
-        private Status getStatusFromReponse(Response response) {
-            if (response.getStatus() < 300) {
-                Map<String, String> body = response.readEntity(Map.class);
-                String status = body.entrySet()
-                        .stream()
-                        .filter(e -> e.getKey().equalsIgnoreCase("status"))
-                        .map(Map.Entry::getValue)
-                        .findFirst().orElse(null);
+        private Status requestHealthCheck(final String healthCheckUrl) {
+            Response response = ResteasyClientBuilder.newClient()
+                    .target(healthCheckUrl)
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .get();
+            return getStatusFromReponse(response);
+        }
 
-                if ("UP".equalsIgnoreCase(status) && !UP.equals(lastStatus)) {
-                    return UP;
-                } else if ("DOWN".equalsIgnoreCase(status) && !DOWN.equals(lastStatus)) {
-                    return DOWN;
-                } else if (!UNKNOWN.equals(lastStatus)) {
-                    return UNKNOWN;
-                }
-            } else {
+        private Status getStatusFromReponse(final Response response) {
+
+            if (!response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {
                 return DOWN;
             }
-            return lastStatus;
+
+            Map<String, String> body = response.readEntity(Map.class);
+            return body.entrySet()
+                    .stream()
+                    .filter(e -> e.getKey().equalsIgnoreCase("status"))
+                    .map(Map.Entry::getValue)
+                    .map(String::toUpperCase)
+                    .map(Status::valueOf)
+                    .findFirst().orElse(UNKNOWN);
         }
 
         private void updateStatusInEureka(final InstanceInfo instanceInfo, final Status newStatus) {
-            instanceInfo.withStatus(newStatus);
             try {
                 String registrationUrl = location.concat("/apps/").concat(instanceInfo.getApp());
 
-                Map<String, InstanceInfo> instance = Collections.singletonMap("instance", instanceInfo);
-                logger.info(JsonbBuilder.create().toJson(instance));
-
-                Response response = ClientBuilder.newClient()
-                        .register(new LoggingFilter())
+                Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(newStatus));
+                Response response = ResteasyClientBuilder.newClient()
                         .target(registrationUrl)
-                        .request(MediaType.APPLICATION_JSON)
+                        .request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.json(instance));
-
-                logger.info(format(
-                        "registering the application in Eureka: %d, %s",
-                        response.getStatus(),
-                        response.readEntity(String.class))
-                );
+                if (response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {
+                    logger.info(format("Service has been registered in %s", location));
+                } else if (response.getStatusInfo().getFamily().equals(CLIENT_ERROR)) {
+                    logger.info(format("Service has problems to register in %s", location));
+                } else if (response.getStatusInfo().getFamily().equals(SERVER_ERROR)) {
+                    logger.info(format("%s returns error message %s", location, response.readEntity(String.class)));
+                }
             } catch (ProcessingException ex) {
                 logger.info("eureka service is down and no status can be register");
                 lastStatus = null;
             }
         }
-
     }
 
 }
