@@ -14,6 +14,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <quarkus.version>0.20.0</quarkus.version>
         <assertj-core.version>3.13.0</assertj-core.version>
+        <rest-assured.version>4.0.0</rest-assured.version>
+        <mockito.version>2.27.0</mockito.version>
+        <wiremock.version>2.19.0</wiremock.version>
     </properties>
 
     <modules>
@@ -51,6 +54,21 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock</artifactId>
+                <version>${wiremock.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
