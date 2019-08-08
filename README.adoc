@@ -96,3 +96,5 @@ and the way to keep fit learning other new technologies which spread around the 
 This is nothing but a way to connect Quarkus to the world easily with the guides provided and hopefully one of the
 multiple integrations with the services we use as developers to monitoring, tracing and scaling our application,
 letting be more reliable for the future of our work.
+
+
