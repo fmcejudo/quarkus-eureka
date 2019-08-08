@@ -2,6 +2,9 @@
 
 image:https://travis-ci.com/fmcejudo/quarkus-eureka.svg?branch=master["Build Status", link="https://travis-ci.com/fmcejudo/quarkus-eureka"]
 
+image:https://coveralls.io/repos/github/fmcejudo/quarkus-eureka/badge.svg?branch=master["Build Status", link="https://coveralls.io/github/fmcejudo/quarkus-eureka?branch=master"]
+
+
 = What?
 
 Given Quarkus being a framework to develop quick start applications running not just
