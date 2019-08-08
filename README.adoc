@@ -1,5 +1,7 @@
 = QUARKUS - EUREKA EXTENSION
 
+image:https://travis-ci.com/fmcejudo/quarkus-eureka.svg?branch=master["Build Status", link="https://travis-ci.com/fmcejudo/quarkus-eureka"]
+
 = What?
 
 Given Quarkus being a framework to develop quick start applications running not just
