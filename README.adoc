@@ -1,0 +1,98 @@
+= QUARKUS - EUREKA EXTENSION
+
+= What?
+
+Given Quarkus being a framework to develop quick start applications running not just
+in the Hotspot JVM but also in GraalVM natively, with a relative new lifespan, there
+are some shortage of integrations with some other services working for the cloud.
+
+With this extension the aim is registering a Quarkus service in Eureka Registry to expose its responsibility to other
+services in a high disponibility environment in which the service is reached by loadbalancers to any of their instances.
+
+Mentioning that the extension does not act as discovery client, so the client can't consume other services in the
+registry yet.
+
+The implementation of this extension is built based in the documentation at:
+
+link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your own extension, window=_blank].
+
+The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
+
+= How?
+
+To use the plugin, other quarkus extensions need to be provided `*quarkus-rest-client*`, `*quarkus-resteasy-jackson*`,
+`*quarkus-resteasy-jsonb*` which are used to communicate with the other end where is the registry.
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-rest-client</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-resteasy-jsonb</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-resteasy-jackson</artifactId>
+</dependency>
+----
+
+
+Including the extension in your application, the next dependency needs to be added to your `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkus.eureka</groupId>
+    <artifactId>quarkus-eureka</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+----
+
+[NOTE]
+====
+As this is not yet published to any repository, the dependency needs to be built locally by cloning the project and
+running `mvn clean install` from the root directory, so as to include in your local repo.
+====
+
+
+Configuring connection with the registry, exposing the name of your service, requires adding the next properties to
+your quarkus `application.properties`:
+
+[source,properties]
+----
+quarkus.eureka.port= <your application port>
+quarkus.eureka.name= <name of your application in Eureka>
+quarkus.eureka.vip-address= <how your application is recognised by clients>
+quarkus.eureka.home-page-url= <home path of your application>
+quarkus.eureka.status-page-url= <where we can check your status>
+quarkus.eureka.health-check-url= <saying if you applicatio is alive and kicking. { "status": "up" }>
+quarkus.eureka.region=default
+quarkus.eureka.prefer-same-zone=true
+quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
+----
+
+In case you don't want to implement the heartbeat of your application, you might make use of:
+
+link:https://quarkus.io/guides/health-guide[Quarkus - Microprofile Health]
+
+applying the endpoints where match.
+
+Eureka registry seems to be ready to work in cloud platforms such as AWS and the API so recognise it. But in this
+first approach it just connects with Eureka instances in by full urls.
+
+With this configuration, once you start up you application, it should register itself in the list of locations
+provided, checking the healthy of its own in the network and the state of the Eureka service where it is registered.
+It keeps checking at the moment every 40 seconds the availability of them, updating the state if feasible.
+
+
+= Why?
+
+The reason to create the extension have been to have other way to make Quarkus openness to use within other services
+and the way to keep fit learning other new technologies which spread around the business.
+
+This is nothing but a way to connect Quarkus to the world easily with the guides provided and hopefully one of the
+multiple integrations with the services we use as developers to monitoring, tracing and scaling our application,
+letting be more reliable for the future of our work.
