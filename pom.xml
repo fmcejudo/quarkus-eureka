@@ -102,16 +102,9 @@
                     <version>0.7.9</version>
                     <executions>
                         <execution>
-                            <id>prepare-agent</id>
+                            <phase>verify</phase>
                             <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>generate-code-coverage-report</id>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>report</goal>
+                                <goal>report-aggregate</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -120,6 +113,11 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>4.3.0</version>
+                    <configuration>
+                        <jacocoReports>
+                            <jacocoReport>${project.basedir}/quarkus-eureka-deployment/target/site/jacoco-aggregate/jacoco.xml</jacocoReport>
+                        </jacocoReports>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

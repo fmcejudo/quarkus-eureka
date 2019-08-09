@@ -1,3 +1,3 @@
 language: java
 after_success:
-  - mvn clean org.jacoco:jacoco-maven-plugin:0.7.9:report org.eluder.coveralls:coveralls-maven-plugin:report
+  - mvn clean org.jacoco:jacoco-maven-plugin:0.7.9:report-aggregate org.eluder.coveralls:coveralls-maven-plugin:report
