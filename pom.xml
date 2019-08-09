@@ -96,31 +96,55 @@
                         </systemProperties>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.9</version>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>report-aggregate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>4.3.0</version>
-                    <configuration>
-                        <jacocoReports>
-                            <jacocoReport>${project.basedir}/quarkus-eureka-deployment/target/site/jacoco-aggregate/jacoco.xml</jacocoReport>
-                        </jacocoReports>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jacoco</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.4</version>
+                        <configuration>
+                            <outputDirectory>target/jacoco-ut</outputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>4.3.0</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>2.2.3</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <jacocoReports>
+                                <jacocoReport>${project.basedir}/target/jacoco-ut/jacoco.xml
+                                </jacocoReport>
+                            </jacocoReports>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
