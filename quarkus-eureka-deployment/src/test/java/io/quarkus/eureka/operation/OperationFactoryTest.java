@@ -1,7 +1,6 @@
 package io.quarkus.eureka.operation;
 
 import io.quarkus.eureka.exception.EurekaOperationException;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

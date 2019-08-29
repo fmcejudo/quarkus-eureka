@@ -15,6 +15,7 @@ public class HostNameDiscovery {
                 .map(HostNameDiscovery::getNetworkInterface)
                 .filter(HostNameDiscovery::isNetworkInterfaceUp)
                 .map(HostNameDiscovery::extractHostname)
+                .filter(s -> s!=null && !s.contains(":"))
                 .findFirst()
                 .orElse(getLocalHost());
     }

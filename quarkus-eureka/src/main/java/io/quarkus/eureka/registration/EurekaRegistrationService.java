@@ -6,7 +6,6 @@ import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.query.InstanceResult;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
-import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

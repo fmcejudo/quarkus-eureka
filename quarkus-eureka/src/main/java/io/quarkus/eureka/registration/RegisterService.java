@@ -2,7 +2,6 @@ package io.quarkus.eureka.registration;
 
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.client.Status;
-import io.quarkus.eureka.operation.OperationFactory;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 

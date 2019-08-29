@@ -33,7 +33,7 @@ public class ApplicationsResult extends QueryResponse<ApplicationsResult> {
 
     @Override
     boolean success() {
-        return false;
+        return applications.stream().anyMatch(ApplicationResult::success);
     }
 
     @Override

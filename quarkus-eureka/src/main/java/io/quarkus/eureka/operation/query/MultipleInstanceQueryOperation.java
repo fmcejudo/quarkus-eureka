@@ -1,7 +1,5 @@
 package io.quarkus.eureka.operation.query;
 
-import java.util.Optional;
-
 public class MultipleInstanceQueryOperation implements QueryOperation {
 
     public ApplicationsResult findAllInstances(final String location) {

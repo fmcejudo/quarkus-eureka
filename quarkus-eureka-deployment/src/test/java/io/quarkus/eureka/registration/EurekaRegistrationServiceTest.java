@@ -2,7 +2,6 @@ package io.quarkus.eureka.registration;
 
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
@@ -22,10 +21,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;

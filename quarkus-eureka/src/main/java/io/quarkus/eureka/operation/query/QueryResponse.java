@@ -1,7 +1,5 @@
 package io.quarkus.eureka.operation.query;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 import java.util.function.Consumer;
 
 abstract class QueryResponse<T> {

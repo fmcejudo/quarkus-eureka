@@ -29,7 +29,7 @@ public class ApplicationResult extends QueryResponse<ApplicationResult> {
 
     @Override
     boolean success() {
-        return false;
+        return instanceResults.stream().anyMatch(InstanceResult::success);
     }
 
     @Override

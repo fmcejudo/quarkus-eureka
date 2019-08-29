@@ -2,8 +2,6 @@ package io.quarkus.eureka.operation.query;
 
 import org.jboss.resteasy.spi.NotImplementedYetException;
 
-import java.util.Optional;
-
 /**
  * It retrieves information about the instances which are deployed in the location in which the service registers.
  * <p>
