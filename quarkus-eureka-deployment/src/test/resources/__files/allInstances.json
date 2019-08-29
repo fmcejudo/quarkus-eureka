@@ -1,0 +1,54 @@
+{
+  "applications": {
+    "versions__delta": "1",
+    "apps__hashcode": "UP_1_",
+    "application": [
+      {
+        "name": "MDR-UPLOAD-CONSOLE",
+        "instance": [
+          {
+            "instanceId": "10.34.37.227:mdr-upload-console:9991",
+            "hostName": "10.34.37.227",
+            "app": "MDR-UPLOAD-CONSOLE",
+            "ipAddr": "10.34.37.227",
+            "status": "UP",
+            "overriddenStatus": "UNKNOWN",
+            "port": {
+              "$": 9991,
+              "@enabled": "true"
+            },
+            "securePort": {
+              "$": 443,
+              "@enabled": "false"
+            },
+            "countryId": 1,
+            "dataCenterInfo": {
+              "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+              "name": "MyOwn"
+            },
+            "leaseInfo": {
+              "renewalIntervalInSecs": 30,
+              "durationInSecs": 90,
+              "registrationTimestamp": 1566996731160,
+              "lastRenewalTimestamp": 1566998800820,
+              "evictionTimestamp": 0,
+              "serviceUpTimestamp": 1566996730305
+            },
+            "metadata": {
+              "management.port": "9991"
+            },
+            "homePageUrl": "http://10.34.37.227:9991/",
+            "statusPageUrl": "http://10.34.37.227:9991/actuator/info",
+            "healthCheckUrl": "http://10.34.37.227:9991/actuator/health",
+            "vipAddress": "mdr-upload-console",
+            "secureVipAddress": "mdr-upload-console",
+            "isCoordinatingDiscoveryServer": "false",
+            "lastUpdatedTimestamp": "1566996731160",
+            "lastDirtyTimestamp": "1566996729868",
+            "actionType": "ADDED"
+          }
+        ]
+      }
+    ]
+  }
+}

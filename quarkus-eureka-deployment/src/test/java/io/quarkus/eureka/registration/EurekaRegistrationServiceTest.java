@@ -5,14 +5,12 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
-import io.quarkus.eureka.util.HostNameDiscovery;
+import io.quarkus.eureka.operation.OperationFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -56,8 +55,8 @@ public class EurekaRegistrationServiceTest {
                         format("http://%s:%d/eureka", getHostname(), port))
                 ),
                 InstanceInfo.of(instanceInfoContext),
-                scheduledExecutorService
-        );
+                new OperationFactory(emptyList()),
+                scheduledExecutorService);
 
         when(scheduledExecutorService
                 .scheduleWithFixedDelay(any(Runnable.class), anyLong(), anyLong(), any(TimeUnit.class))
