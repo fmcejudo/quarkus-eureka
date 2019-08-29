@@ -5,6 +5,7 @@ import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.query.InstanceResult;
+import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
 
 import java.util.concurrent.Executors;
@@ -51,8 +52,9 @@ public class EurekaRegistrationService {
                     RegistrationFlow.instanceHealthCheck(
                             () -> instanceHealthCheckService.healthCheck(instanceInfo.getHealthCheckUrl())
                     ).eurekaHealthCheck(
-                            () -> operationFactory.get(SingleInstanceQueryOperation.class)
-                                    .findInstance(location, instanceInfo.getApp(), instanceInfo.getHostName())
+                            () -> operationFactory.get(MultipleInstanceQueryOperation.class)
+                                    .findInstance(location, instanceInfo.getApp())
+                                    .getInstanceResults().stream().findFirst().orElse(InstanceResult.error())
                     ).onSuccess(
                             queryResponse -> new RegisterService(location, instanceInfo)
                                     .register(queryResponse.getStatus())

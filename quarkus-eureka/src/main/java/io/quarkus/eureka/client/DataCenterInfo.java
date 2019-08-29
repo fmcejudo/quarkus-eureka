@@ -1,6 +1,6 @@
 package io.quarkus.eureka.client;
 
-import javax.json.bind.annotation.JsonbProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public interface DataCenterInfo {
 
@@ -8,7 +8,7 @@ public interface DataCenterInfo {
         MyOwn
     }
 
-    @JsonbProperty("@class")
+    @JsonProperty("@class")
     default String getClassName() {
         return "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo";
     }

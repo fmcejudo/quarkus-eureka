@@ -4,12 +4,12 @@
     "apps__hashcode": "UP_1_",
     "application": [
       {
-        "name": "MDR-UPLOAD-CONSOLE",
+        "name": "SAMPLE",
         "instance": [
           {
-            "instanceId": "10.34.37.227:mdr-upload-console:9991",
+            "instanceId": "10.34.37.227:sample:9991",
             "hostName": "10.34.37.227",
-            "app": "MDR-UPLOAD-CONSOLE",
+            "app": "SAMPLE",
             "ipAddr": "10.34.37.227",
             "status": "UP",
             "overriddenStatus": "UNKNOWN",
@@ -40,8 +40,8 @@
             "homePageUrl": "http://10.34.37.227:9991/",
             "statusPageUrl": "http://10.34.37.227:9991/actuator/info",
             "healthCheckUrl": "http://10.34.37.227:9991/actuator/health",
-            "vipAddress": "mdr-upload-console",
-            "secureVipAddress": "mdr-upload-console",
+            "vipAddress": "sample",
+            "secureVipAddress": "sample",
             "isCoordinatingDiscoveryServer": "false",
             "lastUpdatedTimestamp": "1566996731160",
             "lastDirtyTimestamp": "1566996729868",

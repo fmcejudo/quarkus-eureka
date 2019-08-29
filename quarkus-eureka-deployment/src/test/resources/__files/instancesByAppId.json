@@ -1,0 +1,48 @@
+{
+  "application": {
+    "name": "SAMPLE",
+    "instance": [
+      {
+        "instanceId": "10.34.37.227:sample:9991",
+        "hostName": "10.34.37.227",
+        "app": "SAMPLE",
+        "ipAddr": "10.34.37.227",
+        "status": "UP",
+        "overriddenStatus": "UNKNOWN",
+        "port": {
+          "$": 9991,
+          "@enabled": "true"
+        },
+        "securePort": {
+          "$": 443,
+          "@enabled": "false"
+        },
+        "countryId": 1,
+        "dataCenterInfo": {
+          "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+          "name": "MyOwn"
+        },
+        "leaseInfo": {
+          "renewalIntervalInSecs": 30,
+          "durationInSecs": 90,
+          "registrationTimestamp": 1567070513010,
+          "lastRenewalTimestamp": 1567070872915,
+          "evictionTimestamp": 0,
+          "serviceUpTimestamp": 1567070512396
+        },
+        "metadata": {
+          "management.port": "9991"
+        },
+        "homePageUrl": "http://10.34.37.227:9991/",
+        "statusPageUrl": "http://10.34.37.227:9991/actuator/info",
+        "healthCheckUrl": "http://10.34.37.227:9991/actuator/health",
+        "vipAddress": "sample",
+        "secureVipAddress": "sample",
+        "isCoordinatingDiscoveryServer": "false",
+        "lastUpdatedTimestamp": "1567070513010",
+        "lastDirtyTimestamp": "1567070512328",
+        "actionType": "ADDED"
+      }
+    ]
+  }
+}

@@ -1,12 +1,13 @@
 package io.quarkus.eureka.client;
 
-import javax.json.bind.annotation.JsonbProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class PortEnableInfo {
 
-    @JsonbProperty("$")
+    @JsonProperty("$")
     private final String port;
-    @JsonbProperty("@enabled")
+    @JsonProperty("@enabled")
     private final boolean enabled;
 
     private PortEnableInfo(String port, boolean enabled) {

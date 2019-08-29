@@ -1,14 +1,14 @@
 package io.quarkus.eureka.client;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.quarkus.eureka.config.InstanceInfoContext;
 
-import javax.json.bind.annotation.JsonbPropertyOrder;
 import java.util.function.Function;
 
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 
-@JsonbPropertyOrder({
+@JsonPropertyOrder({
         "hostName",
         "app",
         "vipAddress",

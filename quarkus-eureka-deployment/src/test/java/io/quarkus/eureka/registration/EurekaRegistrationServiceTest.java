@@ -2,10 +2,12 @@ package io.quarkus.eureka.registration;
 
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
+import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +27,10 @@ import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class EurekaRegistrationServiceTest {
@@ -39,6 +43,8 @@ public class EurekaRegistrationServiceTest {
 
     private ScheduledExecutorService scheduledExecutorService;
 
+    private MultipleInstanceQueryOperation multipleInstanceQueryOperation;
+
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -50,12 +56,17 @@ public class EurekaRegistrationServiceTest {
                 appName.toUpperCase(), port, appName, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
+        multipleInstanceQueryOperation = Mockito.mock(MultipleInstanceQueryOperation.class);
+
+        when(multipleInstanceQueryOperation.findInstance(anyString(), anyString())).thenCallRealMethod();
+        when(multipleInstanceQueryOperation.query(anyString(), anyString(), any(Class.class))).thenCallRealMethod();
+
         eurekaRegistrationService = new EurekaRegistrationService(
                 new ServiceLocationConfig(singleton(
                         format("http://%s:%d/eureka", getHostname(), port))
                 ),
                 InstanceInfo.of(instanceInfoContext),
-                new OperationFactory(emptyList()),
+                new OperationFactory(singletonList(multipleInstanceQueryOperation)),
                 scheduledExecutorService);
 
         when(scheduledExecutorService
@@ -73,11 +84,18 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldRegisterAService() throws InterruptedException {
+    public void shouldRegisterAService() {
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBody("{\"status\" : \"up\"}")));
+
+        wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBodyFile("instancesByAppId.json")
+                ));
 
         wireMockServer.stubFor(post(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(204)));
@@ -85,6 +103,7 @@ public class EurekaRegistrationServiceTest {
         eurekaRegistrationService.register();
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
     }
 

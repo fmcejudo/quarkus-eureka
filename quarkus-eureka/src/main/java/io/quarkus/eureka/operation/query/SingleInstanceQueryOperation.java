@@ -1,5 +1,7 @@
 package io.quarkus.eureka.operation.query;
 
+import org.jboss.resteasy.spi.NotImplementedYetException;
+
 import java.util.Optional;
 
 /**
@@ -11,19 +13,13 @@ import java.util.Optional;
 public class SingleInstanceQueryOperation implements QueryOperation {
 
     public InstanceResult findInstance(final String location, final String appId, final String instanceId) {
-        final String path = String.join("/", "apps", appId, instanceId);
-        return queryInstance(location, path);
+        throw new NotImplementedYetException("This api is not implemented for Eureka 1.x");
     }
 
     public InstanceResult findInstanceById(final String location, final String instanceId) {
-        final String path = String.join("/", "instances", instanceId);
-        return queryInstance(location, path);
+        throw new NotImplementedYetException("This api is not implemented for Eureka 1.x");
     }
 
-    private InstanceResult queryInstance(String location, String path) {
-        return Optional.ofNullable(query(location, path, InstanceResult.class))
-                .orElseGet(InstanceResult::error);
-    }
 
 
 }

@@ -1,15 +1,16 @@
 package io.quarkus.eureka.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import javax.json.bind.JsonbBuilder;
 
 public class DataCenterInfoTest {
 
     @Test
-    public void shouldParseDataCenterInfo() {
+    public void shouldParseDataCenterInfo() throws JsonProcessingException {
         DataCenterInfo dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
-        String json = JsonbBuilder.create().toJson(dataCenterInfo);
+        String json = new ObjectMapper().writeValueAsString(dataCenterInfo);
         System.out.println(json);
     }
 }
