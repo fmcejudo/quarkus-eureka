@@ -8,14 +8,14 @@ abstract class QueryResponse<T> {
 
     abstract T entity();
 
-    public T onSuccess(final Consumer<T> statusConsumer) {
+    public T isRegistered(final Consumer<T> statusConsumer) {
         if (success()) {
             statusConsumer.accept(entity());
         }
         return entity();
     }
 
-    public T onError(final Consumer<T> statusConsumer) {
+    public T isNotRegistered(final Consumer<T> statusConsumer) {
         if (!success()) {
             statusConsumer.accept(entity());
         }

@@ -11,11 +11,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
 
 public class EurekaRegistrationService {
 
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final InstanceInfo instanceInfo;
 
     private final ScheduledExecutorService executorService;
@@ -54,11 +56,10 @@ public class EurekaRegistrationService {
                             () -> operationFactory.get(MultipleInstanceQueryOperation.class)
                                     .findInstance(location, instanceInfo.getApp())
                                     .getInstanceResults().stream().findFirst().orElse(InstanceResult.error())
-                    ).onSuccess(
-                            queryResponse -> new RegisterService(location, instanceInfo)
-                                    .register(queryResponse.getStatus())
-                    ).onError(
-                            queryResponse -> System.out.println("error: " + queryResponse.getStatus())
+                    ).isRegistered(
+                            queryResponse -> logger.info("application already registered at " + location)
+                    ).isNotRegistered(
+                            queryResponse -> new RegisterService(location, instanceInfo).register(UP)
                     );
 
                 }, 2L, 40L, TimeUnit.SECONDS));

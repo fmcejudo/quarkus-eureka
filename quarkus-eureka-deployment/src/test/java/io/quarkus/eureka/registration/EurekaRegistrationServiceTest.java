@@ -28,6 +28,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 public class EurekaRegistrationServiceTest {
@@ -53,10 +54,7 @@ public class EurekaRegistrationServiceTest {
                 appName.toUpperCase(), port, appName, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
-        multipleInstanceQueryOperation = Mockito.mock(MultipleInstanceQueryOperation.class);
-
-        when(multipleInstanceQueryOperation.findInstance(anyString(), anyString())).thenCallRealMethod();
-        when(multipleInstanceQueryOperation.query(anyString(), anyString(), any(Class.class))).thenCallRealMethod();
+        multipleInstanceQueryOperation = new MultipleInstanceQueryOperation();
 
         eurekaRegistrationService = new EurekaRegistrationService(
                 new ServiceLocationConfig(singleton(
@@ -90,8 +88,7 @@ public class EurekaRegistrationServiceTest {
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(200)
-                        .withBodyFile("instancesByAppId.json")
+                        .withStatus(404)
                 ));
 
         wireMockServer.stubFor(post(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
@@ -102,6 +99,27 @@ public class EurekaRegistrationServiceTest {
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
+    }
+
+    @Test
+    public void shouldHaveServiceRegistered() {
+        wireMockServer.stubFor(get(urlEqualTo("/info/health"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\"status\" : \"up\"}")));
+
+        wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBodyFile("instancesByAppId.json")
+                ));
+
+        eurekaRegistrationService.register();
+
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
+        wireMockServer.verify(0, postRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
     }
 
     static class TestInstanceInfoContext implements InstanceInfoContext {
