@@ -24,8 +24,7 @@ public class EurekaInfoProcessor {
     public void applyConfiguration(final EurekaRecorder eurekaRecorder,
                                    final EurekaConfiguration eurekaConfiguration,
                                    final BeanContainerBuildItem beanContainer) {
-        eurekaRecorder.configureProperties(eurekaConfiguration, beanContainer.getValue());
-        eurekaRecorder.registerServiceInEureka(beanContainer.getValue());
+        eurekaRecorder.registerServiceInEureka(eurekaConfiguration, beanContainer.getValue());
     }
 
     @Record(ExecutionTime.STATIC_INIT)

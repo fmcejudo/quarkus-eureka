@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
 
+import static io.quarkus.eureka.client.Status.UP;
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
@@ -34,10 +35,10 @@ class RegisterService {
         this.instanceInfo = instanceInfo;
     }
 
-    void register(final Status newStatus) {
+    void register() {
         try {
             String registrationUrl = String.join("/", location, "apps", instanceInfo.getApp());
-            Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(newStatus));
+            Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
             Client client = ResteasyClientBuilder.newClient();
             Response response = client
                     .target(registrationUrl)

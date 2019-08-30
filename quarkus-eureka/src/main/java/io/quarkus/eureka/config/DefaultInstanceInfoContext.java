@@ -18,6 +18,10 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.healthCheckUrl = eurekaConfiguration.healthCheckUrl;
     }
 
+    public static InstanceInfoContext withConfiguration(final EurekaConfiguration eurekaConfiguration) {
+        return new DefaultInstanceInfoContext(eurekaConfiguration);
+    }
+
     public String getName() {
         return name;
     }

@@ -59,7 +59,7 @@ public class EurekaRegistrationService {
                     ).isRegistered(
                             queryResponse -> logger.info("application already registered at " + location)
                     ).isNotRegistered(
-                            queryResponse -> new RegisterService(location, instanceInfo).register(UP)
+                            queryResponse -> new RegisterService(location, instanceInfo).register()
                     );
 
                 }, 2L, 40L, TimeUnit.SECONDS));

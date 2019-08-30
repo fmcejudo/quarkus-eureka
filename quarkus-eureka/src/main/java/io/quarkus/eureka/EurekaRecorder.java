@@ -7,12 +7,14 @@ import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
+import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
 import org.jboss.logging.Logger;
 
 import javax.ws.rs.ProcessingException;
 
+import static io.quarkus.eureka.config.DefaultInstanceInfoContext.withConfiguration;
 import static java.util.Arrays.asList;
 
 @Recorder
@@ -20,17 +22,20 @@ public class EurekaRecorder {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public void configureProperties(final EurekaConfiguration eurekaConfiguration, final BeanContainer container) {
-        container.instance(EurekaProducer.class).setConfiguration(eurekaConfiguration);
-    }
-
-    public void registerServiceInEureka(final BeanContainer beanContainer) {
+    public void registerServiceInEureka(final EurekaConfiguration eurekaConfiguration,
+                                        final BeanContainer beanContainer) {
         try {
             logger.info("registering eurekaService");
-            InstanceInfo instanceInfo = beanContainer.instance(InstanceInfo.class);
-            ServiceLocationConfig serviceLocationConfig = beanContainer.instance(ServiceLocationConfig.class);
+            InstanceInfo instanceInfo = InstanceInfo.of(withConfiguration(eurekaConfiguration));
+            ServiceLocationConfig serviceLocationConfig = new ServiceLocationConfig(eurekaConfiguration);
+
             OperationFactory operationFactory = createOperationFactory();
+
+            beanContainer.instance(EurekaProducer.class).setOperationFactory(operationFactory);
+            beanContainer.instance(EurekaProducer.class).setInstanceInfo(instanceInfo);
+            beanContainer.instance(EurekaProducer.class).setServiceLocationConfig(serviceLocationConfig);
             new EurekaRegistrationService(serviceLocationConfig, instanceInfo, operationFactory).register();
+
         } catch (ProcessingException ex) {
             logger.error("error connecting with eureka registry service", ex.getCause());
         } catch (Exception ex) {
@@ -42,9 +47,11 @@ public class EurekaRecorder {
     private OperationFactory createOperationFactory() {
         SingleInstanceQueryOperation singleQueryOperation = new SingleInstanceQueryOperation();
         MultipleInstanceQueryOperation multipleQueryOperation = new MultipleInstanceQueryOperation();
+        RemoveInstanceOperation removeInstanceOperation = new RemoveInstanceOperation();
         return new OperationFactory(asList(
                 singleQueryOperation,
-                multipleQueryOperation
+                multipleQueryOperation,
+                removeInstanceOperation
         ));
     }
 
