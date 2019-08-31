@@ -24,13 +24,14 @@ public class EurekaClient {
         String target = serviceLocationConfig.getLocations()
                 .stream()
                 .map(location ->
-                        operationFactory.get(MultipleInstanceQueryOperation.class).findInstance(location, appId)
+                        operationFactory.get(MultipleInstanceQueryOperation.class)
+                                .findInstance(location, appId.toUpperCase())
                 )
                 .flatMap(applicationResult ->
                         applicationResult.getInstanceResults().stream().map(InstanceResult::getHomePageUrl)
                 )
                 .findAny()
-                .orElseThrow(() -> new EurekaServiceNotFoundException(appId));
+                .orElseThrow(() -> new EurekaServiceNotFoundException(appId.toUpperCase()));
 
         return ResteasyClientBuilder.newClient().target(target);
     }
