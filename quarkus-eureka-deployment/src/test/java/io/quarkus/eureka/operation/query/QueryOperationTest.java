@@ -65,7 +65,6 @@ public class QueryOperationTest {
         assertThat(instanceResults).hasSize(1)
                 .flatExtracting("status", "app").containsExactly(Status.UP, "SAMPLE");
 
-        assertThat(applicationsResult.getHashCode()).isEqualTo("UP_1_");
     }
 
     @Test

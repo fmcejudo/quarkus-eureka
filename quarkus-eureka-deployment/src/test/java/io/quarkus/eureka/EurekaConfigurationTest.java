@@ -73,11 +73,6 @@ public class EurekaConfigurationTest {
                 .extracting("uri").asString().isEqualTo("http://10.34.37.227:9991/");
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/SAMPLE")));
-
-        assertThatThrownBy(() -> eurekaClient.app("OTHER"))
-                .isInstanceOf(EurekaServiceNotFoundException.class)
-                .hasMessage("service OTHER not found");
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/OTHER")));
     }
 
     @Test

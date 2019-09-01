@@ -15,20 +15,16 @@ public class ApplicationsResult extends QueryResponse<ApplicationsResult> {
 
     private final List<ApplicationResult> applications;
 
-    private final String hashCode;
-
     @JsonCreator
     public ApplicationsResult(
             @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-            @JsonProperty(value = "application") final List<ApplicationResult> applications,
-            @JsonProperty(value = "apps__hashcode") final String hashCode) {
+            @JsonProperty(value = "application") final List<ApplicationResult> applications) {
 
         this.applications = applications;
-        this.hashCode = hashCode;
     }
 
     public static ApplicationsResult error() {
-        return new ApplicationsResult(Collections.emptyList(), "");
+        return new ApplicationsResult(Collections.emptyList());
     }
 
     @Override
@@ -45,7 +41,4 @@ public class ApplicationsResult extends QueryResponse<ApplicationsResult> {
         return applications;
     }
 
-    public String getHashCode() {
-        return hashCode;
-    }
 }
