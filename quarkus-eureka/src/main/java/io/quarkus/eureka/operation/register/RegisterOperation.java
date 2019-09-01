@@ -1,20 +1,17 @@
-package io.quarkus.eureka.registration;
+package io.quarkus.eureka.operation.register;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.client.Status;
+import io.quarkus.eureka.operation.Operation;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.Map;
 
 import static io.quarkus.eureka.client.Status.UP;
@@ -24,18 +21,11 @@ import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
 import static javax.ws.rs.core.Response.Status.Family.SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
-class RegisterService {
+public class RegisterOperation implements Operation {
 
     private Logger logger = Logger.getLogger(this.getClass());
-    private final String location;
-    private final InstanceInfo instanceInfo;
 
-    RegisterService(final String location, final InstanceInfo instanceInfo) {
-        this.location = location;
-        this.instanceInfo = instanceInfo;
-    }
-
-    void register() {
+    public void register(final String location, final InstanceInfo instanceInfo) {
         try {
             String registrationUrl = String.join("/", location, "apps", instanceInfo.getApp());
             Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));

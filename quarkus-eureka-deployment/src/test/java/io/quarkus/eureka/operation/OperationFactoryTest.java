@@ -2,6 +2,7 @@ package io.quarkus.eureka.operation;
 
 import io.quarkus.eureka.exception.EurekaOperationException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
@@ -18,12 +19,14 @@ public class OperationFactoryTest {
     }
 
     @Test
+    @DisplayName("it should retrieve an instance of class in the argument")
     public void shouldIdentifyEachOperation() {
         assertThat(operationFactory.get(OneOperation.class)).isInstanceOf(OneOperation.class);
         assertThat(operationFactory.get(TwoOperations.class)).isInstanceOf(TwoOperations.class);
     }
 
     @Test
+    @DisplayName("it should throw a Eureka Operation Exception when no operation matches")
     public void shouldFailIfOperationIsNotDefined() {
         assertThatThrownBy(() -> operationFactory.get(EmptyOperation.class))
                 .isInstanceOf(EurekaOperationException.class)
@@ -31,6 +34,7 @@ public class OperationFactoryTest {
     }
 
     @Test
+    @DisplayName("it should retrieve implemented classes, but no interfaces")
     public void shouldFailIfOperationIsAnInterface() {
         assertThatThrownBy(() -> operationFactory.get(Operation.class))
                 .isInstanceOf(EurekaOperationException.class)
@@ -46,6 +50,7 @@ public class OperationFactoryTest {
         }
 
     }
+
     static class TwoOperations implements Operation {
         static TwoOperations instance() {
             return new TwoOperations();

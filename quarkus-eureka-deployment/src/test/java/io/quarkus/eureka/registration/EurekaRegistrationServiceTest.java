@@ -6,7 +6,9 @@ import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
+import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
+import io.quarkus.eureka.operation.register.RegisterOperation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,15 +22,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
+import static java.lang.String.join;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 public class EurekaRegistrationServiceTest {
@@ -43,6 +46,10 @@ public class EurekaRegistrationServiceTest {
 
     private MultipleInstanceQueryOperation multipleInstanceQueryOperation;
 
+    private HeartBeatOperation heartBeatOperation;
+
+    private RegisterOperation registerOperation;
+
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -54,6 +61,8 @@ public class EurekaRegistrationServiceTest {
                 appName.toUpperCase(), port, appName, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
+        registerOperation = new RegisterOperation();
+        heartBeatOperation = new HeartBeatOperation();
         multipleInstanceQueryOperation = new MultipleInstanceQueryOperation();
 
         eurekaRegistrationService = new EurekaRegistrationService(
@@ -61,7 +70,11 @@ public class EurekaRegistrationServiceTest {
                         format("http://%s:%d/eureka", getHostname(), port))
                 ),
                 InstanceInfo.of(instanceInfoContext),
-                new OperationFactory(singletonList(multipleInstanceQueryOperation)),
+                new OperationFactory(asList(
+                        registerOperation,
+                        heartBeatOperation,
+                        multipleInstanceQueryOperation
+                )),
                 scheduledExecutorService);
 
         when(scheduledExecutorService
@@ -85,20 +98,20 @@ public class EurekaRegistrationServiceTest {
                         .withStatus(200)
                         .withBody("{\"status\" : \"up\"}")));
 
-        wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
+        wireMockServer.stubFor(get(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withStatus(404)
                 ));
 
-        wireMockServer.stubFor(post(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
+        wireMockServer.stubFor(post(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(204)));
 
         eurekaRegistrationService.register();
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
     }
 
     @Test
@@ -108,18 +121,31 @@ public class EurekaRegistrationServiceTest {
                         .withStatus(200)
                         .withBody("{\"status\" : \"up\"}")));
 
-        wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/" + appName.toUpperCase()))
+        wireMockServer.stubFor(get(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("instancesByAppId.json")
                 ));
 
+        wireMockServer.stubFor(put(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname())))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200)));
+
         eurekaRegistrationService.register();
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo("/eureka/apps/" + appName.toUpperCase())));
+
+        wireMockServer.verify(1,
+                getRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))
+        );
+
+        wireMockServer.verify(1,
+                putRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname())))
+        );
+
+        wireMockServer.verify(0,
+                postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
+        );
     }
 
     static class TestInstanceInfoContext implements InstanceInfoContext {

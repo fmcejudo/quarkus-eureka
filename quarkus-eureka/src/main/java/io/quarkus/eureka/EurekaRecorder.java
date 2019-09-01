@@ -5,8 +5,10 @@ import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.EurekaConfiguration;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
+import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
+import io.quarkus.eureka.operation.register.RegisterOperation;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
@@ -45,10 +47,14 @@ public class EurekaRecorder {
     }
 
     private OperationFactory createOperationFactory() {
+        RegisterOperation registerOperation = new RegisterOperation();
+        HeartBeatOperation heartBeatOperation = new HeartBeatOperation();
         SingleInstanceQueryOperation singleQueryOperation = new SingleInstanceQueryOperation();
         MultipleInstanceQueryOperation multipleQueryOperation = new MultipleInstanceQueryOperation();
         RemoveInstanceOperation removeInstanceOperation = new RemoveInstanceOperation();
         return new OperationFactory(asList(
+                registerOperation,
+                heartBeatOperation,
                 singleQueryOperation,
                 multipleQueryOperation,
                 removeInstanceOperation
