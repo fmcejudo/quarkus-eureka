@@ -8,6 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>quarkus-eureka-parent</name>
+    <description>Quarkus plugin to integrate with Eureka Server</description>
     <url>https://github.com/fmcejudo/quarkus-eureka</url>
 
     <properties>
