@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>quarkus-eureka-parent</artifactId>
-        <groupId>io.quarkus.eureka</groupId>
+        <groupId>io.fmcejudo.quarkus.eureka</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -23,7 +23,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkus.eureka</groupId>
+            <groupId>io.fmcejudo.quarkus.eureka</groupId>
             <artifactId>quarkus-eureka</artifactId>
             <version>${project.version}</version>
         </dependency>

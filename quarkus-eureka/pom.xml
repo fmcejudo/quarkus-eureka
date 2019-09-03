@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>quarkus-eureka-parent</artifactId>
-        <groupId>io.quarkus.eureka</groupId>
+        <groupId>io.fmcejudo.quarkus.eureka</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 

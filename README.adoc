@@ -50,7 +50,7 @@ Including the extension in your application, the next dependency needs to be add
 [source,xml]
 ----
 <dependency>
-    <groupId>io.quarkus.eureka</groupId>
+    <groupId>io.fmcejudo.quarkus.eureka</groupId>
     <artifactId>quarkus-eureka</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
