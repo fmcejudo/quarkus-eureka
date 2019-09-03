@@ -25,6 +25,39 @@
         <module>quarkus-eureka</module>
     </modules>
 
+    <organization>
+        <url>https://github.com/fmcejudo</url>
+        <name>fmcejudo</name>
+    </organization>
+    <inceptionYear>2019</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Francisco Cejudo</name>
+            <email>fmcejudo@gmail.com</email>
+            <organization>fmcejudo</organization>
+            <organizationUrl>https://github.com/fmcejudo</organizationUrl>
+            <timezone>UTC</timezone>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/fmcejudo/quarkus-eureka/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.com/fmcejudo/quarkus-eureka</url>
+    </ciManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
