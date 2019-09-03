@@ -1,0 +1,84 @@
+package io.quarkus.eureka.registration;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import io.quarkus.eureka.client.Status;
+import io.quarkus.eureka.exception.HealthCheckException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static java.lang.String.format;
+import static java.lang.String.join;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+public class InstanceHealthCheckServiceTest {
+
+    private final int port = 10099;
+
+    private final String hostName;
+    private final String healthPath;
+
+    {
+        hostName = format("http://localhost:%d", port);
+        healthPath = "/info/health";
+    }
+
+    private InstanceHealthCheckService instanceHealthCheckService;
+
+    private WireMockServer wireMockServer;
+
+    @BeforeEach
+    public void setUp() {
+        wireMockServer = new WireMockServer(port);
+        wireMockServer.start();
+
+        instanceHealthCheckService = new InstanceHealthCheckService();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        wireMockServer.stop();
+    }
+
+
+    @Test
+    public void shouldReachHealthCheck() {
+
+        wireMockServer.stubFor(get(urlEqualTo(healthPath))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\"status\": \"UP\"}")));
+
+        Status status = instanceHealthCheckService.healthCheck(join("/", hostName, healthPath));
+        assertThat(status).isEqualTo(Status.UP);
+
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenHealthCheckNoImplemented() {
+
+        wireMockServer.stubFor(get(urlEqualTo(healthPath))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(404)));
+
+        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("/", hostName, healthPath)))
+                .isInstanceOf(HealthCheckException.class)
+                .hasMessage("Instance can't reach own application health check. Ensure this has been implemented");
+
+    }
+
+    @Test
+    public void shouldWrapExceptionWithHealthCheckException() {
+
+        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("/", "http://wrong-server", healthPath)))
+                .isInstanceOf(HealthCheckException.class)
+                .hasMessageContaining("Name or service not known");
+    }
+
+}
