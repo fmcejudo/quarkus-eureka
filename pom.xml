@@ -16,7 +16,7 @@
         <assertj-core.version>3.13.0</assertj-core.version>
         <rest-assured.version>4.0.0</rest-assured.version>
         <mockito.version>2.27.0</mockito.version>
-        <wiremock.version>2.19.0</wiremock.version>
+        <wiremock.version>2.24.1</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

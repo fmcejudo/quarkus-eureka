@@ -1,36 +1,44 @@
 package io.quarkus.eureka.util;
 
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.List;
 
 public class HostNameDiscovery {
 
+    private static String HOSTNAME;
+
     public static String getHostname() {
-        final String[] defaultInterfaceNames = {"en0", "eth0", "eth1", "eth2"};
-        return Stream.of(defaultInterfaceNames)
-                .map(HostNameDiscovery::getNetworkInterface)
-                .filter(HostNameDiscovery::isNetworkInterfaceUp)
+        if (HOSTNAME != null && !HOSTNAME.trim().equals("")) {
+            return HOSTNAME;
+        }
+        HOSTNAME = HostNameDiscovery.getNetworkInterfaces().stream()
+                .filter(HostNameDiscovery::hasBroadcast)
                 .map(HostNameDiscovery::extractHostname)
-                .filter(s -> s!=null && !s.contains(":"))
                 .findFirst()
-                .orElse(getLocalHost());
+                .orElseGet(HostNameDiscovery::getLocalHost);
+        return HOSTNAME;
     }
 
-    private static NetworkInterface getNetworkInterface(String name) {
+    private static List<NetworkInterface> getNetworkInterfaces() {
         try {
-            return NetworkInterface.getByName(name);
+            return Collections.list(NetworkInterface.getNetworkInterfaces());
         } catch (SocketException e) {
-            return null;
+            return Collections.emptyList();
         }
     }
 
-    private static boolean isNetworkInterfaceUp(NetworkInterface networkInterface) {
+    private static boolean hasBroadcast(NetworkInterface networkInterface) {
         try {
-            return networkInterface != null && networkInterface.isUp();
+            if (networkInterface == null
+                    || networkInterface.getInterfaceAddresses().stream().allMatch(ia -> ia.getBroadcast() == null)) {
+                return false;
+            }
+            return networkInterface.isUp();
         } catch (SocketException e) {
             return false;
         }
@@ -45,10 +53,10 @@ public class HostNameDiscovery {
     }
 
     private static String extractHostname(final NetworkInterface networkInterface) {
-        Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-        if (inetAddresses.hasMoreElements()) {
-            return inetAddresses.nextElement().getHostName();
-        }
-        return null;
+        return networkInterface.getInterfaceAddresses().stream()
+                .filter(ia -> ia.getBroadcast() != null)
+                .findFirst().map(InterfaceAddress::getAddress)
+                .map(InetAddress::getHostName)
+                .orElseThrow(() -> new RuntimeException("what, there is no broadcast ip"));
     }
 }
