@@ -5,10 +5,12 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
+import io.quarkus.eureka.exception.HealthCheckException;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +115,45 @@ public class EurekaRegistrationServiceTest {
         wireMockServer.verify(1, getRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
     }
+
+    @Test
+    public void shouldFailWhenInstanceHealthCheckNotImplemented() {
+        wireMockServer.stubFor(get(urlEqualTo("/info/health"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(404)));
+
+        Assertions.assertThatThrownBy(() -> eurekaRegistrationService.register())
+                .isInstanceOf(HealthCheckException.class)
+                .hasMessage("Instance can't reach own application health check. Ensure this has been implemented");
+
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+    }
+
+    @Test
+    public void shouldFailWhenEurekaNotReachable() {
+        wireMockServer.stubFor(get(urlEqualTo("/info/health"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\"status\" : \"up\"}")));
+
+        wireMockServer.stubFor(get(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(404)
+                ));
+
+        Assertions.assertThatThrownBy(() -> eurekaRegistrationService.register())
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Eureka Server is not reachable");
+
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+
+        wireMockServer.verify(1,
+                getRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))
+        );
+
+    }
+
 
     @Test
     public void shouldHaveServiceRegistered() {
