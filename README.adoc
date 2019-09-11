@@ -4,6 +4,8 @@ image:https://travis-ci.com/fmcejudo/quarkus-eureka.svg?branch=master["Build Sta
 
 image:https://coveralls.io/repos/github/fmcejudo/quarkus-eureka/badge.svg?branch=master["Build Status", link="https://coveralls.io/github/fmcejudo/quarkus-eureka?branch=master"]
 
+image:https://maven-badges.herokuapp.com/maven-central/com.github.fmcejudo/quarkus-eureka-parent/badge.svg["Build Status", link="https://maven-badges.herokuapp.com/maven-central/com.github.fmcejudo/quarkus-eureka-parent"]
+
 
 = What?
 
@@ -52,14 +54,13 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 </dependency>
 ----
 
 [NOTE]
 ====
-As this is not yet published to any repository, the dependency needs to be built locally by cloning the project and
-running `mvn clean install` from the root directory, so as to include it in your local repo.
+This dependency is in `maven central`
 ====
 
 
