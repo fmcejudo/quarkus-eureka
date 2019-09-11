@@ -81,11 +81,12 @@ public class EurekaConfigurationTest {
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/OTHER"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
-                .withBodyFile("downInstancesByAppId.json")));
+                        .withBodyFile("downInstancesByAppId.json")));
 
         assertThatThrownBy(() -> eurekaClient.app("OTHER"))
                 .isInstanceOf(EurekaServiceNotFoundException.class)
                 .hasMessage("service OTHER not found");
+
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/OTHER")));
     }
 

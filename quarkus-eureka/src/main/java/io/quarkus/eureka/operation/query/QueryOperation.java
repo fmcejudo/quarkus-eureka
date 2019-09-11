@@ -26,7 +26,7 @@ abstract class QueryOperation implements Operation {
 
         String json = response.readEntity(String.class);
         response.close();
-        client.close(); //client closes but it is not Closeable. I can't use try-with-resources
+        client.close();
         return jsonToObject(clazz, json);
     }
 

@@ -28,7 +28,7 @@ public class ApplicationResult extends QueryResponse<ApplicationResult> {
     }
 
     @Override
-    boolean success() {
+    public boolean success() {
         return instanceResults.stream().anyMatch(InstanceResult::success);
     }
 

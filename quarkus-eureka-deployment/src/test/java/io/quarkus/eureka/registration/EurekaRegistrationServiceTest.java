@@ -11,6 +11,7 @@ import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,7 +131,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldFailWhenEurekaNotReachable() {
+    public void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
@@ -142,14 +143,22 @@ public class EurekaRegistrationServiceTest {
                         .withStatus(404)
                 ));
 
-        Assertions.assertThatThrownBy(() -> eurekaRegistrationService.register())
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Eureka Server is not reachable");
+        wireMockServer.stubFor(post(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(404)
+                ));
+
+
+        eurekaRegistrationService.register();
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
 
         wireMockServer.verify(1,
                 getRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))
+        );
+        wireMockServer.verify(1,
+                postRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))
         );
 
     }

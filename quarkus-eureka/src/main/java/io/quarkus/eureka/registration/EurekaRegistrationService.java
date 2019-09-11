@@ -47,6 +47,9 @@ public class EurekaRegistrationService {
 
     public void register() {
 
+        //TODO shall I first check the application has the defined endpoint up and running before
+        // registering with failing parameters
+
         serviceLocationConfig.getLocations()
                 .forEach(location -> executorService.scheduleWithFixedDelay(() -> {
 

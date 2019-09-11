@@ -3,6 +3,7 @@ package io.quarkus.eureka.client;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
 import io.quarkus.eureka.operation.OperationFactory;
+import io.quarkus.eureka.operation.query.ApplicationResult;
 import io.quarkus.eureka.operation.query.InstanceResult;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -27,6 +28,7 @@ public class EurekaClient {
                         operationFactory.get(MultipleInstanceQueryOperation.class)
                                 .findInstance(location, appId.toUpperCase())
                 )
+                .filter(ApplicationResult::success)
                 .flatMap(applicationResult ->
                         applicationResult.getInstanceResults().stream().map(InstanceResult::getHomePageUrl)
                 )
