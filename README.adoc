@@ -16,8 +16,9 @@ are some shortage of integrations with some other services working for the cloud
 With this extension the aim is registering a Quarkus service in Eureka Registry to expose its responsibility to other
 services in a high disponibility environment in which the service is reached by loadbalancers to any of their instances.
 
-Mentioning that the extension does not act as discovery client, so the client can't consume other services in the
-registry yet.
+From the client side point of view, the plugin connects to the Eureka Server to retrieve the bridge which brings the link
+to the actual application to consume their values. That connections are made through their application id or application name
+rather that a static ip.
 
 The implementation of this extension is built based in the documentation at:
 
@@ -63,13 +64,16 @@ Including the extension in your application, the next dependency needs to be add
 This dependency is in `maven central`
 ====
 
+== REGISTRATION
+
+=== PARAMETERS WHICH PLUGIN DEALS WITH
 
 Configuring connection with the registry, exposing the name of your service, requires adding the next properties to
 your quarkus `application.properties`:
 
 [source,properties]
 ----
-quarkus.eureka.port= <your application port>
+quarkus.eureka.port= <your application port, it should match with quarkus.http.port>
 quarkus.eureka.name= <name of your application in Eureka>
 quarkus.eureka.vip-address= <how your application is recognised by clients>
 quarkus.eureka.home-page-url= <home path of your application>
@@ -80,18 +84,102 @@ quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
 ----
 
+i.e: Given the a `sample` application, your configuration properties to work with quarkus-eureka looks like:
+
+[source,properties]
+----
+# Configuration file
+# key = value
+
+quarkus.http.port=8001
+quarkus.eureka.region=default
+
+# what is my application name? (clients can query on this appName)
+quarkus.eureka.name=sample
+
+# what is my application virtual ip address? (clients can query on this vipAddress)
+quarkus.eureka.vip-address=sample
+
+# what is the port that I serve on? (Change this if port 8001 is already in use in your environment)
+quarkus.eureka.port=8001
+
+## configuration related to reaching the eureka servers
+quarkus.eureka.prefer-same-zone=true
+quarkus.eureka.should-use-dns=false
+quarkus.eureka.service-url.default=http://localhost:8761/eureka
+----
+
+Having as default values for remaining properties the following:
+[source,properties]
+----
+quarkus.eureka.home-page-url=/
+quarkus.eureka.status-page-url=/info/status
+quarkus.eureka.health-check-url=/info/health
+quarkus.eureka.prefer-same-zone=true
+----
+
+=== HEALTH INSTANCES
+
 In case you don't want to implement the heartbeat of your application, you might make use of:
 
 link:https://quarkus.io/guides/health-guide[Quarkus - Microprofile Health]
 
+Other alternative is creating your own controller to attend them, a simple approach for this might be:
+[source,java]
+----
+@Path("/info")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class HealthCheckController {
+
+    @GET
+    @Path("/health")
+    public Response health() {
+        return Response.ok(Map.of("STATUS", "UP")).build();
+    }
+
+    @GET
+    @Path("/status")
+    public Response status() {
+        return Response.ok(Map.of()).build();
+    }
+
+}
+----
+
 applying the endpoints where match.
 
 Eureka registry seems to be ready to work in cloud platforms such as AWS and the API so recognise it. But in this
-first approach it just connects with Eureka instances in by full urls.
+first approach it just connects with Eureka instances in by whole urls.
 
+=== WRAPPING UP WITH CONFIG
 With this configuration, once you start up you application, it should register itself in the list of locations
 provided, checking the healthy of its own in the network and the state of the Eureka service where it is registered.
 It keeps checking at the moment every 40 seconds the availability of them, updating the state if feasible.
+
+Bare in mind that Eureka Server is a service which instances need to teach, Eureka Server itself does not ask to instances
+about their states.
+
+== EUREKA CLIENT
+
+=== USING `EASILY` THE CLIENT
+
+As client to consume the services posted in Eureka Server, there is a `EurekaClient` class which requests
+for services in Eureka Server, bringing one of the `UP` status available and presenting the `WebTarget` configured with
+the actual url to the service to link with.
+
+This `WebTarget` instance comes from `RestEasy` implementation which is Quarkus compatible.
+
+To request for an endpoint in `sample` application, results in:
+
+[source,java]
+----
+ return eurekaClient.app("sample")
+                .path("/actuator/health")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get()
+                .readEntity(String.class);
+----
 
 
 = Why?
