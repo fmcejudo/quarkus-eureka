@@ -67,18 +67,18 @@ public class InstanceHealthCheckServiceTest {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(404)));
 
-        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("/", hostName, healthPath)))
+        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("", hostName, healthPath)))
                 .isInstanceOf(HealthCheckException.class)
-                .hasMessage("Instance can't reach own application health check. Ensure this has been implemented");
+                .hasMessageContaining("Health check not reachable:");
 
     }
 
     @Test
     public void shouldWrapExceptionWithHealthCheckException() {
 
-        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("/", "http://wrong-server", healthPath)))
+        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("", "http://wrong-server", healthPath)))
                 .isInstanceOf(HealthCheckException.class)
-                .hasMessageContaining("Name or service not known");
+                .hasMessageContaining("Health check not reachable:");
     }
 
 }

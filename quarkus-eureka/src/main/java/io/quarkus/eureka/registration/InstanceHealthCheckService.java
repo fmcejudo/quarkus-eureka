@@ -4,13 +4,13 @@ import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
 import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
+import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
@@ -30,7 +30,7 @@ class InstanceHealthCheckService {
             return getStatusFromResponse(response);
 
         } catch (Exception ex) {
-            throw new HealthCheckException(ex.getMessage());
+            throw new HealthCheckException(format("Health check not reachable: %s", healthCheckUrl), ex);
         }
     }
 
