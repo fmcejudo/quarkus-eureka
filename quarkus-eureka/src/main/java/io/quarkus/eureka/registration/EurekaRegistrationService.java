@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
 
@@ -72,6 +73,8 @@ public class EurekaRegistrationService {
 
     private static class RegistrationFlow {
 
+        private static final Logger logger = Logger.getLogger(RegistrationFlow.class.getName());
+
         private Status status;
 
         private RegistrationFlow(final Status status) {
@@ -79,7 +82,14 @@ public class EurekaRegistrationService {
         }
 
         private static RegistrationFlow instanceHealthCheck(final Supplier<Status> statusSupplier) {
-            return new RegistrationFlow(statusSupplier.get());
+            try {
+                return new RegistrationFlow(statusSupplier.get());
+            } catch (Exception e) {
+                // We need to log the errors in this thread, as this is inside of an Executor which is not bind to
+                // the main thread
+                logger.warning(e.getMessage());
+                throw e;
+            }
         }
 
         private InstanceResult eurekaHealthCheck(final Supplier<InstanceResult> eurekaHealthSupplier) {

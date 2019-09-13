@@ -7,6 +7,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;

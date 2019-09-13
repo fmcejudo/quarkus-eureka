@@ -33,15 +33,10 @@ public class HostNameDiscovery {
     }
 
     private static boolean hasBroadcast(NetworkInterface networkInterface) {
-        try {
-            if (networkInterface == null
-                    || networkInterface.getInterfaceAddresses().stream().allMatch(ia -> ia.getBroadcast() == null)) {
-                return false;
-            }
-            return networkInterface.isUp();
-        } catch (SocketException e) {
-            return false;
-        }
+
+        return networkInterface != null
+                && networkInterface.getInterfaceAddresses().stream().anyMatch(ia -> ia.getBroadcast() != null);
+
     }
 
     private static String getLocalHost() {
