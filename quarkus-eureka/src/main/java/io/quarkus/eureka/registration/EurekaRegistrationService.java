@@ -52,23 +52,20 @@ public class EurekaRegistrationService {
         // registering with failing parameters
 
         serviceLocationConfig.getLocations()
-                .forEach(location -> executorService.scheduleWithFixedDelay(() -> {
-
-                    RegistrationFlow.instanceHealthCheck(
-                            () -> instanceHealthCheckService.healthCheck(instanceInfo.getHealthCheckUrl())
-                    ).eurekaHealthCheck(
-                            () -> operationFactory.get(MultipleInstanceQueryOperation.class)
-                                    .findInstance(location, instanceInfo.getApp())
-                                    .getInstanceResults().stream().findFirst().orElse(InstanceResult.error())
-                    ).isRegistered(
-                            queryResponse ->
-                                    operationFactory.get(HeartBeatOperation.class).heartbeat(location, instanceInfo)
-                    ).isNotRegistered(
-                            queryResponse ->
-                                    operationFactory.get(RegisterOperation.class).register(location, instanceInfo)
-                    );
-
-                }, 2L, 40L, TimeUnit.SECONDS));
+                .forEach(location -> executorService.scheduleWithFixedDelay(() -> RegistrationFlow.instanceHealthCheck(
+                        () -> instanceHealthCheckService.healthCheck(instanceInfo.getHealthCheckUrl())
+                ).eurekaHealthCheck(
+                        () -> operationFactory.get(MultipleInstanceQueryOperation.class)
+                                .findInstance(location, instanceInfo.getApp())
+                                .getInstanceResults().stream().filter(instanceResult -> instanceInfo.getInstanceId().equals(instanceResult.getInstanceId()))
+                                .findFirst().orElse(InstanceResult.error())
+                ).isRegistered(
+                        queryResponse ->
+                                operationFactory.get(HeartBeatOperation.class).heartbeat(location, instanceInfo)
+                ).isNotRegistered(
+                        queryResponse ->
+                                operationFactory.get(RegisterOperation.class).register(location, instanceInfo)
+                ), 3L, 40L, TimeUnit.SECONDS));
     }
 
     private static class RegistrationFlow {

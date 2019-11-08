@@ -11,14 +11,17 @@ import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 import org.assertj.core.api.Assertions;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -37,11 +40,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EurekaRegistrationServiceTest {
 
-    private final String appName = "quarkus-eureka-test";
+    private final String appName = "sample";
 
-    private final int port = 10099;
+    private final int port = 8002;//10099;
 
     private EurekaRegistrationService eurekaRegistrationService;
 
@@ -54,14 +58,17 @@ public class EurekaRegistrationServiceTest {
     private RegisterOperation registerOperation;
 
     private WireMockServer wireMockServer;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @BeforeEach
     public void setUp() {
+        logger.info("Starting mock server.");
+
         wireMockServer = new WireMockServer(port);
         wireMockServer.start();
 
         InstanceInfoContext instanceInfoContext = new TestInstanceInfoContext(
-                appName.toUpperCase(), port, appName, "/", "/info/status", "/info/health"
+                appName, port, appName, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
         registerOperation = new RegisterOperation();
@@ -90,12 +97,13 @@ public class EurekaRegistrationServiceTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         wireMockServer.stop();
     }
 
     @Test
     public void shouldRegisterAService() {
+        logger.info("shouldRegisterAService test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
@@ -119,19 +127,21 @@ public class EurekaRegistrationServiceTest {
 
     @Test
     public void shouldFailWhenInstanceHealthCheckNotImplemented() {
+        logger.info("shouldFailWhenInstanceHealthCheckNotImplemented test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(404)));
 
         Assertions.assertThatThrownBy(() -> eurekaRegistrationService.register())
                 .isInstanceOf(HealthCheckException.class)
-                .hasMessageContaining("Health check not reachable:");
+                .hasMessageContaining("Instance can't reach own application health check.");
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
     }
 
     @Test
     public void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
+        logger.info("shouldTryToRegisterWhenAppIsNotReachableInEureka test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
@@ -166,6 +176,7 @@ public class EurekaRegistrationServiceTest {
 
     @Test
     public void shouldHaveServiceRegistered() {
+        logger.info("shouldHaveServiceRegistered test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
@@ -175,10 +186,10 @@ public class EurekaRegistrationServiceTest {
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withStatus(200)
-                        .withBodyFile("instancesByAppId.json")
+                        .withBodyFile("instancesByAppId2.json")
                 ));
 
-        wireMockServer.stubFor(put(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname())))
+        wireMockServer.stubFor(put(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname() + ":" + appName + ":" + (port-1) )))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200)));
 
         eurekaRegistrationService.register();
@@ -190,7 +201,7 @@ public class EurekaRegistrationServiceTest {
         );
 
         wireMockServer.verify(1,
-                putRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname())))
+                putRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), getHostname() + ":" + appName + ":" + (port-1) )))
         );
 
         wireMockServer.verify(0,

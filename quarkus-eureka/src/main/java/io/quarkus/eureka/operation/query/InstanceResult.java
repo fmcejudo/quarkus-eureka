@@ -13,6 +13,7 @@ import static io.quarkus.eureka.client.Status.UP;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceResult extends QueryResponse<InstanceResult> {
 
+    private final String instanceId;
     private final String hostName;
     private final String app;
     private final String homePageUrl;
@@ -21,10 +22,12 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
 
     @JsonCreator
     public InstanceResult(@JsonProperty("hostName") final String hostName,
+                          @JsonProperty("instanceId") final String instanceId,
                           @JsonProperty("app") String app,
                           @JsonProperty("homePageUrl") String homePageUrl,
                           @JsonProperty("ipAddr") String ipAddr,
                           @JsonProperty("status") Status status) {
+        this.instanceId = instanceId;
         this.hostName = hostName;
         this.app = app;
         this.ipAddr = ipAddr;
@@ -33,7 +36,7 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
     }
 
     private InstanceResult(final Status status) {
-        this(null, null, null, null, status);
+        this(null, null, null, null, null, status);
     }
 
     public static InstanceResult error() {
@@ -68,5 +71,9 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
 
     public String getIpAddr() {
         return ipAddr;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
     }
 }

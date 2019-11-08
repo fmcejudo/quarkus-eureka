@@ -31,7 +31,8 @@ public class EurekaInfoProcessor {
     @BuildStep(providesCapabilities = "io.quarkus.eureka")
     public void stepConfiguration(BuildProducer<AdditionalBeanBuildItem> additionalBeanProducer,
                                   BuildProducer<BeanContainerListenerBuildItem> containerListenerProducer,
-                                  BuildProducer<FeatureBuildItem> featureProducer) {
+                                  BuildProducer<FeatureBuildItem> featureProducer,
+                                  final EurekaRecorder eurekaRecorder) {
 
         featureProducer.produce(new FeatureBuildItem("eureka"));
 

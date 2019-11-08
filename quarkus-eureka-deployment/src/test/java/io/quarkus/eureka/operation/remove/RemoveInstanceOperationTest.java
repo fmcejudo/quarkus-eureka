@@ -33,7 +33,7 @@ class RemoveInstanceOperationTest {
     @Test
     public void shouldCallDeleteToRemoveInstance() {
         //Given
-        final String deletePath = "/eureka/apps/SAMPLE/" + getHostname();
+        final String deletePath = "/eureka/apps/SAMPLE/" + getHostname() + ":" + "sample" + ":" + 8001;
         wireMockServer.stubFor(delete(urlEqualTo(deletePath))
                 .willReturn(aResponse().withStatus(200)));
 

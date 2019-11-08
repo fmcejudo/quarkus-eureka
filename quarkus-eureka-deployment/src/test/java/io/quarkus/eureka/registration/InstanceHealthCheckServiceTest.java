@@ -69,7 +69,7 @@ public class InstanceHealthCheckServiceTest {
 
         assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("", hostName, healthPath)))
                 .isInstanceOf(HealthCheckException.class)
-                .hasMessageContaining("Health check not reachable:");
+                .hasMessageContaining("Instance can't reach own application health check.");
 
     }
 

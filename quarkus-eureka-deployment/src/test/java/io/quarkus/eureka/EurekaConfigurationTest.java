@@ -2,6 +2,8 @@ package io.quarkus.eureka;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.EurekaClient;
+import io.quarkus.eureka.client.loadBalancer.LoadBalanced;
+import io.quarkus.eureka.client.loadBalancer.LoadBalancerType;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -20,7 +22,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
+import static io.quarkus.eureka.util.HostNameDiscovery.getInstanceId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -28,6 +30,10 @@ public class EurekaConfigurationTest {
 
     @Inject
     public EurekaClient eurekaClient;
+
+    @Inject
+    @LoadBalanced(type = LoadBalancerType.ROUND_ROBIN)
+    public EurekaClient eurekaClientRB;
 
     private WireMockServer wireMockServer;
 
@@ -56,7 +62,7 @@ public class EurekaConfigurationTest {
     @DisplayName(value = "reading configuration properties for eureka")
     public void shouldLoadEurekaConfigAndRegisterBeans() {
 
-        wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getHostname()))
+        wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getInstanceId()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)));
 
@@ -69,6 +75,36 @@ public class EurekaConfigurationTest {
 
         WebTarget sampleWebTarget = eurekaClient.app("sample");
         assertThat(sampleWebTarget)
+                .isNotNull()
+                .extracting("uri").asString().isEqualTo("http://10.34.37.227:9991/");
+
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/SAMPLE")));
+    }
+
+    @Test
+    @DisplayName(value = "reading configuration properties for eureka with LB")
+    public void shouldLoadEurekaConfigAndRegisterBeansWithLB() {
+
+        /*wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getInstanceId()))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(200)));*/
+
+        wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/SAMPLE"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBodyFile("instancesByAppId.json")));
+
+        assertThat(eurekaClientRB).isNotNull();
+        WebTarget sampleWebTarget = eurekaClientRB.app("sample");
+        assertThat(sampleWebTarget)
+                .isNotNull()
+                .extracting("uri").asString().isEqualTo("http://10.34.37.227:9991/");
+        WebTarget sampleWebTarget2 = eurekaClientRB.app("sample");
+        assertThat(sampleWebTarget2)
+                .isNotNull()
+                .extracting("uri").asString().isEqualTo("http://10.34.37.227:9992/");
+        WebTarget sampleWebTarget3 = eurekaClientRB.app("sample");
+        assertThat(sampleWebTarget3)
                 .isNotNull()
                 .extracting("uri").asString().isEqualTo("http://10.34.37.227:9991/");
 

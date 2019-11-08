@@ -1,5 +1,7 @@
 package io.quarkus.eureka.util;
 
+import io.quarkus.eureka.config.InstanceInfoContext;
+
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -11,6 +13,15 @@ import java.util.List;
 public class HostNameDiscovery {
 
     private static String HOSTNAME;
+    private static String INSTANCEID;
+
+    public static String buildInstanceId(final InstanceInfoContext instanceInfoCtx) {
+        return INSTANCEID = HOSTNAME + ":" + instanceInfoCtx.getName() + ":" + instanceInfoCtx.getPort();
+    }
+
+    public static String getInstanceId() {
+        return INSTANCEID;
+    }
 
     public static String getHostname() {
         if (HOSTNAME != null && !HOSTNAME.trim().equals("")) {

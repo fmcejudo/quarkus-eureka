@@ -4,10 +4,11 @@ import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
@@ -18,11 +19,10 @@ import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 class InstanceHealthCheckService {
 
     Status healthCheck(final String healthCheckUrl) {
-        try {
-            Response response = ResteasyClientBuilder.newClient()
-                    .target(healthCheckUrl)
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .get();
+        Client client = ResteasyClientBuilder.newClient();
+        try (Response response = client.target(healthCheckUrl)
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get()) {
             if (response.getStatusInfo().getFamily().equals(CLIENT_ERROR)) {
                 throw new HealthCheckException(
                         "Instance can't reach own application health check. Ensure this has been implemented"
@@ -30,8 +30,10 @@ class InstanceHealthCheckService {
             }
             return getStatusFromResponse(response);
 
-        } catch (Exception ex) {
+        } catch (ProcessingException ex) {
             throw new HealthCheckException(format("Health check not reachable: %s", healthCheckUrl), ex);
+        } finally {
+            client.close();
         }
     }
 

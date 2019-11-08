@@ -2,6 +2,7 @@ package io.quarkus.eureka.client;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.quarkus.eureka.config.InstanceInfoContext;
+import io.quarkus.eureka.util.HostNameDiscovery;
 
 import java.util.function.Function;
 
@@ -9,6 +10,7 @@ import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 
 @JsonPropertyOrder({
+        "instanceId",
         "hostName",
         "app",
         "vipAddress",
@@ -25,6 +27,7 @@ import static java.lang.String.format;
 })
 public final class InstanceInfo {
 
+    private final String instanceId;
     private final String hostName;
     private final String app;
     private final String vipAddress;
@@ -53,6 +56,7 @@ public final class InstanceInfo {
         this.port = PortEnableInfo.of(instanceInfoCtx.getPort(), true);
         this.securePort = PortEnableInfo.of(instanceInfoCtx.getPort(), false);
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
+        this.instanceId = HostNameDiscovery.buildInstanceId(instanceInfoCtx);
     }
 
     private InstanceInfo(final InstanceInfo instanceInfo, final Status status) {
@@ -69,6 +73,7 @@ public final class InstanceInfo {
         this.port = instanceInfo.getPort();
         this.securePort = instanceInfo.getSecurePort();
         this.dataCenterInfo = instanceInfo.getDataCenterInfo();
+        this.instanceId = instanceInfo.getInstanceId();
     }
 
     private String buildUrl(final int port, final String resourcePath) {
@@ -80,6 +85,10 @@ public final class InstanceInfo {
 
     public static InstanceInfo of(final InstanceInfoContext instanceInfoContext) {
         return new InstanceInfo(instanceInfoContext);
+    }
+
+    public String getInstanceId() {
+        return instanceId;
     }
 
     public String getHostName() {

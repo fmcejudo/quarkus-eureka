@@ -12,7 +12,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
+import static io.quarkus.eureka.util.HostNameDiscovery.getInstanceId;
 
 public class HeartBeatOperationTest {
 
@@ -34,7 +34,7 @@ public class HeartBeatOperationTest {
     @Test
     public void shouldUpdateInstanceWithPut() {
         //Given
-        final String updatePath = "/eureka/apps/SAMPLE/" + getHostname();
+        final String updatePath = "/eureka/apps/SAMPLE/" + getInstanceId();
         wireMockServer.stubFor(put(urlEqualTo(updatePath))
                 .willReturn(aResponse().withStatus(200)));
 
