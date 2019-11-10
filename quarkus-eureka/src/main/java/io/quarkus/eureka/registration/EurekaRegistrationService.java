@@ -73,7 +73,7 @@ public class EurekaRegistrationService {
 
     private static class RegistrationFlow {
 
-        private static final Logger logger = Logger.getLogger(RegistrationFlow.class.getName());
+        private static final Logger LOGGER = Logger.getLogger(RegistrationFlow.class.getName());
 
         private Status status;
 
@@ -87,7 +87,7 @@ public class EurekaRegistrationService {
             } catch (Exception e) {
                 // We need to log the errors in this thread, as this is inside of an Executor which is not bind to
                 // the main thread
-                logger.warning(e.getMessage());
+                LOGGER.warning(e.getMessage());
                 throw e;
             }
         }
