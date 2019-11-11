@@ -73,7 +73,8 @@ public class EurekaRegistrationService {
                 ).eurekaHealthCheck(
                         () -> operationFactory.get(MultipleInstanceQueryOperation.class)
                                 .findInstance(location, instanceInfo.getApp())
-                                .getInstanceResults().stream().filter(instanceResult -> instanceInfo.getInstanceId().equals(instanceResult.getInstanceId()))
+                                .getInstanceResults().stream().filter(instanceResult ->
+                                        instanceInfo.getInstanceId().equals(instanceResult.getInstanceId()))
                                 .findFirst().orElse(InstanceResult.error())
                 ).isRegistered(
                         queryResponse ->
