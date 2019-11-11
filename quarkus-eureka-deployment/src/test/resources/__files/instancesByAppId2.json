@@ -3,10 +3,10 @@
     "name": "SAMPLE",
     "instance": [
       {
-        "instanceId": "kubernetes.docker.internal:sample:8002",
-        "hostName": "kubernetes.docker.internal",
+        "instanceId": "127.0.0.1:sample:8002",
+        "hostName": "127.0.0.1",
         "app": "SAMPLE",
-        "ipAddr": "kubernetes.docker.internal",
+        "ipAddr": "127.0.0.1",
         "status": "UP",
         "overriddenStatus": "UNKNOWN",
         "port": {
@@ -33,9 +33,9 @@
         "metadata": {
           "management.port": "8002"
         },
-        "homePageUrl": "http://kubernetes.docker.internal:8002/",
-        "statusPageUrl": "http://kubernetes.docker.internal:8002/actuator/info",
-        "healthCheckUrl": "http://kubernetes.docker.internal:8002/actuator/health",
+        "homePageUrl": "http://127.0.0.1:8002/",
+        "statusPageUrl": "http://127.0.0.1:8002/actuator/info",
+        "healthCheckUrl": "http://127.0.0.1:8002/actuator/health",
         "vipAddress": "SAMPLE",
         "secureVipAddress": "SAMPLE",
         "isCoordinatingDiscoveryServer": "false",

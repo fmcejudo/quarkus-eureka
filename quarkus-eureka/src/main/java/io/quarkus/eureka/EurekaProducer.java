@@ -1,7 +1,12 @@
 package io.quarkus.eureka;
 
-import io.quarkus.eureka.client.*;
-import io.quarkus.eureka.client.loadBalancer.*;
+import io.quarkus.eureka.client.EurekaClient;
+import io.quarkus.eureka.client.InstanceInfo;
+import io.quarkus.eureka.client.loadBalancer.LoadBalanced;
+import io.quarkus.eureka.client.loadBalancer.LoadBalancer;
+import io.quarkus.eureka.client.loadBalancer.LoadBalancerType;
+import io.quarkus.eureka.client.loadBalancer.Random;
+import io.quarkus.eureka.client.loadBalancer.RoundRobin;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;

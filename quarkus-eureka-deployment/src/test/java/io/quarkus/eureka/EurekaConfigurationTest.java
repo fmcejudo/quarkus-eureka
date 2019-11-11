@@ -85,10 +85,6 @@ public class EurekaConfigurationTest {
     @DisplayName(value = "reading configuration properties for eureka with LB")
     public void shouldLoadEurekaConfigAndRegisterBeansWithLB() {
 
-        /*wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getInstanceId()))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(200)));*/
-
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/SAMPLE"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
