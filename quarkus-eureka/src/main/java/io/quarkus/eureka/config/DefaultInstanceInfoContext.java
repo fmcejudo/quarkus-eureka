@@ -16,11 +16,15 @@
 
 package io.quarkus.eureka.config;
 
+import io.quarkus.eureka.util.HostNameDiscovery;
+
 public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     private final String name;
     private final int port;
     private final String vipAddress;
+    private final String instanceId;
+    private final String hostName;
     private final String homePageUrl;
     private final String statusPageUrl;
     private final String healthCheckUrl;
@@ -32,6 +36,8 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaConfiguration.homePageUrl;
         this.statusPageUrl = eurekaConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaConfiguration.healthCheckUrl;
+        this.hostName = HostNameDiscovery.getHostname(eurekaConfiguration.hostName);
+        this.instanceId = HostNameDiscovery.buildInstanceId(this, eurekaConfiguration.instanceId);
     }
 
     public static InstanceInfoContext withConfiguration(final EurekaConfiguration eurekaConfiguration) {
@@ -48,6 +54,14 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public String getVipAddress() {
         return vipAddress;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public String getHostName() {
+        return hostName;
     }
 
     public String getHomePageUrl() {

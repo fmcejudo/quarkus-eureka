@@ -26,6 +26,7 @@ import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
+import io.quarkus.eureka.util.HostNameDiscovery;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +82,7 @@ public class EurekaRegistrationServiceTest {
         wireMockServer.start();
 
         InstanceInfoContext instanceInfoContext = new TestInstanceInfoContext(
-                appName, port, appName, "/", "/info/status", "/info/health"
+                appName, port, appName, hostname + ":" + appName + ":" + port, hostname, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
         registerOperation = new RegisterOperation();
@@ -110,7 +111,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @AfterEach
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         wireMockServer.stop();
     }
 
@@ -226,11 +227,13 @@ public class EurekaRegistrationServiceTest {
         private final String name;
         private final int port;
         private final String vipAddress;
+        private final String instanceId;
+        private final String hostName;
         private final String homePageUrl;
         private final String statusPageUrl;
         private final String healthCheckUrl;
 
-        TestInstanceInfoContext(String name, int port, String vipAddress,
+        TestInstanceInfoContext(String name, int port, String vipAddress, String instanceId, String hostName,
                                 String homePageUrl, String statusPageUrl, String healthCheckUrl) {
             this.name = name;
             this.port = port;
@@ -238,6 +241,9 @@ public class EurekaRegistrationServiceTest {
             this.homePageUrl = homePageUrl;
             this.statusPageUrl = statusPageUrl;
             this.healthCheckUrl = healthCheckUrl;
+            this.hostName = hostName;
+            this.instanceId = instanceId;
+            HostNameDiscovery.setInstanceId(instanceId);
         }
 
         @Override
@@ -253,6 +259,16 @@ public class EurekaRegistrationServiceTest {
         @Override
         public String getVipAddress() {
             return vipAddress;
+        }
+
+        @Override
+        public String getInstanceId() {
+            return instanceId;
+        }
+
+        @Override
+        public String getHostName() {
+            return hostName;
         }
 
         @Override

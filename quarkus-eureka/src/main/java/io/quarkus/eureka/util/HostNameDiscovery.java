@@ -31,12 +31,18 @@ public class HostNameDiscovery {
     private static String HOSTNAME;
     private static String INSTANCEID;
 
-    public static String buildInstanceId(final InstanceInfoContext instanceInfoCtx) {
-        return INSTANCEID = HOSTNAME + ":" + instanceInfoCtx.getName() + ":" + instanceInfoCtx.getPort();
+    public static String buildInstanceId(final InstanceInfoContext instanceInfoCtx, final String instanceId) {
+        return INSTANCEID = instanceId == null ?
+                getHostname() + ":" + instanceInfoCtx.getName() + ":" + instanceInfoCtx.getPort()
+                : instanceId;
     }
 
     public static String getInstanceId() {
         return INSTANCEID;
+    }
+
+    public static void setInstanceId(String INSTANCEID) {
+        HostNameDiscovery.INSTANCEID = INSTANCEID;
     }
 
     public static String getHostname() {
@@ -49,6 +55,13 @@ public class HostNameDiscovery {
                 .findFirst()
                 .orElseGet(HostNameDiscovery::getLocalHost);
         return HOSTNAME;
+    }
+
+    public static String getHostname(String hostname) {
+        if (hostname != null && !hostname.trim().equals("")) {
+            HOSTNAME = hostname;
+        }
+        return getHostname();
     }
 
     private static List<NetworkInterface> getNetworkInterfaces() {
