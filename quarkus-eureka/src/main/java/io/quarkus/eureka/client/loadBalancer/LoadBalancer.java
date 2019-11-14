@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package io.quarkus.eureka.operation;
+package io.quarkus.eureka.client.loadBalancer;
 
-public interface Operation {
+import java.util.Optional;
+
+public interface LoadBalancer {
+    Optional<String> getHomeUrl(String appId);
 }

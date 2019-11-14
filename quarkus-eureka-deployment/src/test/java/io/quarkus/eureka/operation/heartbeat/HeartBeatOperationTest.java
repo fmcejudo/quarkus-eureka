@@ -19,15 +19,15 @@ package io.quarkus.eureka.operation.heartbeat;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
+import io.quarkus.eureka.util.HostNameDiscovery;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.configure;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 
 public class HeartBeatOperationTest {
@@ -41,20 +41,27 @@ public class HeartBeatOperationTest {
     @BeforeEach
     public void setUp() {
         heartBeatOperation = new HeartBeatOperation();
-        this.wireMockServer = new WireMockServer(0);
+        this.wireMockServer = new WireMockServer(8002);
         wireMockServer.start();
 
         this.serverUrl = String.format("http://localhost:%d", wireMockServer.port());
     }
 
+    @AfterEach
+    void tearDown() {
+        wireMockServer.stop();
+    }
+
     @Test
     public void shouldUpdateInstanceWithPut() {
         //Given
-        final String updatePath = "/eureka/apps/SAMPLE/" + getHostname();
+        final String instanceId = getHostname() + ":" + "sample" + ":" + wireMockServer.port();
+        final String updatePath = "/eureka/apps/SAMPLE/" + instanceId;
         wireMockServer.stubFor(put(urlEqualTo(updatePath))
                 .willReturn(aResponse().withStatus(200)));
 
-        InstanceInfo instanceInfo = InstanceInfo.of(TestInstanceInfoContext.of("SAMPLE", wireMockServer.port()));
+        InstanceInfo instanceInfo = InstanceInfo.of(TestInstanceInfoContext.of("SAMPLE", wireMockServer.port(),
+                instanceId, getHostname()));
 
         //When
         heartBeatOperation.heartbeat(serverUrl.concat("/eureka"), instanceInfo);
@@ -68,16 +75,21 @@ public class HeartBeatOperationTest {
 
         private final String name;
         private final int port;
+        private final String instanceId;
+        private final String hostName;
 
-        private TestInstanceInfoContext(final String name,
-                                        final int port) {
+        private TestInstanceInfoContext(final String name, final int port,
+                                        final String instanceId, final String hostName) {
             this.name = name;
             this.port = port;
+            this.instanceId = instanceId;
+            this.hostName = hostName;
+            HostNameDiscovery.setEurekaInstanceId(instanceId);
         }
 
-        public static InstanceInfoContext of(final String name,
-                                             final int port) {
-            return new TestInstanceInfoContext(name, port);
+        public static InstanceInfoContext of(final String name, final int port,
+                                             final String instanceId, final String hostName) {
+            return new TestInstanceInfoContext(name, port, instanceId, hostName);
         }
 
         @Override
@@ -93,6 +105,16 @@ public class HeartBeatOperationTest {
         @Override
         public String getVipAddress() {
             return name;
+        }
+
+        @Override
+        public String getInstanceId() {
+            return instanceId;
+        }
+
+        @Override
+        public String getHostName() {
+            return hostName;
         }
 
         @Override

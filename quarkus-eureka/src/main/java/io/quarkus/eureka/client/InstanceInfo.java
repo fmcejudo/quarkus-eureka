@@ -18,13 +18,11 @@ package io.quarkus.eureka.client;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.quarkus.eureka.config.InstanceInfoContext;
-
 import java.util.function.Function;
-
-import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 
 @JsonPropertyOrder({
+        "instanceId",
         "hostName",
         "app",
         "vipAddress",
@@ -41,6 +39,7 @@ import static java.lang.String.format;
 })
 public final class InstanceInfo {
 
+    private final String instanceId;
     private final String hostName;
     private final String app;
     private final String vipAddress;
@@ -56,11 +55,11 @@ public final class InstanceInfo {
     private final DataCenterInfo dataCenterInfo;
 
     private InstanceInfo(final InstanceInfoContext instanceInfoCtx) {
-        this.hostName = getHostname();
+        this.hostName = instanceInfoCtx.getHostName();
         this.app = instanceInfoCtx.getName().toUpperCase();
         this.vipAddress = instanceInfoCtx.getVipAddress();
         this.secureVipAddress = instanceInfoCtx.getVipAddress();
-        this.ipAddr = getHostname();
+        this.ipAddr = instanceInfoCtx.getHostName();
         this.status = Status.STARTING;
         this.homePageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getHomePageUrl());
         this.statusPageUrl = buildUrl(instanceInfoCtx.getPort(), instanceInfoCtx.getStatusPageUrl());
@@ -69,10 +68,11 @@ public final class InstanceInfo {
         this.port = PortEnableInfo.of(instanceInfoCtx.getPort(), true);
         this.securePort = PortEnableInfo.of(instanceInfoCtx.getPort(), false);
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
+        this.instanceId = instanceInfoCtx.getInstanceId();
     }
 
     private InstanceInfo(final InstanceInfo instanceInfo, final Status status) {
-        this.hostName = getHostname();
+        this.hostName = instanceInfo.getHostName();
         this.app = instanceInfo.getApp();
         this.vipAddress = instanceInfo.getVipAddress();
         this.secureVipAddress = instanceInfo.getSecureVipAddress();
@@ -85,17 +85,22 @@ public final class InstanceInfo {
         this.port = instanceInfo.getPort();
         this.securePort = instanceInfo.getSecurePort();
         this.dataCenterInfo = instanceInfo.getDataCenterInfo();
+        this.instanceId = instanceInfo.getInstanceId();
     }
 
     private String buildUrl(final int port, final String resourcePath) {
         return Function.<String>identity()
                 .andThen(path -> path.startsWith("/") ? path.substring(1) : path)
-                .andThen(path -> format("http://%s:%d/%s", getHostname(), port, path))
+                .andThen(path -> format("http://%s:%d/%s", hostName, port, path))
                 .apply(resourcePath);
     }
 
     public static InstanceInfo of(final InstanceInfoContext instanceInfoContext) {
         return new InstanceInfo(instanceInfoContext);
+    }
+
+    public String getInstanceId() {
+        return instanceId;
     }
 
     public String getHostName() {

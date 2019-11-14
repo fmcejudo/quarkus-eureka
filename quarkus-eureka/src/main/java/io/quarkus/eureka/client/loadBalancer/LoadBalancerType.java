@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package io.quarkus.eureka.operation;
+package io.quarkus.eureka.client.loadBalancer;
 
-public interface Operation {
+public enum LoadBalancerType {
+    RANDOM, ROUND_ROBIN;
 }

@@ -21,6 +21,8 @@ public interface InstanceInfoContext {
     String getName();
     int getPort();
     String getVipAddress();
+    String getInstanceId();
+    String getHostName();
     String getHomePageUrl();
     String getStatusPageUrl();
     String getHealthCheckUrl();

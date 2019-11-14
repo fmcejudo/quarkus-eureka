@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-package io.quarkus.eureka.operation;
+package io.quarkus.eureka.client.loadBalancer;
 
-public interface Operation {
+import io.quarkus.eureka.util.ServiceDiscovery;
+
+import java.util.Optional;
+
+public class Random implements LoadBalancer {
+    private final ServiceDiscovery serviceDiscovery;
+
+    public Random(ServiceDiscovery serviceDiscovery) {
+        this.serviceDiscovery = serviceDiscovery;
+    }
+
+    @Override
+    public Optional<String> getHomeUrl(String appId) {
+        return serviceDiscovery.findServiceLocations(appId).findAny();
+    }
 }

@@ -16,6 +16,8 @@
 
 package io.quarkus.eureka.util;
 
+import io.quarkus.eureka.config.InstanceInfoContext;
+
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -27,6 +29,21 @@ import java.util.List;
 public class HostNameDiscovery {
 
     private static String HOSTNAME;
+    private static String INSTANCEID;
+
+    public static String buildInstanceId(final InstanceInfoContext instanceInfoCtx, final String instanceId) {
+        return INSTANCEID = instanceId == null ?
+                getHostname() + ":" + instanceInfoCtx.getName() + ":" + instanceInfoCtx.getPort()
+                : instanceId;
+    }
+
+    public static String getEurekaInstanceId() {
+        return INSTANCEID;
+    }
+
+    public static void setEurekaInstanceId(String instanceId) {
+        HostNameDiscovery.INSTANCEID = instanceId;
+    }
 
     public static String getHostname() {
         if (HOSTNAME != null && !HOSTNAME.trim().equals("")) {
@@ -38,6 +55,13 @@ public class HostNameDiscovery {
                 .findFirst()
                 .orElseGet(HostNameDiscovery::getLocalHost);
         return HOSTNAME;
+    }
+
+    public static String getHostname(String hostname) {
+        if (hostname != null && !hostname.trim().equals("")) {
+            HOSTNAME = hostname;
+        }
+        return getHostname();
     }
 
     private static List<NetworkInterface> getNetworkInterfaces() {

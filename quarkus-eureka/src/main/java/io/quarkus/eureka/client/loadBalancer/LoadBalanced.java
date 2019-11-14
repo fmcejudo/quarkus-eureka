@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-package io.quarkus.eureka.operation;
+package io.quarkus.eureka.client.loadBalancer;
 
-public interface Operation {
+import javax.enterprise.util.Nonbinding;
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
+
+@Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Qualifier
+public @interface LoadBalanced {
+    @Nonbinding LoadBalancerType type() default LoadBalancerType.RANDOM;
 }
