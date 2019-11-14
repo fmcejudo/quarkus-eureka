@@ -38,7 +38,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static io.quarkus.eureka.util.HostNameDiscovery.getInstanceId;
+import static io.quarkus.eureka.util.HostNameDiscovery.getEurekaInstanceId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -78,7 +78,7 @@ public class EurekaConfigurationTest {
     @DisplayName(value = "reading configuration properties for eureka")
     public void shouldLoadEurekaConfigAndRegisterBeans() {
 
-        wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getInstanceId()))
+        wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/" + getEurekaInstanceId()))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)));
 

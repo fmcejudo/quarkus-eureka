@@ -17,6 +17,7 @@
 package io.quarkus.eureka.operation.remove;
 
 import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.util.HostNameDiscovery;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
@@ -32,7 +33,7 @@ public class RemoveInstanceOperation implements Operation {
 
     public void remove(final String location, final String appId) {
         logger.info(format("Deregistering %s from %s", appId, location));
-        final String path = String.join("/", "apps", appId, Operation.INSTANCE_ID);
+        final String path = String.join("/", "apps", appId, HostNameDiscovery.getEurekaInstanceId());
         Client client = ResteasyClientBuilder.newClient();
 
         try {

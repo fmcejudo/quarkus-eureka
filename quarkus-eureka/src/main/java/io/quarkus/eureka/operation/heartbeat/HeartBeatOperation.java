@@ -18,6 +18,7 @@ package io.quarkus.eureka.operation.heartbeat;
 
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.util.HostNameDiscovery;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
@@ -38,7 +39,7 @@ public class HeartBeatOperation implements Operation {
     public void heartbeat(final String location, final InstanceInfo instanceInfo) {
         String appId = instanceInfo.getApp();
         logger.info(format("%s heartbeat to %s", appId, location));
-        final String path = String.join("/", "apps", appId, Operation.INSTANCE_ID);
+        final String path = String.join("/", "apps", appId, HostNameDiscovery.getEurekaInstanceId());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
         Client client = ResteasyClientBuilder.newClient();
 

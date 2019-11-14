@@ -37,12 +37,12 @@ public class HostNameDiscovery {
                 : instanceId;
     }
 
-    public static String getInstanceId() {
+    public static String getEurekaInstanceId() {
         return INSTANCEID;
     }
 
-    public static void setInstanceId(String INSTANCEID) {
-        HostNameDiscovery.INSTANCEID = INSTANCEID;
+    public static void setEurekaInstanceId(String instanceId) {
+        HostNameDiscovery.INSTANCEID = instanceId;
     }
 
     public static String getHostname() {
