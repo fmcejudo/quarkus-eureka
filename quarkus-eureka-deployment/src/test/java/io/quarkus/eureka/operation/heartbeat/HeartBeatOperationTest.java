@@ -18,9 +18,7 @@ package io.quarkus.eureka.operation.heartbeat;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.test.config.TestInstanceInfoContext;
-import io.quarkus.eureka.util.HostNameDiscovery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +28,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
-import static java.lang.String.join;
 
 public class HeartBeatOperationTest {
 
