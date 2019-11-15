@@ -19,6 +19,7 @@ package io.quarkus.eureka.operation.heartbeat;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
+import io.quarkus.eureka.test.config.TestInstanceInfoContext;
 import io.quarkus.eureka.util.HostNameDiscovery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,70 +73,4 @@ public class HeartBeatOperationTest {
         wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
 
     }
-
-    static class TestInstanceInfoContext implements InstanceInfoContext {
-
-        private final String name;
-        private final int port;
-        private final String instanceId;
-        private final String hostName;
-
-        private TestInstanceInfoContext(final String name, final int port, final String hostName) {
-
-            this.name = name;
-            this.port = port;
-            this.hostName = hostName;
-            this.instanceId = buildInstanceId();
-        }
-
-        public static InstanceInfoContext of(final String name, final int port, final String hostName) {
-
-            return new TestInstanceInfoContext(name, port, hostName);
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String getVipAddress() {
-            return name;
-        }
-
-        @Override
-        public String getInstanceId() {
-            return instanceId;
-        }
-
-        @Override
-        public String getHostName() {
-            return hostName;
-        }
-
-        @Override
-        public String getHealthCheckUrl() {
-            return "/info/health";
-        }
-
-        @Override
-        public String getHomePageUrl() {
-            return "/";
-        }
-
-        @Override
-        public String getStatusPageUrl() {
-            return "/info/status";
-        }
-
-        private String buildInstanceId() {
-            return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
-        }
-    }
-
 }

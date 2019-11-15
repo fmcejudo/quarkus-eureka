@@ -26,6 +26,7 @@ import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
+import io.quarkus.eureka.test.config.TestInstanceInfoContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +81,7 @@ class EurekaRegistrationServiceTest {
         wireMockServer = new WireMockServer(port);
         wireMockServer.start();
 
-        InstanceInfoContext instanceInfoContext = new TestInstanceInfoContext(
+        InstanceInfoContext instanceInfoContext = TestInstanceInfoContext.of(
                 appName, port, appName, hostname, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
@@ -220,74 +221,6 @@ class EurekaRegistrationServiceTest {
         wireMockServer.verify(0,
                 postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
         );
-    }
-
-    static class TestInstanceInfoContext implements InstanceInfoContext {
-        private final String name;
-        private final int port;
-        private final String vipAddress;
-        private final String instanceId;
-        private final String hostName;
-        private final String homePageUrl;
-        private final String statusPageUrl;
-        private final String healthCheckUrl;
-
-        TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
-                                String homePageUrl, String statusPageUrl, String healthCheckUrl) {
-            this.name = name;
-            this.port = port;
-            this.vipAddress = vipAddress;
-            this.homePageUrl = homePageUrl;
-            this.statusPageUrl = statusPageUrl;
-            this.healthCheckUrl = healthCheckUrl;
-            this.hostName = hostName;
-            this.instanceId = buildInstanceId();
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String getVipAddress() {
-            return vipAddress;
-        }
-
-        @Override
-        public String getInstanceId() {
-            return instanceId;
-        }
-
-        @Override
-        public String getHostName() {
-            return hostName;
-        }
-
-        @Override
-        public String getHomePageUrl() {
-            return homePageUrl;
-        }
-
-        @Override
-        public String getStatusPageUrl() {
-            return statusPageUrl;
-        }
-
-        @Override
-        public String getHealthCheckUrl() {
-            return healthCheckUrl;
-        }
-
-        private String buildInstanceId() {
-            return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
-        }
-
     }
 
 }
