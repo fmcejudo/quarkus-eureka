@@ -44,18 +44,6 @@ public class EurekaConfiguration {
     String vipAddress;
 
     /**
-     * Name of instance id which instance will be registered to Eureka
-     */
-    @ConfigItem
-    String instanceId;
-
-    /**
-     * The hostname, otherwise it will be guest from OS primitives
-     */
-    @ConfigItem
-    String hostName;
-
-    /**
      * if AWS environment, in which region this registry service is
      */
     @ConfigItem

@@ -26,7 +26,6 @@ import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
-import io.quarkus.eureka.util.HostNameDiscovery;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +52,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-public class EurekaRegistrationServiceTest {
+class EurekaRegistrationServiceTest {
 
     private final String appName = "sample";
 
@@ -75,14 +74,14 @@ public class EurekaRegistrationServiceTest {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         logger.info("Starting mock server.");
 
         wireMockServer = new WireMockServer(port);
         wireMockServer.start();
 
         InstanceInfoContext instanceInfoContext = new TestInstanceInfoContext(
-                appName, port, appName, hostname + ":" + appName + ":" + port, hostname, "/", "/info/status", "/info/health"
+                appName, port, appName, hostname, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
         registerOperation = new RegisterOperation();
@@ -111,12 +110,12 @@ public class EurekaRegistrationServiceTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         wireMockServer.stop();
     }
 
     @Test
-    public void shouldRegisterAService() {
+    void shouldRegisterAService() {
         logger.info("shouldRegisterAService test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -140,7 +139,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldFailWhenInstanceHealthCheckNotImplemented() {
+    void shouldFailWhenInstanceHealthCheckNotImplemented() {
         logger.info("shouldFailWhenInstanceHealthCheckNotImplemented test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -154,7 +153,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
+    void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
         logger.info("shouldTryToRegisterWhenAppIsNotReachableInEureka test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -189,7 +188,7 @@ public class EurekaRegistrationServiceTest {
 
 
     @Test
-    public void shouldHaveServiceRegistered() {
+    void shouldHaveServiceRegistered() {
         logger.info("shouldHaveServiceRegistered test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -233,7 +232,7 @@ public class EurekaRegistrationServiceTest {
         private final String statusPageUrl;
         private final String healthCheckUrl;
 
-        TestInstanceInfoContext(String name, int port, String vipAddress, String instanceId, String hostName,
+        TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
                                 String homePageUrl, String statusPageUrl, String healthCheckUrl) {
             this.name = name;
             this.port = port;
@@ -242,8 +241,7 @@ public class EurekaRegistrationServiceTest {
             this.statusPageUrl = statusPageUrl;
             this.healthCheckUrl = healthCheckUrl;
             this.hostName = hostName;
-            this.instanceId = instanceId;
-            HostNameDiscovery.setEurekaInstanceId(instanceId);
+            this.instanceId = buildInstanceId();
         }
 
         @Override
@@ -285,6 +283,11 @@ public class EurekaRegistrationServiceTest {
         public String getHealthCheckUrl() {
             return healthCheckUrl;
         }
+
+        private String buildInstanceId() {
+            return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
+        }
+
     }
 
 }

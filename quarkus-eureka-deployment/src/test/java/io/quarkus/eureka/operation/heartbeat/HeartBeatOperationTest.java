@@ -29,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
+import static java.lang.String.join;
 
 public class HeartBeatOperationTest {
 
@@ -60,8 +61,9 @@ public class HeartBeatOperationTest {
         wireMockServer.stubFor(put(urlEqualTo(updatePath))
                 .willReturn(aResponse().withStatus(200)));
 
-        InstanceInfo instanceInfo = InstanceInfo.of(TestInstanceInfoContext.of("SAMPLE", wireMockServer.port(),
-                instanceId, getHostname()));
+        InstanceInfo instanceInfo = InstanceInfo.of(
+                TestInstanceInfoContext.of("SAMPLE", wireMockServer.port(), getHostname())
+        );
 
         //When
         heartBeatOperation.heartbeat(serverUrl.concat("/eureka"), instanceInfo);
@@ -78,18 +80,17 @@ public class HeartBeatOperationTest {
         private final String instanceId;
         private final String hostName;
 
-        private TestInstanceInfoContext(final String name, final int port,
-                                        final String instanceId, final String hostName) {
+        private TestInstanceInfoContext(final String name, final int port, final String hostName) {
+
             this.name = name;
             this.port = port;
-            this.instanceId = instanceId;
             this.hostName = hostName;
-            HostNameDiscovery.setEurekaInstanceId(instanceId);
+            this.instanceId = buildInstanceId();
         }
 
-        public static InstanceInfoContext of(final String name, final int port,
-                                             final String instanceId, final String hostName) {
-            return new TestInstanceInfoContext(name, port, instanceId, hostName);
+        public static InstanceInfoContext of(final String name, final int port, final String hostName) {
+
+            return new TestInstanceInfoContext(name, port, hostName);
         }
 
         @Override
@@ -130,6 +131,10 @@ public class HeartBeatOperationTest {
         @Override
         public String getStatusPageUrl() {
             return "/info/status";
+        }
+
+        private String buildInstanceId() {
+            return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
         }
     }
 
