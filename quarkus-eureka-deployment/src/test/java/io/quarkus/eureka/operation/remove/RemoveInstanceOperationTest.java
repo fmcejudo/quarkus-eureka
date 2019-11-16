@@ -17,7 +17,6 @@
 package io.quarkus.eureka.operation.remove;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import io.quarkus.eureka.util.HostNameDiscovery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ class RemoveInstanceOperationTest {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         this.removeInstanceOperation = new RemoveInstanceOperation();
         this.wireMockServer = new WireMockServer(8002);
@@ -54,16 +53,16 @@ class RemoveInstanceOperationTest {
     }
 
     @Test
-    public void shouldCallDeleteToRemoveInstance() {
+    void shouldCallDeleteToRemoveInstance() {
         //Given
-        final String deletePath = "/eureka/apps/SAMPLE/" + getHostname() + ":" + "sample" + ":" + wireMockServer.port();
-        HostNameDiscovery.setEurekaInstanceId(getHostname()+ ":" + "sample" + ":" + wireMockServer.port());
+        String instanceId = getHostname() + ":" + "sample" + ":" + wireMockServer.port();
+        String deletePath = "/eureka/apps/SAMPLE/".concat(instanceId);
         wireMockServer.stubFor(delete(urlEqualTo(deletePath))
                 .willReturn(aResponse().withStatus(200)));
 
 
         //When
-        removeInstanceOperation.remove(serverUrl.concat("/eureka"), "SAMPLE");
+        removeInstanceOperation.remove(serverUrl.concat("/eureka"), "SAMPLE", instanceId);
 
         //Then
         wireMockServer.verify(1, deleteRequestedFor(urlEqualTo(deletePath)));

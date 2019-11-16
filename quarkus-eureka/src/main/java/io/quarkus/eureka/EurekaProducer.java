@@ -51,9 +51,9 @@ public class EurekaProducer {
     EurekaClient eurekaClient(InjectionPoint ip) {
         LoadBalancer loadBalancer;
         ServiceDiscovery serviceDiscovery = new ServiceDiscovery(serviceLocationConfig, operationFactory);
-        if(ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.RANDOM)
+        if (ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.RANDOM)
             loadBalancer = new Random(serviceDiscovery);
-        else if(ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.ROUND_ROBIN)
+        else if (ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.ROUND_ROBIN)
             loadBalancer = new RoundRobin(serviceDiscovery);
         else
             loadBalancer = new Random(serviceDiscovery);
@@ -63,14 +63,16 @@ public class EurekaProducer {
     @Produces
     EurekaClient eurekaClient() {
         ServiceDiscovery serviceDiscovery = new ServiceDiscovery(serviceLocationConfig, operationFactory);
-        return new EurekaClient( new Random(serviceDiscovery));
+        return new EurekaClient(new Random(serviceDiscovery));
     }
 
     void onApplicationStop(@Observes ShutdownEvent shutdownEvent) {
         logger.info("application finished... now we have to deregister from Eureka...");
         String appId = instanceInfo.getApp();
-        serviceLocationConfig.getLocations()
-                .forEach(location -> operationFactory.get(RemoveInstanceOperation.class).remove(location, appId));
+        String instanceId = instanceInfo.getInstanceId();
+        serviceLocationConfig.getLocations().forEach(location ->
+                operationFactory.get(RemoveInstanceOperation.class).remove(location, appId, instanceId)
+        );
     }
 
     void setInstanceInfo(final InstanceInfo instanceInfo) {

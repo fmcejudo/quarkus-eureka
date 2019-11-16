@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.quarkus.eureka.config;
+package io.quarkus.eureka.test.config;
 
-import io.quarkus.eureka.util.HostNameDiscovery;
+import io.quarkus.eureka.config.InstanceInfoContext;
 
-import java.util.Optional;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.join;
 
-public class DefaultInstanceInfoContext implements InstanceInfoContext {
+public class TestInstanceInfoContext implements InstanceInfoContext {
 
     private final String name;
     private final int port;
@@ -34,61 +31,72 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
     private final String statusPageUrl;
     private final String healthCheckUrl;
 
-    DefaultInstanceInfoContext(final EurekaConfiguration eurekaConfiguration) {
-        this.name = eurekaConfiguration.name;
-        this.port = eurekaConfiguration.port;
-        this.vipAddress = eurekaConfiguration.vipAddress;
-        this.homePageUrl = eurekaConfiguration.homePageUrl;
-        this.statusPageUrl = eurekaConfiguration.statusPageUrl;
-        this.healthCheckUrl = eurekaConfiguration.healthCheckUrl;
-        this.hostName = resolveHostname(eurekaConfiguration.hostName);
+    private TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
+                                    String homePageUrl, String statusPageUrl, String healthCheckUrl) {
+        this.name = name;
+        this.port = port;
+        this.vipAddress = vipAddress;
+        this.homePageUrl = homePageUrl;
+        this.statusPageUrl = statusPageUrl;
+        this.healthCheckUrl = healthCheckUrl;
+        this.hostName = hostName;
         this.instanceId = buildInstanceId();
     }
 
-    public static InstanceInfoContext withConfiguration(final EurekaConfiguration eurekaConfiguration) {
-        return new DefaultInstanceInfoContext(eurekaConfiguration);
+    public static InstanceInfoContext of(final String name, final int port, final String hostName) {
+
+        return new TestInstanceInfoContext(name, port, name, hostName, "/", "/info/status", "/info/health");
     }
 
+    public static InstanceInfoContext of(final String name, final int port, final String vipAddress,
+                                         final String hostName, final String homePageUrl, final String statusPageUrl,
+                                         final String healthCheckUrl) {
+        return new TestInstanceInfoContext(
+                name, port, vipAddress, hostName, homePageUrl, statusPageUrl, healthCheckUrl
+        );
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public String getVipAddress() {
         return vipAddress;
     }
 
+    @Override
     public String getInstanceId() {
         return instanceId;
     }
 
+    @Override
     public String getHostName() {
         return hostName;
     }
 
+    @Override
     public String getHomePageUrl() {
         return homePageUrl;
     }
 
+    @Override
     public String getStatusPageUrl() {
         return statusPageUrl;
     }
 
+    @Override
     public String getHealthCheckUrl() {
         return healthCheckUrl;
-    }
-
-    private String resolveHostname(final String hostName) {
-        return Optional.ofNullable(hostName)
-                .filter(hn -> !isNullOrEmpty(hn))
-                .orElseGet(HostNameDiscovery::getHostname);
     }
 
     private String buildInstanceId() {
         return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
     }
-
 }

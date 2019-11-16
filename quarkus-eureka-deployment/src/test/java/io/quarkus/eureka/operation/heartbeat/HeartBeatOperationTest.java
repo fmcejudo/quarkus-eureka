@@ -17,11 +17,12 @@
 package io.quarkus.eureka.operation.heartbeat;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.http.Fault;
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.config.InstanceInfoContext;
-import io.quarkus.eureka.util.HostNameDiscovery;
+import io.quarkus.eureka.test.config.TestInstanceInfoContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -30,7 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 
-public class HeartBeatOperationTest {
+class HeartBeatOperationTest {
 
     private WireMockServer wireMockServer;
 
@@ -39,7 +40,7 @@ public class HeartBeatOperationTest {
     private HeartBeatOperation heartBeatOperation;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         heartBeatOperation = new HeartBeatOperation();
         this.wireMockServer = new WireMockServer(8002);
         wireMockServer.start();
@@ -53,84 +54,42 @@ public class HeartBeatOperationTest {
     }
 
     @Test
-    public void shouldUpdateInstanceWithPut() {
+    @DisplayName("update instance status with PUT method")
+    void shouldUpdateInstanceWithPut() {
         //Given
         final String instanceId = getHostname() + ":" + "sample" + ":" + wireMockServer.port();
         final String updatePath = "/eureka/apps/SAMPLE/" + instanceId;
         wireMockServer.stubFor(put(urlEqualTo(updatePath))
                 .willReturn(aResponse().withStatus(200)));
 
-        InstanceInfo instanceInfo = InstanceInfo.of(TestInstanceInfoContext.of("SAMPLE", wireMockServer.port(),
-                instanceId, getHostname()));
+        InstanceInfo instanceInfo = InstanceInfo.of(
+                TestInstanceInfoContext.of("SAMPLE", wireMockServer.port(), getHostname())
+        );
 
         //When
         heartBeatOperation.heartbeat(serverUrl.concat("/eureka"), instanceInfo);
 
         //Then
         wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
-
     }
 
-    static class TestInstanceInfoContext implements InstanceInfoContext {
+    @Test
+    @DisplayName("it can't update instance if it does not exist eureka service")
+    void shouldNotUpdateInstance() {
+        //Given
+        final String instanceId = getHostname() + ":" + "other" + ":" + wireMockServer.port();
+        final String updatePath = "/eureka/apps/OTHER/" + instanceId;
+        wireMockServer.stubFor(put(urlEqualTo(updatePath))
+                .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
 
-        private final String name;
-        private final int port;
-        private final String instanceId;
-        private final String hostName;
+        InstanceInfo instanceInfo = InstanceInfo.of(
+                TestInstanceInfoContext.of("OTHER", wireMockServer.port(), getHostname())
+        );
 
-        private TestInstanceInfoContext(final String name, final int port,
-                                        final String instanceId, final String hostName) {
-            this.name = name;
-            this.port = port;
-            this.instanceId = instanceId;
-            this.hostName = hostName;
-            HostNameDiscovery.setEurekaInstanceId(instanceId);
-        }
+        //When
+        heartBeatOperation.heartbeat(serverUrl.concat("/eureka"), instanceInfo);
 
-        public static InstanceInfoContext of(final String name, final int port,
-                                             final String instanceId, final String hostName) {
-            return new TestInstanceInfoContext(name, port, instanceId, hostName);
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String getVipAddress() {
-            return name;
-        }
-
-        @Override
-        public String getInstanceId() {
-            return instanceId;
-        }
-
-        @Override
-        public String getHostName() {
-            return hostName;
-        }
-
-        @Override
-        public String getHealthCheckUrl() {
-            return "/info/health";
-        }
-
-        @Override
-        public String getHomePageUrl() {
-            return "/";
-        }
-
-        @Override
-        public String getStatusPageUrl() {
-            return "/info/status";
-        }
+        //Then
+        wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
     }
-
 }

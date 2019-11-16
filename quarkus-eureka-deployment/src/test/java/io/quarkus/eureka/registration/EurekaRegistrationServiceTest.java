@@ -26,7 +26,7 @@ import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
-import io.quarkus.eureka.util.HostNameDiscovery;
+import io.quarkus.eureka.test.config.TestInstanceInfoContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-public class EurekaRegistrationServiceTest {
+class EurekaRegistrationServiceTest {
 
     private final String appName = "sample";
 
@@ -75,14 +75,14 @@ public class EurekaRegistrationServiceTest {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         logger.info("Starting mock server.");
 
         wireMockServer = new WireMockServer(port);
         wireMockServer.start();
 
-        InstanceInfoContext instanceInfoContext = new TestInstanceInfoContext(
-                appName, port, appName, hostname + ":" + appName + ":" + port, hostname, "/", "/info/status", "/info/health"
+        InstanceInfoContext instanceInfoContext = TestInstanceInfoContext.of(
+                appName, port, appName, hostname, "/", "/info/status", "/info/health"
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
         registerOperation = new RegisterOperation();
@@ -111,12 +111,12 @@ public class EurekaRegistrationServiceTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         wireMockServer.stop();
     }
 
     @Test
-    public void shouldRegisterAService() {
+    void shouldRegisterAService() {
         logger.info("shouldRegisterAService test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -140,7 +140,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldFailWhenInstanceHealthCheckNotImplemented() {
+    void shouldFailWhenInstanceHealthCheckNotImplemented() {
         logger.info("shouldFailWhenInstanceHealthCheckNotImplemented test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -154,7 +154,7 @@ public class EurekaRegistrationServiceTest {
     }
 
     @Test
-    public void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
+    void shouldTryToRegisterWhenAppIsNotReachableInEureka() {
         logger.info("shouldTryToRegisterWhenAppIsNotReachableInEureka test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -189,7 +189,7 @@ public class EurekaRegistrationServiceTest {
 
 
     @Test
-    public void shouldHaveServiceRegistered() {
+    void shouldHaveServiceRegistered() {
         logger.info("shouldHaveServiceRegistered test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -221,70 +221,6 @@ public class EurekaRegistrationServiceTest {
         wireMockServer.verify(0,
                 postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
         );
-    }
-
-    static class TestInstanceInfoContext implements InstanceInfoContext {
-        private final String name;
-        private final int port;
-        private final String vipAddress;
-        private final String instanceId;
-        private final String hostName;
-        private final String homePageUrl;
-        private final String statusPageUrl;
-        private final String healthCheckUrl;
-
-        TestInstanceInfoContext(String name, int port, String vipAddress, String instanceId, String hostName,
-                                String homePageUrl, String statusPageUrl, String healthCheckUrl) {
-            this.name = name;
-            this.port = port;
-            this.vipAddress = vipAddress;
-            this.homePageUrl = homePageUrl;
-            this.statusPageUrl = statusPageUrl;
-            this.healthCheckUrl = healthCheckUrl;
-            this.hostName = hostName;
-            this.instanceId = instanceId;
-            HostNameDiscovery.setEurekaInstanceId(instanceId);
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String getVipAddress() {
-            return vipAddress;
-        }
-
-        @Override
-        public String getInstanceId() {
-            return instanceId;
-        }
-
-        @Override
-        public String getHostName() {
-            return hostName;
-        }
-
-        @Override
-        public String getHomePageUrl() {
-            return homePageUrl;
-        }
-
-        @Override
-        public String getStatusPageUrl() {
-            return statusPageUrl;
-        }
-
-        @Override
-        public String getHealthCheckUrl() {
-            return healthCheckUrl;
-        }
     }
 
 }
