@@ -17,10 +17,12 @@
 package io.quarkus.eureka.operation.heartbeat;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.http.Fault;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.test.config.TestInstanceInfoContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -29,7 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 
-public class HeartBeatOperationTest {
+class HeartBeatOperationTest {
 
     private WireMockServer wireMockServer;
 
@@ -38,7 +40,7 @@ public class HeartBeatOperationTest {
     private HeartBeatOperation heartBeatOperation;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         heartBeatOperation = new HeartBeatOperation();
         this.wireMockServer = new WireMockServer(8002);
         wireMockServer.start();
@@ -52,7 +54,8 @@ public class HeartBeatOperationTest {
     }
 
     @Test
-    public void shouldUpdateInstanceWithPut() {
+    @DisplayName("update instance status with PUT method")
+    void shouldUpdateInstanceWithPut() {
         //Given
         final String instanceId = getHostname() + ":" + "sample" + ":" + wireMockServer.port();
         final String updatePath = "/eureka/apps/SAMPLE/" + instanceId;
@@ -68,6 +71,27 @@ public class HeartBeatOperationTest {
 
         //Then
         wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
+    }
 
+    @Test
+    @DisplayName("it can't update instance if it does not exist eureka service")
+    void shouldNotUpdateInstance() {
+        //Given
+        final String instanceId = getHostname() + ":" + "other" + ":" + wireMockServer.port();
+        final String updatePath = "/eureka/apps/OTHER/" + instanceId;
+        wireMockServer.stubFor(put(urlEqualTo(updatePath))
+                .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
+
+        InstanceInfo instanceInfo = InstanceInfo.of(
+                TestInstanceInfoContext.of("OTHER", wireMockServer.port(), getHostname())
+        );
+
+        //When
+        heartBeatOperation.heartbeat(serverUrl.concat("/eureka"), instanceInfo);
+
+        //Then
+        wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
+        //TODO how to assert log output to print a processingException. Or shall we throw the exception.
+        // this would end up in traces for the user output
     }
 }

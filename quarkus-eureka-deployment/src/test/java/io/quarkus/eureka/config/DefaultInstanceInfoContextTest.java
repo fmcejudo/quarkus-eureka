@@ -16,8 +16,74 @@
 
 package io.quarkus.eureka.config;
 
-import static org.junit.jupiter.api.Assertions.*;
+import io.quarkus.eureka.util.HostNameDiscovery;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultInstanceInfoContextTest {
+
+    private EurekaConfiguration eurekaConfiguration;
+
+    @BeforeEach
+    void setUp() {
+        eurekaConfiguration = new EurekaConfiguration();
+        eurekaConfiguration.port = 8001;
+        eurekaConfiguration.name = "sample";
+        eurekaConfiguration.vipAddress = "sample";
+        eurekaConfiguration.region = "default";
+        eurekaConfiguration.preferSameZone = true;
+    }
+
+    @Test
+    void shouldBuildInstanceId() {
+        //Given
+        eurekaConfiguration.hostName = "example.com";
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getInstanceId()).isEqualTo("example.com:sample:8001");
+
+    }
+
+    @Test
+    void shouldInstanceIdBeLowerCase() {
+        //Given
+        eurekaConfiguration.hostName = "EXAMPLE.COM";
+        eurekaConfiguration.name = "SAMPLE";
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getInstanceId()).isEqualTo("example.com:sample:8001");
+        assertThat(instanceInfoContext.getHostName()).isEqualTo("EXAMPLE.COM");
+
+    }
+
+    @Test
+    void shouldGetDefinedHostname() {
+        //Given
+        eurekaConfiguration.hostName = "example.com";
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getHostName()).isEqualTo("example.com");
+    }
+
+    @Test
+    void shouldGetHostAddress() {
+
+        //Given && When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getHostname());
+    }
 
 }

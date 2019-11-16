@@ -29,22 +29,14 @@ public class HostNameDiscovery {
     private static String HOSTNAME;
 
     public static String getHostname() {
-        if (HOSTNAME != null && !HOSTNAME.trim().equals("")) {
-            return HOSTNAME;
+        if (HOSTNAME == null || HOSTNAME.trim().equals("")) {
+            HOSTNAME = HostNameDiscovery.getNetworkInterfaces().stream()
+                    .filter(HostNameDiscovery::hasBroadcast)
+                    .map(HostNameDiscovery::extractHostname)
+                    .findFirst()
+                    .orElseGet(HostNameDiscovery::getLocalHost);
         }
-        HOSTNAME = HostNameDiscovery.getNetworkInterfaces().stream()
-                .filter(HostNameDiscovery::hasBroadcast)
-                .map(HostNameDiscovery::extractHostname)
-                .findFirst()
-                .orElseGet(HostNameDiscovery::getLocalHost);
         return HOSTNAME;
-    }
-
-    public static String getHostname(String hostname) {
-        if (hostname != null && !hostname.trim().equals("")) {
-            HOSTNAME = hostname;
-        }
-        return getHostname();
     }
 
     private static List<NetworkInterface> getNetworkInterfaces() {

@@ -18,6 +18,9 @@ package io.quarkus.eureka.config;
 
 import io.quarkus.eureka.util.HostNameDiscovery;
 
+import java.util.Optional;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.join;
 
 public class DefaultInstanceInfoContext implements InstanceInfoContext {
@@ -38,7 +41,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaConfiguration.homePageUrl;
         this.statusPageUrl = eurekaConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaConfiguration.healthCheckUrl;
-        this.hostName = HostNameDiscovery.getHostname();
+        this.hostName = resolveHostname(eurekaConfiguration.hostName);
         this.instanceId = buildInstanceId();
     }
 
@@ -76,6 +79,12 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public String getHealthCheckUrl() {
         return healthCheckUrl;
+    }
+
+    private String resolveHostname(final String hostName) {
+        return Optional.ofNullable(hostName)
+                .filter(hn -> !isNullOrEmpty(hn))
+                .orElseGet(HostNameDiscovery::getHostname);
     }
 
     private String buildInstanceId() {
