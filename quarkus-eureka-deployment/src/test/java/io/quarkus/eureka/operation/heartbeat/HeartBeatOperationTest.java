@@ -80,7 +80,7 @@ class HeartBeatOperationTest {
         final String instanceId = getHostname() + ":" + "other" + ":" + wireMockServer.port();
         final String updatePath = "/eureka/apps/OTHER/" + instanceId;
         wireMockServer.stubFor(put(urlEqualTo(updatePath))
-                .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
+                .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
 
         InstanceInfo instanceInfo = InstanceInfo.of(
                 TestInstanceInfoContext.of("OTHER", wireMockServer.port(), getHostname())
@@ -91,7 +91,5 @@ class HeartBeatOperationTest {
 
         //Then
         wireMockServer.verify(1, putRequestedFor(urlEqualTo(updatePath)));
-        //TODO how to assert log output to print a processingException. Or shall we throw the exception.
-        // this would end up in traces for the user output
     }
 }
