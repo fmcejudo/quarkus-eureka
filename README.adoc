@@ -55,7 +55,7 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.4</version>
 </dependency>
 ----
 
@@ -74,6 +74,7 @@ your quarkus `application.properties`:
 [source,properties]
 ----
 quarkus.eureka.port= <your application port, it should match with quarkus.http.port>
+quarkus.eureka.hostname= <your application address. By default the host where the application has started up>
 quarkus.eureka.name= <name of your application in Eureka>
 quarkus.eureka.vip-address= <how your application is recognised by clients>
 quarkus.eureka.home-page-url= <home path of your application>
@@ -112,6 +113,7 @@ quarkus.eureka.service-url.default=http://localhost:8761/eureka
 Having as default values for remaining properties the following:
 [source,properties]
 ----
+quarkus.eureka.host-name=<host address>
 quarkus.eureka.home-page-url=/
 quarkus.eureka.status-page-url=/info/status
 quarkus.eureka.health-check-url=/info/health
@@ -167,6 +169,20 @@ about their states.
 As client to consume the services posted in Eureka Server, there is a `EurekaClient` class which requests
 for services in Eureka Server, bringing one of the `UP` status available and presenting the `WebTarget` configured with
 the actual url to the service to link with.
+
+A mechanism has been implemented to select one instance amongst the available ones for the given service, this can be done
+as:
+
+[source,java]
+----
+
+    @Inject
+    @LoadBalanced(type = LoadBalancerType.ROUND_ROBIN)
+    public EurekaClient eurekaClient;
+
+----
+
+Being the available ones `ROUND_ROBIN` or `RANDOM`.
 
 This `WebTarget` instance comes from `RestEasy` implementation which is Quarkus compatible.
 
