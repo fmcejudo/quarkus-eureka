@@ -29,7 +29,7 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <quarkus.version>0.24.0</quarkus.version>
+        <quarkus.version>1.0.1.Final</quarkus.version>
         <assertj-core.version>3.13.0</assertj-core.version>
         <rest-assured.version>4.0.0</rest-assured.version>
         <mockito.version>2.27.0</mockito.version>
