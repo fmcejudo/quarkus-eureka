@@ -57,9 +57,14 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ----
+
+An alternative way to do this is through `maven` quarkus tool as:
+
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.5"`
+
 
 [NOTE]
 ====
@@ -81,7 +86,7 @@ quarkus.eureka.name= <name of your application in Eureka>
 quarkus.eureka.vip-address= <how your application is recognised by clients>
 quarkus.eureka.home-page-url= <home path of your application>
 quarkus.eureka.status-page-url= <where we can check your status>
-quarkus.eureka.health-check-url= <saying if you applicatio is alive and kicking. { "status": "up" }>
+quarkus.eureka.health-check-url= <saying if you application is alive and kicking. { "status": "up" }>
 quarkus.eureka.region=default
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
