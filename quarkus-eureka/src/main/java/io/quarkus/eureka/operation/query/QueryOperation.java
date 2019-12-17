@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.util.AuthHelper;
+
 import org.apache.http.HttpStatus;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -32,8 +34,9 @@ abstract class QueryOperation implements Operation {
 
     <T> T query(final String location, final String path, Class<T> clazz) {
         Client client = ResteasyClientBuilder.newClient();
-        Response response = client.target(String.join("/", location, path))
-                .request(MediaType.APPLICATION_JSON_TYPE)
+        Response response = AuthHelper
+                .addAuthHeader(client.target(String.join("/", location, path))
+                .request(MediaType.APPLICATION_JSON_TYPE), location)
                 .get();
 
         if (response.getStatus() == HttpStatus.SC_NOT_FOUND) {

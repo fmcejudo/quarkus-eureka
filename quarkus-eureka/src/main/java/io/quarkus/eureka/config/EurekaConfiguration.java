@@ -56,7 +56,9 @@ public class EurekaConfiguration {
     String region;
 
     /**
-     *  instances of registry services in which the application will publish itself
+     * instances of registry services in which the application will publish itself
+     * its possible to add basic auth credentials in this url like
+     * http://user:password@eureka:8761
      */
     @ConfigItem
     Map<String, String> serviceUrl;

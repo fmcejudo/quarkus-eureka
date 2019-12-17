@@ -20,6 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.util.AuthHelper;
+
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -46,9 +48,8 @@ public class RegisterOperation implements Operation {
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
         Client client = ResteasyClientBuilder.newClient();
 
-        try (Response response = client
-                .target(registrationUrl)
-                .request(MediaType.APPLICATION_JSON)
+        try (Response response = AuthHelper
+                .addAuthHeader(client.target(registrationUrl).request(MediaType.APPLICATION_JSON), location)
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(objectToJson(instance), MediaType.APPLICATION_JSON_TYPE))) {
             if (response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {

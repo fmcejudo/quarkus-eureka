@@ -18,6 +18,8 @@ package io.quarkus.eureka.operation.heartbeat;
 
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.util.AuthHelper;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
@@ -44,8 +46,10 @@ public class HeartBeatOperation implements Operation {
         Client client = ResteasyClientBuilder.newClient();
 
         try {
-            client.target(String.join("/", location, path))
-                    .request(MediaType.APPLICATION_JSON_TYPE)
+            AuthHelper.addAuthHeader(
+                    client
+                    .target(String.join("/", location, path))
+                    .request(MediaType.APPLICATION_JSON_TYPE), location)
                     .put(Entity.entity(instance, MediaType.APPLICATION_JSON_TYPE))
                     .close();
         } catch (ProcessingException e) {
