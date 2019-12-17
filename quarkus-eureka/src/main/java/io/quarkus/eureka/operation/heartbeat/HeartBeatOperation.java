@@ -17,14 +17,13 @@
 package io.quarkus.eureka.operation.heartbeat;
 
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -32,7 +31,7 @@ import static io.quarkus.eureka.client.Status.UP;
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 
-public class HeartBeatOperation implements Operation {
+public class HeartBeatOperation extends AbstractOperation {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -44,8 +43,7 @@ public class HeartBeatOperation implements Operation {
         Client client = ResteasyClientBuilder.newClient();
 
         try {
-            client.target(String.join("/", location, path))
-                    .request(MediaType.APPLICATION_JSON_TYPE)
+            this.restClientBuilder(client, location, path)
                     .put(Entity.entity(instance, MediaType.APPLICATION_JSON_TYPE))
                     .close();
         } catch (ProcessingException e) {

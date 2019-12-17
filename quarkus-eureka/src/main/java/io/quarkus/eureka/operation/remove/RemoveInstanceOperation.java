@@ -16,17 +16,16 @@
 
 package io.quarkus.eureka.operation.remove;
 
-import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
-public class RemoveInstanceOperation implements Operation {
+public class RemoveInstanceOperation extends AbstractOperation {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -36,8 +35,7 @@ public class RemoveInstanceOperation implements Operation {
         Client client = ResteasyClientBuilder.newClient();
 
         try {
-            client.target(String.join("/", location, path))
-                    .request(MediaType.APPLICATION_JSON_TYPE)
+            this.restClientBuilder(client, location, path)
                     .delete()
                     .close();
         } catch (ProcessingException e) {

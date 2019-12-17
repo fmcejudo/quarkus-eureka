@@ -19,6 +19,7 @@ package io.quarkus.eureka.operation.query;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.quarkus.eureka.operation.AbstractOperation;
 import io.quarkus.eureka.operation.Operation;
 import org.apache.http.HttpStatus;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -28,13 +29,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-abstract class QueryOperation implements Operation {
+abstract class QueryOperation extends AbstractOperation {
 
     <T> T query(final String location, final String path, Class<T> clazz) {
         Client client = ResteasyClientBuilder.newClient();
-        Response response = client.target(String.join("/", location, path))
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
+        Response response = this.restClientBuilder(client, location, path).get();
 
         if (response.getStatus() == HttpStatus.SC_NOT_FOUND) {
             return this.onNotFound(clazz);

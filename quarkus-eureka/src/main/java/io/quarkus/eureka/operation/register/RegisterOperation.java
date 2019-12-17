@@ -19,7 +19,7 @@ package io.quarkus.eureka.operation.register;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -37,20 +37,19 @@ import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
 import static javax.ws.rs.core.Response.Status.Family.SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
-public class RegisterOperation implements Operation {
+public class RegisterOperation extends AbstractOperation {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
     public void register(final String location, final InstanceInfo instanceInfo) {
-        String registrationUrl = String.join("/", location, "apps", instanceInfo.getApp());
+        String path = String.join("/", "apps", instanceInfo.getApp());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
         Client client = ResteasyClientBuilder.newClient();
 
-        try (Response response = client
-                .target(registrationUrl)
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(objectToJson(instance), MediaType.APPLICATION_JSON_TYPE))) {
+        try {
+            Response response = this.restClientBuilder(client, location, path)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .post(Entity.entity(objectToJson(instance), MediaType.APPLICATION_JSON_TYPE));
             if (response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {
                 logger.info(format("Service has been registered in %s", location));
             } else if (response.getStatusInfo().getFamily().equals(CLIENT_ERROR)) {
@@ -58,6 +57,7 @@ public class RegisterOperation implements Operation {
             } else if (response.getStatusInfo().getFamily().equals(SERVER_ERROR)) {
                 logger.info(format("%s returns error message %s", location, response.readEntity(String.class)));
             }
+            response.close();
         } catch (ProcessingException ex) {
             logger.info("eureka service is down and no status can be register");
         } finally {
