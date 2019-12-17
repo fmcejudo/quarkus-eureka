@@ -1,10 +1,25 @@
-*.iml
-.idea/
+##MVN
 target/
+
+##ECLIPSE
+.apt_generated
+.classpath
+.factorypath
 .project
-.settings/
-.vscode/settings.json
-quarkus-eureka/.classpath
-quarkus-eureka/.factorypath
-quarkus-eureka-deployment/.classpath
-quarkus-eureka-deployment/.factorypath
+.settings
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iml
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
