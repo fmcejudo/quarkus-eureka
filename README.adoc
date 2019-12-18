@@ -124,7 +124,6 @@ quarkus.eureka.host-name=<host address>
 quarkus.eureka.home-page-url=/
 quarkus.eureka.status-page-url=/info/status
 quarkus.eureka.health-check-url=/info/health
-quarkus.eureka.prefer-same-zone=true
 ----
 
 === HEALTH INSTANCES
