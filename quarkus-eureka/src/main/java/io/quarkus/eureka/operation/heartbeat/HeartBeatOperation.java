@@ -16,6 +16,7 @@
 
 package io.quarkus.eureka.operation.heartbeat;
 
+import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -35,7 +36,7 @@ public class HeartBeatOperation extends AbstractOperation {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    public void heartbeat(final String location, final InstanceInfo instanceInfo) {
+    public void heartbeat(final Location location, final InstanceInfo instanceInfo) {
         String appId = instanceInfo.getApp();
         logger.info(format("%s heartbeat to %s", appId, location));
         final String path = String.join("/", "apps", appId, instanceInfo.getInstanceId());
@@ -47,7 +48,7 @@ public class HeartBeatOperation extends AbstractOperation {
                     .put(Entity.entity(instance, MediaType.APPLICATION_JSON_TYPE))
                     .close();
         } catch (ProcessingException e) {
-            logger.info(format("remote endpoint %s does not response", String.join("/", location, path)));
+            logger.info(format("remote endpoint %s does not response", String.join("/", location.getUrl(), path)));
         } finally {
             client.close();
         }

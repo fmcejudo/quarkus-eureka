@@ -19,6 +19,7 @@ package io.quarkus.eureka.operation.register;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
+import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -41,7 +42,7 @@ public class RegisterOperation extends AbstractOperation {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public void register(final String location, final InstanceInfo instanceInfo) {
+    public void register(final Location location, final InstanceInfo instanceInfo) {
         String path = String.join("/", "apps", instanceInfo.getApp());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
         Client client = ResteasyClientBuilder.newClient();

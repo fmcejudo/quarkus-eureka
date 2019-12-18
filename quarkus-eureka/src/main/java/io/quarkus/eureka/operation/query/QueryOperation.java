@@ -19,19 +19,19 @@ package io.quarkus.eureka.operation.query;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import io.quarkus.eureka.operation.Operation;
 import org.apache.http.HttpStatus;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 abstract class QueryOperation extends AbstractOperation {
 
-    <T> T query(final String location, final String path, Class<T> clazz) {
+    <T> T query(final Location location, final String path, Class<T> clazz) {
         Client client = ResteasyClientBuilder.newClient();
         Response response = this.restClientBuilder(client, location, path).get();
 

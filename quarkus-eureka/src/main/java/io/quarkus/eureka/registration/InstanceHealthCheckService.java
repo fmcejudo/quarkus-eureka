@@ -59,7 +59,7 @@ class InstanceHealthCheckService {
             return DOWN;
         }
 
-        Map<String, String> body = response.readEntity(Map.class);
+        final Map<String, String> body = response.readEntity(Map.class);
         return body.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equalsIgnoreCase("status"))

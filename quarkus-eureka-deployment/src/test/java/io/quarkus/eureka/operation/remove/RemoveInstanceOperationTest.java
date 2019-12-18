@@ -21,6 +21,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.eureka.config.Location;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
@@ -62,7 +64,7 @@ class RemoveInstanceOperationTest {
 
 
         //When
-        removeInstanceOperation.remove(serverUrl.concat("/eureka"), "SAMPLE", instanceId);
+        removeInstanceOperation.remove(new Location(serverUrl.concat("/eureka")), "SAMPLE", instanceId);
 
         //Then
         wireMockServer.verify(1, deleteRequestedFor(urlEqualTo(deletePath)));

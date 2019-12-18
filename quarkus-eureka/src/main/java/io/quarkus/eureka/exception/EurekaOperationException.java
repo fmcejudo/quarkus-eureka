@@ -18,6 +18,8 @@ package io.quarkus.eureka.exception;
 
 public class EurekaOperationException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public EurekaOperationException(final String message) {
         super(message);
     }

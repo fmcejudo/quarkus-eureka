@@ -18,6 +18,8 @@ package io.quarkus.eureka.operation.query;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.Status;
+import io.quarkus.eureka.config.Location;
+
 import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,11 +43,11 @@ public class QueryOperationTest {
 
     private final Integer port;
 
-    private final String location;
+    private final Location location;
 
     {
         port = 10029;
-        location = format("http://localhost:%d/eureka", port);
+        location = new Location(format("http://localhost:%d/eureka", port));
     }
 
     @BeforeEach
