@@ -1,11 +1,9 @@
 package io.quarkus.eureka.config;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +14,6 @@ public class LocationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // 
-        // user:pass as Base64String
         encodedCredentials = Base64.getEncoder().encodeToString("user:pass".getBytes("UTF-8"));
     }
 
@@ -28,7 +24,7 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertFalse(l.hasBasicAuthToken());
+        assertThat(l.hasBasicAuthToken()).isFalse();
     }
 
     @Test
@@ -38,8 +34,8 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertTrue(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), encodedCredentials);
+        assertThat(l.hasBasicAuthToken()).isTrue();
+        assertThat(l.getBasicAuthToken()).isEqualTo(encodedCredentials);
     }
 
     @Test
@@ -49,8 +45,8 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertTrue(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), encodedCredentials);
+        assertThat(l.hasBasicAuthToken()).isTrue();
+        assertThat(l.getBasicAuthToken()).isEqualTo(encodedCredentials);
     }
 
     @Test
@@ -60,8 +56,8 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertTrue(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), encodedCredentials);
+        assertThat(l.hasBasicAuthToken()).isTrue();
+        assertThat(l.getBasicAuthToken()).isEqualTo(encodedCredentials);
     }
 
     @Test
@@ -71,8 +67,8 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertFalse(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), null);
+        assertThat(l.hasBasicAuthToken()).isFalse();
+        assertThat(l.getBasicAuthToken()).isNull();
     }
 
     @Test
@@ -82,8 +78,8 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertTrue(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), encodedCredentials);
+        assertThat(l.hasBasicAuthToken()).isTrue();
+        assertThat(l.getBasicAuthToken()).isEqualTo(encodedCredentials);
     }
 
     @Test
@@ -93,11 +89,11 @@ public class LocationTest {
 
         Location l = new Location(url);
 
-        assertTrue(l.hasBasicAuthToken());
-        assertEquals(l.getBasicAuthToken(), encodedCredentials);
+        assertThat(l.hasBasicAuthToken()).isTrue();
+        assertThat(l.getBasicAuthToken()).isEqualTo(encodedCredentials);
 
         String tokenDecoded = new String(Base64.getDecoder().decode(l.getBasicAuthToken()), "UTF-8");
 
-        assertEquals(tokenDecoded, "user:pass");
+        assertThat(tokenDecoded).isEqualTo("user:pass");
     }
 }
