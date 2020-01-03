@@ -19,13 +19,21 @@ package io.quarkus.eureka.operation.query;
 public class MultipleInstanceQueryOperation extends QueryOperation {
 
     public ApplicationsResult findAllInstances(final String location) {
-        final String path = "apps";
-        return query(location, path, ApplicationsResult.class);
+        try {
+            final String path = "apps";
+            return query(location, path, ApplicationsResult.class);
+        } catch(Exception e) {
+            return ApplicationsResult.error();
+        }
     }
 
     public ApplicationResult findInstance(final String location, final String appId) {
-        final String path = String.join("/", "apps", appId);
-        return query(location, path, ApplicationResult.class);
+        try {
+            final String path = String.join("/", "apps", appId);
+            return query(location, path, ApplicationResult.class);
+        } catch(Exception e) {
+            return ApplicationResult.error();
+        }
     }
 
     @Override
