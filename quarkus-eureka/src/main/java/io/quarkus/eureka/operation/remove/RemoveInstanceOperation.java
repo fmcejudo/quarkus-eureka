@@ -16,32 +16,31 @@
 
 package io.quarkus.eureka.operation.remove;
 
-import io.quarkus.eureka.operation.Operation;
+import io.quarkus.eureka.config.Location;
+import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
-public class RemoveInstanceOperation implements Operation {
+public class RemoveInstanceOperation extends AbstractOperation {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    public void remove(final String location, final String appId, final String instanceId) {
+    public void remove(final Location location, final String appId, final String instanceId) {
         logger.info(format("Deregistering %s from %s", appId, location));
         final String path = String.join("/", "apps", appId, instanceId);
         Client client = ResteasyClientBuilder.newClient();
 
         try {
-            client.target(String.join("/", location, path))
-                    .request(MediaType.APPLICATION_JSON_TYPE)
+            this.restClientBuilder(client, location, path)
                     .delete()
                     .close();
         } catch (ProcessingException e) {
-            logger.info(format("remote endpoint %s does not response", String.join("/", location, path)));
+            logger.info(format("remote endpoint %s does not response", String.join("/", location.getUrl(), path)));
         } finally {
             client.close();
         }

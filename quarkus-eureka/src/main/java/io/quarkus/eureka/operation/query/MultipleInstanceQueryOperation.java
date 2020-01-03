@@ -16,10 +16,13 @@
 
 package io.quarkus.eureka.operation.query;
 
+import io.quarkus.eureka.config.Location;
+
 public class MultipleInstanceQueryOperation extends QueryOperation {
 
-    public ApplicationsResult findAllInstances(final String location) {
-        try {
+
+    public ApplicationsResult findAllInstances(final Location location) {
+       try {
             final String path = "apps";
             return query(location, path, ApplicationsResult.class);
         } catch(Exception e) {
@@ -27,7 +30,7 @@ public class MultipleInstanceQueryOperation extends QueryOperation {
         }
     }
 
-    public ApplicationResult findInstance(final String location, final String appId) {
+    public ApplicationResult findInstance(final Location location, final String appId) {
         try {
             final String path = String.join("/", "apps", appId);
             return query(location, path, ApplicationResult.class);

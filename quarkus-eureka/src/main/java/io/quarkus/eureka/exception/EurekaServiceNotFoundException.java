@@ -19,6 +19,9 @@ package io.quarkus.eureka.exception;
 import static java.lang.String.format;
 
 public class EurekaServiceNotFoundException extends RuntimeException {
+    
+    private static final long serialVersionUID = 1L;
+
     public EurekaServiceNotFoundException(String appId) {
         super(format("service %s not found", appId));
     }

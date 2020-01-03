@@ -18,6 +18,8 @@ package io.quarkus.eureka.operation.query;
 
 import org.jboss.resteasy.spi.NotImplementedYetException;
 
+import io.quarkus.eureka.config.Location;
+
 /**
  * It retrieves information about the instances which are deployed in the location in which the service registers.
  * <p>
@@ -26,11 +28,11 @@ import org.jboss.resteasy.spi.NotImplementedYetException;
  */
 public class SingleInstanceQueryOperation extends QueryOperation {
 
-    public InstanceResult findInstance(final String location, final String appId, final String instanceId) {
+    public InstanceResult findInstance(final Location location, final String appId, final String instanceId) {
         throw new NotImplementedYetException("This api is not implemented for Eureka 1.x");
     }
 
-    public InstanceResult findInstanceById(final String location, final String instanceId) {
+    public InstanceResult findInstanceById(final Location location, final String instanceId) {
         throw new NotImplementedYetException("This api is not implemented for Eureka 1.x");
     }
 

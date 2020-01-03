@@ -18,6 +18,8 @@ package io.quarkus.eureka.exception;
 
 public class HealthCheckException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public HealthCheckException(final String message) {
         super(message);
     }
