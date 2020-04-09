@@ -9,6 +9,7 @@ image:https://maven-badges.herokuapp.com/maven-central/com.github.fmcejudo/quark
 
 = What?
 
+
 Given Quarkus being a framework to develop quick start applications running not just
 in the Hotspot JVM but also in GraalVM natively, with a relative new lifespan, there
 are some shortage of integrations with some other services working for the cloud.
@@ -26,7 +27,7 @@ link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your ow
 
 The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
 
-The most recent version, from which this extension has been built, is `1.0.1.Final`
+The most recent version, from which this extension has been built, is `1.3.2.Final`
 
 = How?
 
@@ -44,7 +45,6 @@ which are used to communicate with the other end where is the registry.
     <artifactId>quarkus-resteasy-jackson</artifactId>
 </dependency>
 ----
-
 
 Including the extension in your application, the next dependency needs to be added to your `pom.xml`:
 
