@@ -30,18 +30,14 @@ The most recent version, from which this extension has been built, is `1.0.1.Fin
 
 = How?
 
-To use the plugin, other quarkus extensions need to be provided `*quarkus-rest-client*`, `*quarkus-resteasy-jackson*`,
-`*quarkus-resteasy-jsonb*` which are used to communicate with the other end where is the registry.
+To use the plugin, other quarkus extensions need to be provided `*quarkus-rest-client*` and `*quarkus-resteasy-jackson*`
+which are used to communicate with the other end where is the registry.
 
 [source,xml]
 ----
 <dependency>
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-rest-client</artifactId>
-</dependency>
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-resteasy-jsonb</artifactId>
 </dependency>
 <dependency>
     <groupId>io.quarkus</groupId>
