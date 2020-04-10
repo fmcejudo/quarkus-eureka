@@ -18,7 +18,7 @@ package io.quarkus.eureka;
 
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.config.EurekaConfiguration;
+import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
@@ -40,12 +40,12 @@ public class EurekaRecorder {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public void registerServiceInEureka(final EurekaConfiguration eurekaConfiguration,
+    public void registerServiceInEureka(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
                                         final BeanContainer beanContainer) {
         try {
             logger.info("registering eurekaService");
-            InstanceInfo instanceInfo = InstanceInfo.of(withConfiguration(eurekaConfiguration));
-            ServiceLocationConfig serviceLocationConfig = new ServiceLocationConfig(eurekaConfiguration);
+            InstanceInfo instanceInfo = InstanceInfo.of(withConfiguration(eurekaRuntimeConfiguration));
+            ServiceLocationConfig serviceLocationConfig = new ServiceLocationConfig(eurekaRuntimeConfiguration);
 
             OperationFactory operationFactory = createOperationFactory();
 

@@ -41,7 +41,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class EurekaConfigurationTest {
+public class EurekaRuntimeConfigurationTest {
 
     @Inject
     public EurekaClient eurekaClient;
@@ -50,10 +50,6 @@ public class EurekaConfigurationTest {
     @LoadBalanced(type = LoadBalancerType.ROUND_ROBIN)
     public EurekaClient eurekaClientRB;
 
-    private WireMockServer wireMockServer;
-
-    private static final int PORT = 10034;
-
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap
@@ -61,6 +57,9 @@ public class EurekaConfigurationTest {
                     .addAsResource("eureka-config.properties", "application.properties")
             );
 
+    private WireMockServer wireMockServer;
+
+    private static final int PORT = 10034;
 
     @BeforeEach
     public void setUp() {
@@ -137,5 +136,4 @@ public class EurekaConfigurationTest {
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/OTHER")));
     }
-
 }

@@ -23,24 +23,24 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 import java.util.Map;
 
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
-public class EurekaConfiguration {
+public class EurekaRuntimeConfiguration {
 
     /**
      * port where eureka server will redirect to attend the service
      */
-    @ConfigItem
+    @ConfigItem(defaultValue = "${quarkus.http.port}")
     Integer port;
 
     /**
      * name of the service as it will turn up in Eureka
      */
-    @ConfigItem
+    @ConfigItem(defaultValue = "${quarkus.application.name}")
     String name;
 
     /**
      * Name used by load balancer to redirect to the service
      */
-    @ConfigItem
+    @ConfigItem(defaultValue = "${quarkus.application.name}")
     String vipAddress;
 
     /**
@@ -56,7 +56,7 @@ public class EurekaConfiguration {
     String region;
 
     /**
-     *  instances of registry services in which the application will publish itself
+     * instances of registry services in which the application will publish itself
      */
     @ConfigItem
     Map<String, String> serviceUrl;

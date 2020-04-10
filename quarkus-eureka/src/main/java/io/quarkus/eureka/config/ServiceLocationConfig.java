@@ -28,8 +28,8 @@ public class ServiceLocationConfig {
 
     private final Collection<Location> locations;
 
-    public ServiceLocationConfig(@NotNull final EurekaConfiguration eurekaConfiguration) {
-       this(ofNullable(eurekaConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
+    public ServiceLocationConfig(@NotNull final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+       this(ofNullable(eurekaRuntimeConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
     }
 
     public ServiceLocationConfig(Collection<String> locationsAsString) {

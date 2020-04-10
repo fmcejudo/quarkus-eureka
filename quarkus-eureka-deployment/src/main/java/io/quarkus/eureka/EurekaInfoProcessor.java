@@ -24,7 +24,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.eureka.config.EurekaConfiguration;
+import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 
 
 public class EurekaInfoProcessor {
@@ -38,9 +38,9 @@ public class EurekaInfoProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     @BuildStep
     public void applyConfiguration(final EurekaRecorder eurekaRecorder,
-                                   final EurekaConfiguration eurekaConfiguration,
+                                   final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
                                    final BeanContainerBuildItem beanContainer) {
-        eurekaRecorder.registerServiceInEureka(eurekaConfiguration, beanContainer.getValue());
+        eurekaRecorder.registerServiceInEureka(eurekaRuntimeConfiguration, beanContainer.getValue());
     }
 
     @Record(ExecutionTime.STATIC_INIT)

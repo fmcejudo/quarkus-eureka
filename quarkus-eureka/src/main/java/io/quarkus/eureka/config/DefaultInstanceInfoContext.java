@@ -34,19 +34,19 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
     private final String statusPageUrl;
     private final String healthCheckUrl;
 
-    DefaultInstanceInfoContext(final EurekaConfiguration eurekaConfiguration) {
-        this.name = eurekaConfiguration.name;
-        this.port = eurekaConfiguration.port;
-        this.vipAddress = eurekaConfiguration.vipAddress;
-        this.homePageUrl = eurekaConfiguration.homePageUrl;
-        this.statusPageUrl = eurekaConfiguration.statusPageUrl;
-        this.healthCheckUrl = eurekaConfiguration.healthCheckUrl;
-        this.hostName = resolveHostname(eurekaConfiguration.hostName);
+    DefaultInstanceInfoContext(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        this.name = eurekaRuntimeConfiguration.name;
+        this.port = eurekaRuntimeConfiguration.port;
+        this.vipAddress = eurekaRuntimeConfiguration.vipAddress;
+        this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
+        this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
+        this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
+        this.hostName = resolveHostname(eurekaRuntimeConfiguration.hostName);
         this.instanceId = buildInstanceId();
     }
 
-    public static InstanceInfoContext withConfiguration(final EurekaConfiguration eurekaConfiguration) {
-        return new DefaultInstanceInfoContext(eurekaConfiguration);
+    public static InstanceInfoContext withConfiguration(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        return new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
     }
 
     public String getName() {

@@ -83,7 +83,7 @@ public class LocationTest {
     }
 
     @Test
-    void authTokenShoudBeDecodeable() throws Exception {
+    void shouldAuthTokenBeDecodeable() throws Exception {
 
         String url = "http://user:pass@test2.example.de/eureka";
 
