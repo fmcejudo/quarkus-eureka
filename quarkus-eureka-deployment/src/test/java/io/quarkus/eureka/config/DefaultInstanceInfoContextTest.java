@@ -24,25 +24,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultInstanceInfoContextTest {
 
-    private EurekaConfiguration eurekaConfiguration;
+    private EurekaRuntimeConfiguration eurekaRuntimeConfiguration;
 
     @BeforeEach
     void setUp() {
-        eurekaConfiguration = new EurekaConfiguration();
-        eurekaConfiguration.port = 8001;
-        eurekaConfiguration.name = "sample";
-        eurekaConfiguration.vipAddress = "sample";
-        eurekaConfiguration.region = "default";
-        eurekaConfiguration.preferSameZone = true;
+        eurekaRuntimeConfiguration = new EurekaRuntimeConfiguration();
+        eurekaRuntimeConfiguration.port = 8001;
+        eurekaRuntimeConfiguration.name = "sample";
+        eurekaRuntimeConfiguration.vipAddress = "sample";
+        eurekaRuntimeConfiguration.region = "default";
+        eurekaRuntimeConfiguration.preferSameZone = true;
     }
 
     @Test
     void shouldBuildInstanceId() {
         //Given
-        eurekaConfiguration.hostName = "example.com";
+        eurekaRuntimeConfiguration.hostName = "example.com";
 
         //When
-        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
         assertThat(instanceInfoContext.getInstanceId()).isEqualTo("example.com:sample:8001");
@@ -52,11 +52,11 @@ class DefaultInstanceInfoContextTest {
     @Test
     void shouldInstanceIdBeLowerCase() {
         //Given
-        eurekaConfiguration.hostName = "EXAMPLE.COM";
-        eurekaConfiguration.name = "SAMPLE";
+        eurekaRuntimeConfiguration.hostName = "EXAMPLE.COM";
+        eurekaRuntimeConfiguration.name = "SAMPLE";
 
         //When
-        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
         assertThat(instanceInfoContext.getInstanceId()).isEqualTo("example.com:sample:8001");
@@ -67,10 +67,10 @@ class DefaultInstanceInfoContextTest {
     @Test
     void shouldGetDefinedHostname() {
         //Given
-        eurekaConfiguration.hostName = "example.com";
+        eurekaRuntimeConfiguration.hostName = "example.com";
 
         //When
-        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
         assertThat(instanceInfoContext.getHostName()).isEqualTo("example.com");
@@ -80,7 +80,7 @@ class DefaultInstanceInfoContextTest {
     void shouldGetHostAddress() {
 
         //Given && When
-        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaConfiguration);
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
         assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getHostname());
