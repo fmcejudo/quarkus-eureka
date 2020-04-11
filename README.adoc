@@ -53,13 +53,13 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
 </dependency>
 ----
 
 An alternative way to do this is through `maven` quarkus tool as:
 
-`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.5"`
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.6"`
 
 
 [NOTE]
