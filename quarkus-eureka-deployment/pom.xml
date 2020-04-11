@@ -21,7 +21,7 @@
     <parent>
         <artifactId>quarkus-eureka-parent</artifactId>
         <groupId>com.github.fmcejudo</groupId>
-        <version>0.0.6</version>
+        <version>0.0.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>quarkus-eureka-deployment</artifactId>
