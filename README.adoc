@@ -76,9 +76,9 @@ your quarkus `application.properties`:
 
 [source,properties]
 ----
-quarkus.eureka.port= <your application port, it should match with quarkus.http.port>
+quarkus.eureka.port= <your application port, it should match with quarkus.http.port. If it does not exist,it takes quarkus.http.port>
 quarkus.eureka.hostname= <your application address. By default the host where the application has started up>
-quarkus.eureka.name= <name of your application in Eureka>
+quarkus.eureka.name= <name of your application in Eureka. It takes quarkus.application.name if it does not exist>
 quarkus.eureka.vip-address= <how your application is recognised by clients>
 quarkus.eureka.home-page-url= <home path of your application>
 quarkus.eureka.status-page-url= <where we can check your status>
@@ -96,17 +96,8 @@ i.e: Given the a `sample` application, your configuration properties to work wit
 # key = value
 
 quarkus.http.port=8001
+quarkus.application.name=sample
 quarkus.eureka.region=default
-
-# what is my application name? (clients can query on this appName)
-quarkus.eureka.name=sample
-
-# what is my application virtual ip address? (clients can query on this vipAddress)
-quarkus.eureka.vip-address=sample
-
-# what is the port that I serve on? (Change this if port 8001 is already in use in your environment)
-quarkus.eureka.port=8001
-
 ## configuration related to reaching the eureka servers
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.should-use-dns=false
@@ -117,6 +108,8 @@ Having as default values for remaining properties the following:
 [source,properties]
 ----
 quarkus.eureka.host-name=<host address>
+quarkus.eureka.port=${quarkus.http.port}
+quarkus.eureka.name=${quarkus.application.name}
 quarkus.eureka.home-page-url=/
 quarkus.eureka.status-page-url=/info/status
 quarkus.eureka.health-check-url=/info/health
@@ -199,6 +192,17 @@ To request for an endpoint in `sample` application, results in:
                 .readEntity(String.class);
 ----
 
+== CONNECTING TO SECURED EUREKA-SERVERS
+
+In the use case in which your Eureka Server is secure with basic authentication, the way to proceed in your
+`application.properties` file is adding the credential as:
+
+[source,properties]
+----
+quarkus.eureka.service-url.default=http://user:pass@eureka-server/eureka
+----
+
+The credentials are added to the request headers in the `Authorization` field with the value encoded as `Basic <base64 value>`
 
 = Why?
 
