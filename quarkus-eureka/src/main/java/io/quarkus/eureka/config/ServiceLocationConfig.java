@@ -29,13 +29,11 @@ public class ServiceLocationConfig {
     private final Collection<Location> locations;
 
     public ServiceLocationConfig(@NotNull final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
-       this(ofNullable(eurekaRuntimeConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
+        this(ofNullable(eurekaRuntimeConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
     }
 
     public ServiceLocationConfig(Collection<String> locationsAsString) {
-
-
-        this.locations = locationsAsString.stream().map(s -> new Location(s)).collect(Collectors.toList());
+        this.locations = locationsAsString.stream().map(Location::new).collect(Collectors.toList());
     }
 
     public Collection<Location> getLocations() {
