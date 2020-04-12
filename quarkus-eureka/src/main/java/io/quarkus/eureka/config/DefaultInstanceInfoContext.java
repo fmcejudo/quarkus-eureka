@@ -41,7 +41,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
         this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
-        this.hostName = resolveHostname(eurekaRuntimeConfiguration.hostName);
+        this.hostName = eurekaRuntimeConfiguration.hostName;
         this.instanceId = buildInstanceId();
     }
 
@@ -79,12 +79,6 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public String getHealthCheckUrl() {
         return healthCheckUrl;
-    }
-
-    private String resolveHostname(final String hostName) {
-        return Optional.ofNullable(hostName)
-                .filter(hn -> !isNullOrEmpty(hn))
-                .orElseGet(HostNameDiscovery::getHostname);
     }
 
     private String buildInstanceId() {

@@ -34,6 +34,7 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.vipAddress = "sample";
         eurekaRuntimeConfiguration.region = "default";
         eurekaRuntimeConfiguration.preferSameZone = true;
+        eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
     }
 
     @Test

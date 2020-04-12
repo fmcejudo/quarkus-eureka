@@ -16,11 +16,16 @@
 
 package io.quarkus.eureka.config;
 
+import io.quarkus.eureka.util.HostNameDiscovery;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.quarkus.runtime.annotations.ConvertWith;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.spi.Converter;
 
 import java.util.Map;
+import java.util.Optional;
 
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public class EurekaRuntimeConfiguration {
@@ -46,6 +51,7 @@ public class EurekaRuntimeConfiguration {
     /**
      * The hostname, otherwise it will be guest from OS primitives
      */
+    @ConvertWith(NetworkConverter.class)
     @ConfigItem
     String hostName;
 
@@ -84,4 +90,15 @@ public class EurekaRuntimeConfiguration {
      */
     @ConfigItem(defaultValue = "/info/health")
     String healthCheckUrl;
+
+    public static class NetworkConverter implements Converter<String> {
+
+        @Override
+        public String convert(final String hostname) {
+            return Optional.ofNullable(hostname)
+                    .filter(StringUtils::isNotEmpty)
+                    .orElseGet(HostNameDiscovery::getHostname);
+        }
+    }
+
 }
