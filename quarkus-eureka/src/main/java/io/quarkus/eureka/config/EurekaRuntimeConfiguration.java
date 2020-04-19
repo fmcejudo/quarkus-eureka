@@ -21,11 +21,9 @@ import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.quarkus.runtime.annotations.ConvertWith;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.spi.Converter;
 
 import java.util.Map;
-import java.util.Optional;
 
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public class EurekaRuntimeConfiguration {
@@ -95,9 +93,10 @@ public class EurekaRuntimeConfiguration {
 
         @Override
         public String convert(final String hostname) {
-            return Optional.ofNullable(hostname)
-                    .filter(StringUtils::isNotEmpty)
-                    .orElseGet(HostNameDiscovery::getHostname);
+            if (hostname != null && !hostname.trim().isEmpty()) {
+                return hostname;
+            }
+            return HostNameDiscovery.getHostname();
         }
     }
 
