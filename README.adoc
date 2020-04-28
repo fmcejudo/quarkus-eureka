@@ -27,7 +27,7 @@ link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your ow
 
 The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
 
-The most recent version, from which this extension has been built, is `1.3.2.Final`
+The most recent version, from which this extension has been built, is `1.4.1.Final`
 
 = How?
 
