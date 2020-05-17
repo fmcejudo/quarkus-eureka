@@ -150,7 +150,7 @@ class EurekaRegistrationServiceTest {
                 .isInstanceOf(HealthCheckException.class)
                 .hasMessageContaining("Instance can't reach own application health check.");
 
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(getRequestedFor(urlEqualTo("/info/health")));
     }
 
     @Test
