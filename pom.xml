@@ -13,7 +13,7 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <quarkus.version>1.6.1.Final</quarkus.version>
+        <quarkus.version>1.8.1.Final</quarkus.version>
         <wiremock.version>2.24.1</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
@@ -63,6 +63,13 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock</artifactId>
                 <version>${wiremock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>

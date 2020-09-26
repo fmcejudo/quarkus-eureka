@@ -27,18 +27,6 @@
 
     <name>quarkus-eureka</name>
     
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
