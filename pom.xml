@@ -18,6 +18,7 @@
         <wiremock.version>2.24.1</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
+        <guava.version>29.0-jre</guava.version>
     </properties>
 
     <modules>
@@ -64,6 +65,11 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock</artifactId>
                 <version>${wiremock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
