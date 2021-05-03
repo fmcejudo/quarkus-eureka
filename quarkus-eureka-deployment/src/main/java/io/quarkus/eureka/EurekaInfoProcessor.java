@@ -16,6 +16,8 @@
 
 package io.quarkus.eureka;
 
+import java.util.ArrayList;
+
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.BeanContainerListenerBuildItem;
@@ -24,6 +26,10 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.eureka.client.DataCenterInfo;
+import io.quarkus.eureka.client.InstanceInfo;
+import io.quarkus.eureka.client.PortEnableInfo;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 
 
@@ -55,5 +61,14 @@ public class EurekaInfoProcessor {
         AdditionalBeanBuildItem eurekaBuildItem = AdditionalBeanBuildItem.unremovableOf(EurekaProducer.class);
         additionalBeanProducer.produce(eurekaBuildItem);
     }
+
+	@BuildStep
+	public ReflectiveClassBuildItem registerForReflection() {
+		ArrayList<String> dtos = new ArrayList<>();  
+		dtos.add(InstanceInfo.class.getName());
+		dtos.add(DataCenterInfo.class.getName());
+		dtos.add(PortEnableInfo.class.getName());
+		return new ReflectiveClassBuildItem(true, true, dtos.toArray(new String[dtos.size()]));
+	}
 
 }
