@@ -14,11 +14,11 @@
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <quarkus.version>1.9.2.Final</quarkus.version>
-        <wiremock.version>2.24.1</wiremock.version>
+        <quarkus.version>1.13.3.Final</quarkus.version>
+        <wiremock.version>2.27.2</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
     </properties>
 
     <modules>
