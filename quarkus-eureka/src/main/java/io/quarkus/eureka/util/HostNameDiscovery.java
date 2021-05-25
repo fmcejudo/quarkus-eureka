@@ -39,6 +39,14 @@ public class HostNameDiscovery {
         return HOSTNAME;
     }
 
+    public static String getLocalHost() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static List<NetworkInterface> getNetworkInterfaces() {
         try {
             return Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -52,14 +60,6 @@ public class HostNameDiscovery {
         return networkInterface != null
                 && networkInterface.getInterfaceAddresses().stream().anyMatch(ia -> ia.getBroadcast() != null);
 
-    }
-
-    private static String getLocalHost() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static String extractHostname(final NetworkInterface networkInterface) {

@@ -87,4 +87,14 @@ class DefaultInstanceInfoContextTest {
         assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getHostname());
     }
 
+    @Test
+    void shouldGetLocalAddress() {
+    	eurekaRuntimeConfiguration.preferIpAddress = true;
+
+        //Given && When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getLocalHost());
+    }
 }
