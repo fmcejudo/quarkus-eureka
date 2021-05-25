@@ -16,12 +16,9 @@
 
 package io.quarkus.eureka.config;
 
-import io.quarkus.eureka.util.HostNameDiscovery;
-
-import java.util.Optional;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.join;
+
+import io.quarkus.eureka.util.HostNameDiscovery;
 
 public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
@@ -41,7 +38,9 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
         this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
-        this.hostName = eurekaRuntimeConfiguration.hostName;
+		this.hostName = eurekaRuntimeConfiguration.preferIpAddress
+				? HostNameDiscovery.getLocalHost()
+				: eurekaRuntimeConfiguration.hostName;
         this.instanceId = buildInstanceId();
     }
 

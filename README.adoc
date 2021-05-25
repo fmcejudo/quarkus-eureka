@@ -53,13 +53,13 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.11</version>
 </dependency>
 ----
 
 An alternative way to do this is through `maven` quarkus tool as:
 
-`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.10"`
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.11"`
 
 
 [NOTE]
@@ -78,6 +78,7 @@ your quarkus `application.properties`:
 ----
 quarkus.eureka.port= <your application port, it should match with quarkus.http.port. If it does not exist,it takes quarkus.http.port>
 quarkus.eureka.hostname= <your application address. By default the host where the application has started up>
+quarkus.eureka.prefer-ip-address= <whether or not to override hostname with the application LAN IP address. By default this is set to false>
 quarkus.eureka.name= <name of your application in Eureka. It takes quarkus.application.name if it does not exist>
 quarkus.eureka.vip-address= <how your application is recognised by clients>
 quarkus.eureka.home-page-url= <home path of your application>
@@ -108,6 +109,7 @@ Having as default values for remaining properties the following:
 [source,properties]
 ----
 quarkus.eureka.host-name=<host address>
+quarkus.eureka.prefer-ip-address=false
 quarkus.eureka.port=${quarkus.http.port}
 quarkus.eureka.name=${quarkus.application.name}
 quarkus.eureka.home-page-url=/
