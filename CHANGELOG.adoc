@@ -1,0 +1,38 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+ 
+ 
+## [Unreleased] - yyyy-mm-dd
+ 
+Here we write upgrading notes for brands. It's a team effort to make them as
+straightforward as possible.
+ 
+### Added
+ 
+### Changed
+ 
+### Fixed
+ 
+## [0.0.12] - 2021-05-26
+  
+ 
+### Added
+
+- [CONDITIONALLY ENABLE EUREKA] (https://github.com/fmcejudo/quarkus-eureka/pull/29)
+  MINOR Add flag `enable` which lets decide if your app has to be registered in Eureka
+- [PUBLISH SERVICE IN IP ADDRESS RATHER HOSTNAME] (https://github.com/fmcejudo/quarkus-eureka/pull/31)
+  MINOR `quarkus.eureka.prefer-ip-address` tell the application to publish an IP Address or the hostname  
+
+### Changed
+  
+### Fixed
+ 
+## [0.0.11] - 2017-03-14
+ 
+### Added
+   
+### Changed
+ 
+### Fixed
+ 
+-
