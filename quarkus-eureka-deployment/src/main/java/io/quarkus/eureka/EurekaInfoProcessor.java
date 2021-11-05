@@ -44,17 +44,17 @@ public class EurekaInfoProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     @BuildStep
     public void applyConfiguration(final EurekaRecorder eurekaRecorder,
-                                   final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
-                                   final BeanContainerBuildItem beanContainer) {
+        final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
+        final BeanContainerBuildItem beanContainer) {
         eurekaRecorder.registerServiceInEureka(eurekaRuntimeConfiguration, beanContainer.getValue());
     }
 
     @Record(ExecutionTime.STATIC_INIT)
-    @BuildStep(providesCapabilities = "io.quarkus.eureka")
+    @BuildStep
     public void stepConfiguration(BuildProducer<AdditionalBeanBuildItem> additionalBeanProducer,
-                                  BuildProducer<BeanContainerListenerBuildItem> containerListenerProducer,
-                                  BuildProducer<FeatureBuildItem> featureProducer,
-                                  final EurekaRecorder eurekaRecorder) {
+        BuildProducer<BeanContainerListenerBuildItem> containerListenerProducer,
+        BuildProducer<FeatureBuildItem> featureProducer,
+        final EurekaRecorder eurekaRecorder) {
 
         featureProducer.produce(new FeatureBuildItem("eureka"));
 
@@ -62,13 +62,13 @@ public class EurekaInfoProcessor {
         additionalBeanProducer.produce(eurekaBuildItem);
     }
 
-	@BuildStep
-	public ReflectiveClassBuildItem registerForReflection() {
-		ArrayList<String> dtos = new ArrayList<>();  
-		dtos.add(InstanceInfo.class.getName());
-		dtos.add(DataCenterInfo.class.getName());
-		dtos.add(PortEnableInfo.class.getName());
-		return new ReflectiveClassBuildItem(true, true, dtos.toArray(new String[dtos.size()]));
-	}
+    @BuildStep
+    public ReflectiveClassBuildItem registerForReflection() {
+        ArrayList<String> dtos = new ArrayList<>();
+        dtos.add(InstanceInfo.class.getName());
+        dtos.add(DataCenterInfo.class.getName());
+        dtos.add(PortEnableInfo.class.getName());
+        return new ReflectiveClassBuildItem(true, true, dtos.toArray(new String[dtos.size()]));
+    }
 
 }

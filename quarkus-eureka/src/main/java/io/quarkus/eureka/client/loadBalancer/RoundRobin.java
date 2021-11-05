@@ -42,7 +42,6 @@ public class RoundRobin implements LoadBalancer {
             }
         };
         this.cache = CacheBuilder.newBuilder().expireAfterWrite(Duration.ofSeconds(60))
-                //.refreshAfterWrite(Duration.ofSeconds(30))
                 .build(loader);
     }
 

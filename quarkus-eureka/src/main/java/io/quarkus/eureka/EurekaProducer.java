@@ -33,7 +33,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
+
 import java.util.logging.Logger;
+
+import static io.quarkus.eureka.client.loadBalancer.LoadBalancerType.ROUND_ROBIN;
 
 @ApplicationScoped
 public class EurekaProducer {
@@ -48,16 +52,19 @@ public class EurekaProducer {
 
     @Produces
     @LoadBalanced
-    EurekaClient eurekaClient(InjectionPoint ip) {
-        LoadBalancer loadBalancer;
+    EurekaClient eurekaClient(InjectionPoint injectionPoint) {
         ServiceDiscovery serviceDiscovery = new ServiceDiscovery(serviceLocationConfig, operationFactory);
-        if (ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.RANDOM)
-            loadBalancer = new Random(serviceDiscovery);
-        else if (ip.getAnnotated().getAnnotation(LoadBalanced.class).type() == LoadBalancerType.ROUND_ROBIN)
-            loadBalancer = new RoundRobin(serviceDiscovery);
-        else
-            loadBalancer = new Random(serviceDiscovery);
+        LoadBalancer loadBalancer = selectLoadBalancer(injectionPoint, serviceDiscovery);
         return new EurekaClient(loadBalancer);
+    }
+
+    private LoadBalancer selectLoadBalancer(final InjectionPoint injectionPoint,
+        final ServiceDiscovery serviceDiscovery) {
+
+        if (injectionPoint.getAnnotated().getAnnotation(LoadBalanced.class).type() == ROUND_ROBIN) {
+            return new RoundRobin(serviceDiscovery);
+        }
+        return new Random(serviceDiscovery);
     }
 
     @Produces
@@ -71,7 +78,7 @@ public class EurekaProducer {
         String appId = instanceInfo.getApp();
         String instanceId = instanceInfo.getInstanceId();
         serviceLocationConfig.getLocations().forEach(location ->
-                operationFactory.get(RemoveInstanceOperation.class).remove(location, appId, instanceId)
+            operationFactory.get(RemoveInstanceOperation.class).remove(location, appId, instanceId)
         );
     }
 
