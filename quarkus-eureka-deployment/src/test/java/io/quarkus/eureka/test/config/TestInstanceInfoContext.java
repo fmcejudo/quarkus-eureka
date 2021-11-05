@@ -16,6 +16,8 @@
 
 package io.quarkus.eureka.test.config;
 
+import java.util.Map;
+
 import io.quarkus.eureka.config.InstanceInfoContext;
 
 import static java.lang.String.join;
@@ -30,6 +32,7 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
     private final String homePageUrl;
     private final String statusPageUrl;
     private final String healthCheckUrl;
+    private final Map<String, String> metadata;
 
     private TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
                                     String homePageUrl, String statusPageUrl, String healthCheckUrl) {
@@ -41,6 +44,7 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
         this.healthCheckUrl = healthCheckUrl;
         this.hostName = hostName;
         this.instanceId = buildInstanceId();
+        this.metadata = Map.of("context", "/");
     }
 
     public static InstanceInfoContext of(final String name, final int port, final String hostName) {
@@ -94,6 +98,10 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
     @Override
     public String getHealthCheckUrl() {
         return healthCheckUrl;
+    }
+
+    public Map<String, String> getMetadata() {
+        return this.metadata;
     }
 
     private String buildInstanceId() {

@@ -16,6 +16,8 @@
 
 package io.quarkus.eureka.operation.query;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,6 +37,7 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
     private final String homePageUrl;
     private final String ipAddr;
     private final Status status;
+    private final Map<String, String> metadata;
 
     @JsonCreator
     public InstanceResult(@JsonProperty("hostName") final String hostName,
@@ -42,17 +45,19 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
                           @JsonProperty("app") String app,
                           @JsonProperty("homePageUrl") String homePageUrl,
                           @JsonProperty("ipAddr") String ipAddr,
-                          @JsonProperty("status") Status status) {
+                          @JsonProperty("status") Status status,
+                          @JsonProperty("metadata") Map<String,String> metadata) {
         this.instanceId = instanceId;
         this.hostName = hostName;
         this.app = app;
         this.ipAddr = ipAddr;
         this.status = status;
         this.homePageUrl = homePageUrl;
+        this.metadata = metadata;
     }
 
     private InstanceResult(final Status status) {
-        this(null, null, null, null, null, status);
+        this(null, null, null, null, null, status, Map.of());
     }
 
     public static InstanceResult error() {
@@ -87,6 +92,10 @@ public class InstanceResult extends QueryResponse<InstanceResult> {
 
     public String getIpAddr() {
         return ipAddr;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
     public String getInstanceId() {

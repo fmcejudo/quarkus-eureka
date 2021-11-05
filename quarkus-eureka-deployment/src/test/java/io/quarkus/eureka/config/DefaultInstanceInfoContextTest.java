@@ -35,6 +35,7 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.region = "default";
         eurekaRuntimeConfiguration.preferSameZone = true;
         eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
+        eurekaRuntimeConfiguration.contextPath = "/";
     }
 
     @Test

@@ -16,6 +16,9 @@
 
 package io.quarkus.eureka.config;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static java.lang.String.join;
 
 import io.quarkus.eureka.util.HostNameDiscovery;
@@ -30,6 +33,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
     private final String homePageUrl;
     private final String statusPageUrl;
     private final String healthCheckUrl;
+    private final Map<String, String> metadata;
 
     DefaultInstanceInfoContext(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         this.name = eurekaRuntimeConfiguration.name;
@@ -38,10 +42,11 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
         this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
-		this.hostName = eurekaRuntimeConfiguration.preferIpAddress
-				? HostNameDiscovery.getLocalHost()
-				: eurekaRuntimeConfiguration.hostName;
+        this.hostName = eurekaRuntimeConfiguration.preferIpAddress
+            ? HostNameDiscovery.getLocalHost()
+            : eurekaRuntimeConfiguration.hostName;
         this.instanceId = buildInstanceId();
+        this.metadata = new LinkedHashMap<>(Map.of("context", eurekaRuntimeConfiguration.contextPath));
     }
 
     public static InstanceInfoContext withConfiguration(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
@@ -78,6 +83,10 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public String getHealthCheckUrl() {
         return healthCheckUrl;
+    }
+
+    public Map<String, String> getMetadata() {
+        return this.metadata;
     }
 
     private String buildInstanceId() {

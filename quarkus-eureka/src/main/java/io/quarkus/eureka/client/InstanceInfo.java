@@ -19,6 +19,8 @@ package io.quarkus.eureka.client;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.quarkus.eureka.config.InstanceInfoContext;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -55,6 +57,7 @@ public final class InstanceInfo {
     private final PortEnableInfo port;
     private final PortEnableInfo securePort;
     private final DataCenterInfo dataCenterInfo;
+    private final Map<String, String> metadata;
 
     private InstanceInfo(final InstanceInfoContext instanceInfoCtx) {
         this.hostName = instanceInfoCtx.getHostName();
@@ -71,6 +74,7 @@ public final class InstanceInfo {
         this.securePort = PortEnableInfo.of(instanceInfoCtx.getPort(), false);
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
         this.instanceId = instanceInfoCtx.getInstanceId();
+        this.metadata = instanceInfoCtx.getMetadata();
     }
 
     private InstanceInfo(final InstanceInfo instanceInfo, final Status status) {
@@ -88,6 +92,7 @@ public final class InstanceInfo {
         this.securePort = instanceInfo.getSecurePort();
         this.dataCenterInfo = instanceInfo.getDataCenterInfo();
         this.instanceId = instanceInfo.getInstanceId();
+        this.metadata = instanceInfo.getMetadata();
     }
 
     private String buildUrl(final int port, final String resourcePath) {
@@ -159,5 +164,9 @@ public final class InstanceInfo {
 
     public InstanceInfo withStatus(final Status newStatus) {
         return new InstanceInfo(this, newStatus);
+    }
+
+    public Map<String, String> getMetadata() {
+        return this.metadata;
     }
 }
