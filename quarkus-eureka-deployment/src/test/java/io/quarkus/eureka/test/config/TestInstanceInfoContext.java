@@ -35,7 +35,7 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
     private final Map<String, String> metadata;
 
     private TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
-                                    String homePageUrl, String statusPageUrl, String healthCheckUrl) {
+        String homePageUrl, String contextPath, String statusPageUrl, String healthCheckUrl) {
         this.name = name;
         this.port = port;
         this.vipAddress = vipAddress;
@@ -44,19 +44,19 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
         this.healthCheckUrl = healthCheckUrl;
         this.hostName = hostName;
         this.instanceId = buildInstanceId();
-        this.metadata = Map.of("context", "/");
+        this.metadata = Map.of("context", contextPath);
     }
 
     public static InstanceInfoContext of(final String name, final int port, final String hostName) {
 
-        return new TestInstanceInfoContext(name, port, name, hostName, "/", "/info/status", "/info/health");
+        return new TestInstanceInfoContext(name, port, name, hostName, "/", "/", "/info/status", "/info/health");
     }
 
     public static InstanceInfoContext of(final String name, final int port, final String vipAddress,
-                                         final String hostName, final String homePageUrl, final String statusPageUrl,
-                                         final String healthCheckUrl) {
+        final String hostName, final String homePageUrl, final String contextPath,
+        final String statusPageUrl, final String healthCheckUrl) {
         return new TestInstanceInfoContext(
-                name, port, vipAddress, hostName, homePageUrl, statusPageUrl, healthCheckUrl
+            name, port, vipAddress, hostName, homePageUrl, contextPath, statusPageUrl, healthCheckUrl
         );
     }
 
