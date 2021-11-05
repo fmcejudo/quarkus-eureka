@@ -203,7 +203,8 @@ class EurekaRegistrationServiceTest {
                         .withBodyFile("instancesByAppId2.json")
                 ));
 
-        wireMockServer.stubFor(put(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), hostname + ":" + appName + ":" + port)))
+        String instanceId = join(":", hostname, appName, String.valueOf(port));
+        wireMockServer.stubFor(put(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), instanceId)))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200)));
 
         eurekaRegistrationService.register();
@@ -215,7 +216,7 @@ class EurekaRegistrationServiceTest {
         );
 
         wireMockServer.verify(1,
-                putRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), hostname + ":" + appName + ":" + port)))
+                putRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase(), instanceId)))
         );
 
         wireMockServer.verify(0,

@@ -25,6 +25,7 @@ import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import java.util.stream.Stream;
 
 public class ServiceDiscovery {
+
     private final ServiceLocationConfig serviceLocationConfig;
     private final OperationFactory operationFactory;
 
@@ -35,14 +36,23 @@ public class ServiceDiscovery {
 
     public Stream<String> findServiceLocations(final String appId) {
         return serviceLocationConfig.getLocations()
-                .stream()
-                .map(location ->
-                        operationFactory.get(MultipleInstanceQueryOperation.class)
-                                .findInstance(location, appId.toUpperCase())
-                )
-                .filter(ApplicationResult::success)
-                .flatMap(applicationResult ->
-                        applicationResult.getInstanceResults().stream().map(InstanceResult::getHomePageUrl)
-                );
+            .stream()
+            .map(location ->
+                operationFactory.get(MultipleInstanceQueryOperation.class)
+                    .findInstance(location, appId.toUpperCase())
+            )
+            .filter(ApplicationResult::success)
+            .flatMap(applicationResult ->
+                applicationResult.getInstanceResults().stream().map(this::getBaseUrl)
+            );
+    }
+
+    private String getBaseUrl(final InstanceResult instanceResult) {
+        String contextPath = instanceResult.getMetadata().getOrDefault("context", "/");
+        String homePageUrl = instanceResult.getHomePageUrl();
+        if (homePageUrl.endsWith("/")) {
+            homePageUrl = homePageUrl.substring(0, homePageUrl.length() - 1);
+        }
+        return homePageUrl.concat(contextPath);
     }
 }

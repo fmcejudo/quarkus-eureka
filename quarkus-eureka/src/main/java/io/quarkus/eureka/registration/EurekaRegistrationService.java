@@ -99,7 +99,7 @@ public class EurekaRegistrationService {
             try {
                 return new RegistrationFlow(statusSupplier.get());
             } catch (Exception e) {
-                // We need to log the errors in this thread, as this is inside of an Executor which is not bind to
+                // We need to log the errors in this thread, as this is inside an Executor which is not bind to
                 // the main thread
                 LOGGER.warning(e.getMessage());
                 throw e;
