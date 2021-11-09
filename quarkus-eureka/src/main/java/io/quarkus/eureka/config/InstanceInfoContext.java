@@ -16,6 +16,8 @@
 
 package io.quarkus.eureka.config;
 
+import java.util.Map;
+
 public interface InstanceInfoContext {
 
     String getName();
@@ -26,4 +28,5 @@ public interface InstanceInfoContext {
     String getHomePageUrl();
     String getStatusPageUrl();
     String getHealthCheckUrl();
+    Map<String, String> getMetadata();
 }

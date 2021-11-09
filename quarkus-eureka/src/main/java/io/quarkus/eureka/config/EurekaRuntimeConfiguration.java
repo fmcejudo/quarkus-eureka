@@ -47,6 +47,12 @@ public class EurekaRuntimeConfiguration {
     String name;
 
     /**
+     * base-path where the application resides
+     */
+    @ConfigItem(defaultValue = "${quarkus.http.root-path:/}")
+    String contextPath;
+
+    /**
      * Name used by load balancer to redirect to the service
      */
     @ConfigItem(defaultValue = "${quarkus.application.name}")

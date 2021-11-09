@@ -16,6 +16,9 @@
 
 package io.quarkus.eureka;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
@@ -28,7 +31,6 @@ import io.quarkus.eureka.operation.register.RegisterOperation;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
-import org.jboss.logging.Logger;
 
 import javax.ws.rs.ProcessingException;
 
@@ -38,7 +40,7 @@ import static java.util.Arrays.asList;
 @Recorder
 public class EurekaRecorder {
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public void registerServiceInEureka(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
                                         final BeanContainer beanContainer) {
@@ -60,9 +62,9 @@ public class EurekaRecorder {
                     .register();
 
             } catch (ProcessingException ex) {
-                logger.error("error connecting with eureka registry service", ex.getCause());
+                logger.log(Level.SEVERE, "error connecting with eureka registry service", ex);
             } catch (Exception ex) {
-                logger.error(ex);
+                logger.log(Level.SEVERE, "error registering eureka", ex);
                 throw new RuntimeException(ex);
             }
         }
