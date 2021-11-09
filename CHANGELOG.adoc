@@ -12,6 +12,21 @@ straightforward as possible.
 ### Changed
  
 ### Fixed
+
+## [0.0.14] - 2021-11-10
+
+
+### Added
+
+- [EUREKA USING CONTEXT-PATH METADATA] (https://github.com/fmcejudo/quarkus-eureka/issues/35)
+MINOR Add a new property named `quarkus.eureka.context-path` to enable redirect to application path as defined.
+- [BUMP UP JAVA VERSION]
+MEDIUM Bump up java version from 8 to 11
+
+### Changed
+
+### Fixed
+
  
 ## [0.0.12] - 2021-05-26
   
