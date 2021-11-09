@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import org.jboss.logging.Logger;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.ProcessingException;
@@ -30,6 +29,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
 import static java.lang.String.format;
@@ -40,7 +40,7 @@ import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 public class RegisterOperation extends AbstractOperation {
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     public void register(final Location location, final InstanceInfo instanceInfo) {
         String path = String.join("/", "apps", instanceInfo.getApp());

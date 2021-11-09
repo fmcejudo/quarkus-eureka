@@ -16,8 +16,9 @@
 
 package io.quarkus.eureka;
 
+import java.util.logging.Logger;
+
 import io.quarkus.runtime.annotations.Recorder;
-import org.jboss.logging.Logger;
 
 @Recorder
 public class EurekaInfoRecorder {
