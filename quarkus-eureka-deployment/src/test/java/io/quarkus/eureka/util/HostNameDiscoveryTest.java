@@ -19,14 +19,19 @@ package io.quarkus.eureka.util;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HostNameDiscoveryTest {
@@ -48,20 +53,33 @@ class HostNameDiscoveryTest {
 
     @Test
     public void shouldSkipNetworkInterface() throws Exception {
-        //Given && When
-        final List<String> ignoredNetworkInterfaceNames = List.of("eth0", "en0");
+        //Given
+        List<NetworkInterface> existingNetworkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 
-        String skipIpAddress = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
-                .filter(ni -> ignoredNetworkInterfaceNames.contains(ni.getDisplayName()))
-                .findFirst().map(ni -> ni.getInetAddresses().nextElement().getHostAddress())
-                .orElseThrow(() -> new RuntimeException(
-                        format("none of the coming network interface names are found in your computer: %s",
-                                String.join(",", ignoredNetworkInterfaceNames))
-                ));
+        Predicate<NetworkInterface> isLoopbackInterface = ni -> {
+            try {
+                return ni.isLoopback();
+            } catch (Exception exception) {
+                return false;
+            }
+        };
 
-        String anotherIpAddress = HostNameDiscovery.getHostname(List.of("en0"));
+        NetworkInterface loopbackInterfaceName = existingNetworkInterfaces.stream()
+                .filter(isLoopbackInterface)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("there is not loopback interface"));
+
+        List<String> nonLoopbackInterfaces = existingNetworkInterfaces.stream()
+                .filter(not(isLoopbackInterface))
+                .map(NetworkInterface::getDisplayName)
+                .collect(Collectors.toList());
+
+        //When
+        String nonLoopbackInterface = HostNameDiscovery.getHostname(List.of(loopbackInterfaceName.getDisplayName()));
+        HostNameDiscovery.resetHostname();
+        String loopbackInterface = HostNameDiscovery.getHostname(nonLoopbackInterfaces);
 
         //Then
-        Assertions.assertThat(anotherIpAddress).isNotEqualTo(skipIpAddress);
+        Assertions.assertThat(nonLoopbackInterface).isNotEqualTo(loopbackInterface);
     }
 }
