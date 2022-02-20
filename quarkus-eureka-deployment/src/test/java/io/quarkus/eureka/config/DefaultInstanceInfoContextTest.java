@@ -22,6 +22,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultInstanceInfoContextTest {
@@ -38,10 +46,6 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.preferSameZone = true;
         eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
         eurekaRuntimeConfiguration.contextPath = "/";
-    }
-
-    @AfterEach
-    void tearDown() {
         HostNameDiscovery.resetHostname();
     }
 
@@ -107,5 +111,33 @@ class DefaultInstanceInfoContextTest {
                 .isNotNull()
                 .doesNotStartWith("127.")
                 .matches("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
+    }
+
+    @Test
+    void shouldIgnoreDefaultNetworkInterface() throws Exception {
+        // Given
+        Predicate<NetworkInterface> isLoopbackInterface = ni -> {
+            try {
+                return ni.isLoopback();
+            } catch (Exception exception) {
+                return false;
+            }
+        };
+
+        List<String> nonLoopbackInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
+                .filter(not(isLoopbackInterface))
+                .map(NetworkInterface::getDisplayName)
+                .collect(Collectors.toList());
+
+        eurekaRuntimeConfiguration.preferIpAddress = true;
+        eurekaRuntimeConfiguration.ignoreNetworkInterfaces = String.join(",", nonLoopbackInterfaces);
+
+        // When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        // Then
+        assertThat(instanceInfoContext.getHostName())
+                .isNotNull()
+                .isEqualTo("127.0.0.1");
     }
 }
