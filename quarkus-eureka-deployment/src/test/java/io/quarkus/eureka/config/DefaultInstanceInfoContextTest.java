@@ -23,8 +23,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Map;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultInstanceInfoContextTest {
@@ -43,10 +51,6 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
         eurekaRuntimeConfiguration.contextPath = "/";
         eurekaRuntimeConfiguration.healthCheckInitialDelay = HEALTH_CHECK_INITIAL_DELAY_DEFAULT;
-    }
-
-    @AfterEach
-    void tearDown() {
         HostNameDiscovery.resetHostname();
     }
 
@@ -115,6 +119,36 @@ class DefaultInstanceInfoContextTest {
     }
 
     @Test
+    void shouldIgnoreDefaultNetworkInterface() throws Exception {
+        // Given
+        Predicate<NetworkInterface> isLoopbackInterface = ni -> {
+            try {
+                return ni.isLoopback();
+            } catch (Exception exception) {
+                return false;
+            }
+        };
+
+        List<String> nonLoopbackInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
+                .filter(not(isLoopbackInterface))
+                .map(NetworkInterface::getDisplayName)
+                .collect(Collectors.toList());
+
+        eurekaRuntimeConfiguration.preferIpAddress = true;
+        eurekaRuntimeConfiguration.ignoreNetworkInterfaces = String.join(",", nonLoopbackInterfaces);
+
+        // When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        // Then
+        assertThat(instanceInfoContext.getHostName())
+                .isNotNull()
+                .isEqualTo("127.0.0.1");
+        Assertions.assertThat(instanceInfoContext.getMetadata()).isNotEmpty();
+    }
+
+    
+    @Test
     void shouldRegisterMetadata() {
         //Given
         eurekaRuntimeConfiguration.metadata = Map.of("tag", "v1", "app", "test-app");
@@ -142,7 +176,7 @@ class DefaultInstanceInfoContextTest {
         assertThat(eurekaRuntimeConfiguration.metadata).isNull();
         Assertions.assertThat(instanceInfoContext.getMetadata()).isNotEmpty();
     }
-
+    
     @Test
     void shouldRegisterHealthCheckInitialDelay() {
         final long expected = HEALTH_CHECK_INITIAL_DELAY_DEFAULT + 4L;
