@@ -26,7 +26,7 @@ link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your ow
 
 The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
 
-The most recent quarkus version at the time, from which this extension has been built, is `2.4.1.Final`.
+The most recent quarkus version at the time, from which this extension has been built, is `2.7.1.Final`.
 
 The java version used to implement such plugin is java 11.
 
@@ -91,6 +91,7 @@ quarkus.eureka.region=default
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
 quarkus.eureka.metadata.<tag-key>=<tag value> #These keys values will be shown in Eureka registry if available i.e.: jhipster-registry
+quarkus.eureka.ignore-network-interfaces=<comma separated list of network interface names to ignore, default: none>
 quarkus.eureka.health-check-initial-delay= <delay in seconds before initially checking health before registration. Default 3>
 ----
 
@@ -109,6 +110,7 @@ quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.should-use-dns=false
 quarkus.eureka.service-url.default=http://localhost:8761/eureka
 quarkus.eureka.metadata.app-key=my-quarkus-app
+quarkus.eureka.ignore-network-interfaces=lo0
 ----
 
 Having as default values for remaining properties the following:
