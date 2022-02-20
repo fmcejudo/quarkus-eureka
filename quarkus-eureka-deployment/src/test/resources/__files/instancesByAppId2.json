@@ -3,10 +3,10 @@
     "name": "SAMPLE",
     "instance": [
       {
-        "instanceId": "127.0.0.1:sample:8002",
-        "hostName": "127.0.0.1",
+        "instanceId": "<hostname>:sample:8002",
+        "hostName": "<hostname>",
         "app": "SAMPLE",
-        "ipAddr": "127.0.0.1",
+        "ipAddr": "<hostname>",
         "status": "UP",
         "overriddenStatus": "UNKNOWN",
         "port": {
@@ -33,9 +33,9 @@
         "metadata": {
           "management.port": "8002"
         },
-        "homePageUrl": "http://127.0.0.1:8002/",
-        "statusPageUrl": "http://127.0.0.1:8002/actuator/info",
-        "healthCheckUrl": "http://127.0.0.1:8002/actuator/health",
+        "homePageUrl": "http://<hostname>:8002/",
+        "statusPageUrl": "http://<hostname>:8002/actuator/info",
+        "healthCheckUrl": "http://<hostname>:8002/actuator/health",
         "vipAddress": "SAMPLE",
         "secureVipAddress": "SAMPLE",
         "isCoordinatingDiscoveryServer": "false",

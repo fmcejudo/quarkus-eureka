@@ -24,14 +24,23 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.function.Predicate.not;
+
 public class HostNameDiscovery {
 
     private static String HOSTNAME;
 
     public static String getHostname() {
+        return getHostname(List.of());
+    }
+
+    public static String getHostname(List<String> ignoreNetworkInterfaces) {
         if (HOSTNAME == null || HOSTNAME.trim().equals("")) {
             HOSTNAME = HostNameDiscovery.getNetworkInterfaces().stream()
                     .filter(HostNameDiscovery::hasBroadcast)
+                    .filter(not(networkInterface ->
+                            ignoreNetworkInterfaces.contains(networkInterface.getDisplayName())
+                    ))
                     .map(HostNameDiscovery::extractHostname)
                     .findFirst()
                     .orElseGet(HostNameDiscovery::getLocalHost);
@@ -39,7 +48,7 @@ public class HostNameDiscovery {
         return HOSTNAME;
     }
 
-    public static String getLocalHost() {
+    private static String getLocalHost() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
@@ -68,5 +77,9 @@ public class HostNameDiscovery {
                 .findFirst().map(InterfaceAddress::getAddress)
                 .map(InetAddress::getHostName)
                 .orElseThrow(() -> new RuntimeException("what, there is no broadcast ip"));
+    }
+
+    public static void resetHostname() {
+        HOSTNAME = null;
     }
 }

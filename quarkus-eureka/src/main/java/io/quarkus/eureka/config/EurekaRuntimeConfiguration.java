@@ -16,12 +16,9 @@
 
 package io.quarkus.eureka.config;
 
-import io.quarkus.eureka.util.HostNameDiscovery;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
-import io.quarkus.runtime.annotations.ConvertWith;
-import org.eclipse.microprofile.config.spi.Converter;
 
 import java.util.Map;
 
@@ -61,13 +58,18 @@ public class EurekaRuntimeConfiguration {
     /**
      * The hostname, otherwise it will be guest from OS primitives
      */
-    @ConvertWith(NetworkConverter.class)
-    @ConfigItem
+    @ConfigItem(defaultValue = "default")
     String hostName;
 
-	/**
-	 * Determines if the local ip address should be used instead of the hostName.
-	 */
+    /**
+     * The hostname, otherwise it will be guest from OS primitives
+     */
+    @ConfigItem(defaultValue = "none")
+    String ignoreNetworkInterfaces;
+
+    /**
+     * Determines if the local ip address should be used instead of the hostName.
+     */
     @ConfigItem
     boolean preferIpAddress;
 
@@ -106,17 +108,4 @@ public class EurekaRuntimeConfiguration {
      */
     @ConfigItem(defaultValue = "/info/health")
     String healthCheckUrl;
-
-    public static class NetworkConverter implements Converter<String> {
-		private static final long serialVersionUID = -423310887944694372L;
-
-		@Override
-        public String convert(final String hostname) {
-            if (hostname != null && !hostname.trim().isEmpty()) {
-                return hostname;
-            }
-            return HostNameDiscovery.getHostname();
-        }
-    }
-
 }

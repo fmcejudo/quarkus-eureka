@@ -16,17 +16,52 @@
 
 package io.quarkus.eureka.util;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HostNameDiscoveryTest {
 
+    @BeforeEach
+    void setUp() {
+        HostNameDiscovery.resetHostname();
+    }
+
     @Test
     @DisplayName("it should find a host ip")
     public void shouldReturnAHostAddress() {
+        //Given && When
         String hostname = HostNameDiscovery.getHostname();
+
+        //Then
         assertThat(hostname).doesNotContain(":");
+    }
+
+    @Test
+    public void shouldSkipNetworkInterface() throws Exception {
+        //Given && When
+        final List<String> ignoredNetworkInterfaceNames = List.of("eth0", "en0");
+
+        String skipIpAddress = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
+                .filter(ni -> ignoredNetworkInterfaceNames.contains(ni.getDisplayName()))
+                .findFirst().map(ni -> ni.getInetAddresses().nextElement().getHostAddress())
+                .orElseThrow(() -> new RuntimeException(
+                        format("none of the coming network interface names are found in your computer: %s",
+                                String.join(",", ignoredNetworkInterfaceNames))
+                ));
+
+        String anotherIpAddress = HostNameDiscovery.getHostname(List.of("en0"));
+
+        //Then
+        Assertions.assertThat(anotherIpAddress).isNotEqualTo(skipIpAddress);
     }
 }
