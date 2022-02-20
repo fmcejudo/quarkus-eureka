@@ -23,4 +23,5 @@
 <suppressions>
     <suppress checks="JavadocPackage" files="io[\\/]quarkus[\\/]eureka[\\/]"/>
     <suppress checks="RegexpHeader" files="io[\\/]quarkus[\\/]eureka[\\/]"/>
+    <suppress files="[/\\]target[/\\]" checks=".*"/>
 </suppressions>

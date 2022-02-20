@@ -18,7 +18,9 @@ package io.quarkus.eureka.config;
 
 import io.quarkus.eureka.util.HostNameDiscovery;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -41,6 +43,11 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
         eurekaRuntimeConfiguration.contextPath = "/";
         eurekaRuntimeConfiguration.healthCheckInitialDelay = HEALTH_CHECK_INITIAL_DELAY_DEFAULT;
+    }
+
+    @AfterEach
+    void tearDown() {
+        HostNameDiscovery.resetHostname();
     }
 
     @Test
@@ -101,7 +108,10 @@ class DefaultInstanceInfoContextTest {
         InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
-        assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getLocalHost());
+        assertThat(instanceInfoContext.getHostName())
+                .isNotNull()
+                .doesNotStartWith("127.")
+                .matches("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
     }
 
     @Test

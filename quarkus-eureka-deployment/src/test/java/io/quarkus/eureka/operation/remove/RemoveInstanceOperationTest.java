@@ -44,7 +44,7 @@ class RemoveInstanceOperationTest {
         this.wireMockServer = new WireMockServer(8002);
         wireMockServer.start();
 
-        this.serverUrl = String.format("http://localhost:%d", wireMockServer.port());
+        this.serverUrl = String.format("http://%s:%d", getHostname(), wireMockServer.port());
 
     }
 

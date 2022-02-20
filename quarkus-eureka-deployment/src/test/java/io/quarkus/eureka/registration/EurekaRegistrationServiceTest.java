@@ -27,24 +27,19 @@ import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 import io.quarkus.eureka.test.config.TestInstanceInfoContext;
+import io.quarkus.eureka.util.HostNameDiscovery;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.quarkus.eureka.util.HostNameDiscovery.getHostname;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
@@ -57,7 +52,7 @@ class EurekaRegistrationServiceTest {
 
     private final String appName = "sample";
 
-    private final static String hostname = "127.0.0.1";
+    private final static String hostname = getHostname();
 
     private final int port = 8002;
 
@@ -187,20 +182,23 @@ class EurekaRegistrationServiceTest {
 
     }
 
-
     @Test
-    void shouldHaveServiceRegistered() {
+    @DisplayName("it should have service registered and only requires to update it`")
+    void shouldHaveServiceRegistered() throws Exception {
         logger.info("shouldHaveServiceRegistered test.");
         wireMockServer.stubFor(get(urlEqualTo("/info/health"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBody("{\"status\" : \"up\"}")));
 
+        Path registeredAppInfoPath = Path.of("src", "test", "resources", "__files").resolve("instancesByAppId2.json");
+        String registeredAppInfoContent = Files.readString(registeredAppInfoPath).replace("<hostname>", getHostname());
+
         wireMockServer.stubFor(get(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withStatus(200)
-                        .withBodyFile("instancesByAppId2.json")
+                        .withBody(registeredAppInfoContent)
                 ));
 
         String instanceId = join(":", hostname, appName, String.valueOf(port));
@@ -223,5 +221,4 @@ class EurekaRegistrationServiceTest {
                 postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase())))
         );
     }
-
 }

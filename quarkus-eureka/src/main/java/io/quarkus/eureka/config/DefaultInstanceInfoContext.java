@@ -19,6 +19,7 @@ package io.quarkus.eureka.config;
 import io.quarkus.eureka.util.HostNameDiscovery;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -43,7 +44,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
         this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
-        this.hostName = selectedHostname(eurekaRuntimeConfiguration);
+        this.hostName = resolveHostname(eurekaRuntimeConfiguration);
         this.instanceId = buildInstanceId();
         this.metadata = composeMetadata(eurekaRuntimeConfiguration);
         this.healthCheckInitialDelay = eurekaRuntimeConfiguration.healthCheckInitialDelay;
@@ -65,6 +66,24 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public static InstanceInfoContext withConfiguration(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         return new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+    }
+
+    private static String resolveHostname(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+
+        if (eurekaRuntimeConfiguration.preferIpAddress || eurekaRuntimeConfiguration.hostName.equals("default")) {
+            if (hasDefinedIgnoredInterfaces(eurekaRuntimeConfiguration)) {
+                List<String> ignoredInterfaces = List.of(eurekaRuntimeConfiguration.ignoreNetworkInterfaces.split(","));
+                return HostNameDiscovery.getHostname(ignoredInterfaces);
+            }
+            return HostNameDiscovery.getHostname();
+        }
+
+        return eurekaRuntimeConfiguration.hostName;
+    }
+
+    private static boolean hasDefinedIgnoredInterfaces(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        return eurekaRuntimeConfiguration.ignoreNetworkInterfaces != null &&
+                !"none".equals(eurekaRuntimeConfiguration.ignoreNetworkInterfaces);
     }
 
     public String getName() {
