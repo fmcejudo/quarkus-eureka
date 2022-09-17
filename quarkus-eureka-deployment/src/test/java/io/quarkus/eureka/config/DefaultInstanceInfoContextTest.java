@@ -20,6 +20,8 @@ import io.quarkus.eureka.util.HostNameDiscovery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultInstanceInfoContextTest {
@@ -97,5 +99,30 @@ class DefaultInstanceInfoContextTest {
 
         //Then
         assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getLocalHost());
+    }
+
+    @Test
+    void shouldRegisterMetadata() {
+        //Given
+        eurekaRuntimeConfiguration.metadata = Map.of("tag", "v1", "app", "test-app");
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getMetadata())
+                .containsEntry("context", "/")
+                .containsEntry("tag", "v1")
+                .containsEntry("app", "test-app");
+    }
+
+    @Test
+    void shouldRegisterDefaultMetadata() {
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getMetadata())
+                .containsEntry("context", "/").doesNotContainKey("tag").doesNotContainKey("app");
     }
 }

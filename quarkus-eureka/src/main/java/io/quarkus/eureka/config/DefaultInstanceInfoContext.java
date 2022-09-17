@@ -16,12 +16,12 @@
 
 package io.quarkus.eureka.config;
 
+import io.quarkus.eureka.util.HostNameDiscovery;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
-
-import io.quarkus.eureka.util.HostNameDiscovery;
 
 public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
@@ -42,11 +42,23 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
         this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
         this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
-        this.hostName = eurekaRuntimeConfiguration.preferIpAddress
-            ? HostNameDiscovery.getLocalHost()
-            : eurekaRuntimeConfiguration.hostName;
+        this.hostName = selectedHostname(eurekaRuntimeConfiguration);
         this.instanceId = buildInstanceId();
-        this.metadata = new LinkedHashMap<>(Map.of("context", eurekaRuntimeConfiguration.contextPath));
+        this.metadata = composeMetadata(eurekaRuntimeConfiguration);
+    }
+
+    private String selectedHostname(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        if (eurekaRuntimeConfiguration.preferIpAddress) return HostNameDiscovery.getLocalHost();
+        return eurekaRuntimeConfiguration.hostName;
+    }
+
+    private Map<String, String> composeMetadata(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (eurekaRuntimeConfiguration.metadata != null) {
+            result.putAll(eurekaRuntimeConfiguration.metadata);
+        }
+        result.putIfAbsent("context", eurekaRuntimeConfiguration.contextPath);
+        return result;
     }
 
     public static InstanceInfoContext withConfiguration(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
