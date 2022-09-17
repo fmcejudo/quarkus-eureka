@@ -17,6 +17,7 @@
 package io.quarkus.eureka.config;
 
 import io.quarkus.eureka.util.HostNameDiscovery;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -114,6 +115,8 @@ class DefaultInstanceInfoContextTest {
                 .containsEntry("context", "/")
                 .containsEntry("tag", "v1")
                 .containsEntry("app", "test-app");
+        Assertions.assertThat(eurekaRuntimeConfiguration.metadata).isNotEmpty();
+        
     }
 
     @Test
@@ -124,5 +127,7 @@ class DefaultInstanceInfoContextTest {
         //Then
         assertThat(instanceInfoContext.getMetadata())
                 .containsEntry("context", "/").doesNotContainKey("tag").doesNotContainKey("app");
+        assertThat(eurekaRuntimeConfiguration.metadata).isNull();
+        Assertions.assertThat(instanceInfoContext.getMetadata()).isNotEmpty();
     }
 }
