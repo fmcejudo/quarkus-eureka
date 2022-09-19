@@ -96,6 +96,12 @@ public class EurekaRuntimeConfiguration {
     String homePageUrl;
 
     /**
+     * some extra tags which identifies app
+     */
+    @ConfigItem
+    Map<String, String> metadata;
+
+    /**
      * Check the application state
      */
     @ConfigItem(defaultValue = "/info/status")

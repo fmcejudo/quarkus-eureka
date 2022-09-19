@@ -17,8 +17,11 @@
 package io.quarkus.eureka.config;
 
 import io.quarkus.eureka.util.HostNameDiscovery;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,5 +100,34 @@ class DefaultInstanceInfoContextTest {
 
         //Then
         assertThat(instanceInfoContext.getHostName()).isEqualTo(HostNameDiscovery.getLocalHost());
+    }
+
+    @Test
+    void shouldRegisterMetadata() {
+        //Given
+        eurekaRuntimeConfiguration.metadata = Map.of("tag", "v1", "app", "test-app");
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getMetadata())
+                .containsEntry("context", "/")
+                .containsEntry("tag", "v1")
+                .containsEntry("app", "test-app");
+        Assertions.assertThat(eurekaRuntimeConfiguration.metadata).isNotEmpty();
+        
+    }
+
+    @Test
+    void shouldRegisterDefaultMetadata() {
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getMetadata())
+                .containsEntry("context", "/").doesNotContainKey("tag").doesNotContainKey("app");
+        assertThat(eurekaRuntimeConfiguration.metadata).isNull();
+        Assertions.assertThat(instanceInfoContext.getMetadata()).isNotEmpty();
     }
 }

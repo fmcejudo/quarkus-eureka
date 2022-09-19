@@ -90,6 +90,7 @@ quarkus.eureka.health-check-url= <saying if you application is alive and kicking
 quarkus.eureka.region=default
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
+quarkus.eureka.metadata.<tag-key>=<tag value> #These keys values will be shown in Eureka registry if available i.e.: jhipster-registry
 ----
 
 i.e: Given a `sample` application, your configuration properties to work with quarkus-eureka looks like:
@@ -106,6 +107,7 @@ quarkus.eureka.region=default
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.should-use-dns=false
 quarkus.eureka.service-url.default=http://localhost:8761/eureka
+quarkus.eureka.metadata.app-key=my-quarkus-app
 ----
 
 Having as default values for remaining properties the following:
