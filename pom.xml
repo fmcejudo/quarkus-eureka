@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka-parent</artifactId>
-    <version>0.0.15</version>
+    <version>0.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>quarkus-eureka-parent</name>
     <description>Quarkus plugin to integrate with Eureka Server</description>
@@ -317,7 +317,7 @@
         <url>https://github.com/fmcejudo/quarkus-eureka</url>
         <developerConnection>scm:git:git@github.com:fmcejudo/quarkus-eureka.git</developerConnection>
         <connection>scm:git:git@github.com:fmcejudo/quarkus-eureka.git</connection>
-        <tag>quarkus-eureka-parent-0.0.15</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
