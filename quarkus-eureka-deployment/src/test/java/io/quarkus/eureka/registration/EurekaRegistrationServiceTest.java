@@ -82,7 +82,7 @@ class EurekaRegistrationServiceTest {
         wireMockServer.start();
 
         InstanceInfoContext instanceInfoContext = TestInstanceInfoContext.of(
-                appName, port, appName, hostname, "/", "/v1", "/info/status", "/info/health"
+                appName, port, appName, hostname, "/", "/v1", "/info/status", "/info/health", 3L
         );
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
         registerOperation = new RegisterOperation();

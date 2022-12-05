@@ -39,7 +39,8 @@ import static java.lang.String.format;
         "secureHealthCheckUrl",
         "port",
         "securePort",
-        "dataCenterInfo"
+        "dataCenterInfo",
+        "healthCheckInitialDelay"
 })
 public final class InstanceInfo {
 
@@ -58,6 +59,7 @@ public final class InstanceInfo {
     private final PortEnableInfo securePort;
     private final DataCenterInfo dataCenterInfo;
     private final Map<String, String> metadata;
+    private final long healthCheckInitialDelay;
 
     private InstanceInfo(final InstanceInfoContext instanceInfoCtx) {
         this.hostName = instanceInfoCtx.getHostName();
@@ -75,6 +77,7 @@ public final class InstanceInfo {
         this.dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
         this.instanceId = instanceInfoCtx.getInstanceId();
         this.metadata = instanceInfoCtx.getMetadata();
+        this.healthCheckInitialDelay = instanceInfoCtx.getHealthCheckInitialDelay();
     }
 
     private InstanceInfo(final InstanceInfo instanceInfo, final Status status) {
@@ -93,6 +96,7 @@ public final class InstanceInfo {
         this.dataCenterInfo = instanceInfo.getDataCenterInfo();
         this.instanceId = instanceInfo.getInstanceId();
         this.metadata = instanceInfo.getMetadata();
+        this.healthCheckInitialDelay = instanceInfo.getHealthCheckInitialDelay();
     }
 
     private String buildUrl(final int port, final String resourcePath) {
@@ -169,4 +173,9 @@ public final class InstanceInfo {
     public Map<String, String> getMetadata() {
         return this.metadata;
     }
+
+    public long getHealthCheckInitialDelay() {
+        return healthCheckInitialDelay;
+    }
+
 }

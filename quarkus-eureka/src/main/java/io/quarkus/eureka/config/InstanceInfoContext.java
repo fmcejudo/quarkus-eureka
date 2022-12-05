@@ -29,4 +29,5 @@ public interface InstanceInfoContext {
     String getStatusPageUrl();
     String getHealthCheckUrl();
     Map<String, String> getMetadata();
+    long getHealthCheckInitialDelay();
 }
