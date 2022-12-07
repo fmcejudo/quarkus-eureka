@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultInstanceInfoContextTest {
 
     private EurekaRuntimeConfiguration eurekaRuntimeConfiguration;
+    private static final long HEALTH_CHECK_INITIAL_DELAY_DEFAULT = 3L;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +40,7 @@ class DefaultInstanceInfoContextTest {
         eurekaRuntimeConfiguration.preferSameZone = true;
         eurekaRuntimeConfiguration.hostName = HostNameDiscovery.getHostname();
         eurekaRuntimeConfiguration.contextPath = "/";
+        eurekaRuntimeConfiguration.healthCheckInitialDelay = HEALTH_CHECK_INITIAL_DELAY_DEFAULT;
     }
 
     @Test
@@ -129,5 +131,32 @@ class DefaultInstanceInfoContextTest {
                 .containsEntry("context", "/").doesNotContainKey("tag").doesNotContainKey("app");
         assertThat(eurekaRuntimeConfiguration.metadata).isNull();
         Assertions.assertThat(instanceInfoContext.getMetadata()).isNotEmpty();
+    }
+
+    @Test
+    void shouldRegisterHealthCheckInitialDelay() {
+        final long expected = HEALTH_CHECK_INITIAL_DELAY_DEFAULT + 4L;
+
+        //Given
+        eurekaRuntimeConfiguration.healthCheckInitialDelay = expected;
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getHealthCheckInitialDelay())
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void shouldRegisterDefaultHealthCheckInitialDelay() {
+        final long expected = HEALTH_CHECK_INITIAL_DELAY_DEFAULT;
+
+        //When
+        InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
+
+        //Then
+        assertThat(instanceInfoContext.getHealthCheckInitialDelay())
+                .isEqualTo(expected);
     }
 }
