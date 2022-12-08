@@ -113,6 +113,12 @@ public class EurekaRuntimeConfiguration {
     @ConfigItem(defaultValue = "/info/health")
     String healthCheckUrl;
 
+    /**
+     * Initial delay in seconds for health check before eureka registration
+     */
+    @ConfigItem(defaultValue = "3")
+    long healthCheckInitialDelay;
+
     public static class NetworkConverter implements Converter<String> {
 		private static final long serialVersionUID = -423310887944694372L;
 

@@ -82,7 +82,7 @@ public class EurekaRegistrationService {
                 ).isNotRegistered(
                         queryResponse ->
                                 operationFactory.get(RegisterOperation.class).register(location, instanceInfo)
-                ), 3L, 40L, TimeUnit.SECONDS));
+                ), instanceInfo.getHealthCheckInitialDelay(), 40L, TimeUnit.SECONDS));
     }
 
     private static class RegistrationFlow {

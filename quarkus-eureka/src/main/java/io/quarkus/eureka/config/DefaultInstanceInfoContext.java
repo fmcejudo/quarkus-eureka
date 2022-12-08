@@ -34,6 +34,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
     private final String statusPageUrl;
     private final String healthCheckUrl;
     private final Map<String, String> metadata;
+    private final long healthCheckInitialDelay;
 
     DefaultInstanceInfoContext(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         this.name = eurekaRuntimeConfiguration.name;
@@ -45,6 +46,7 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.hostName = selectedHostname(eurekaRuntimeConfiguration);
         this.instanceId = buildInstanceId();
         this.metadata = composeMetadata(eurekaRuntimeConfiguration);
+        this.healthCheckInitialDelay = eurekaRuntimeConfiguration.healthCheckInitialDelay;
     }
 
     private String selectedHostname(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
@@ -99,6 +101,10 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
 
     public Map<String, String> getMetadata() {
         return this.metadata;
+    }
+
+    public long getHealthCheckInitialDelay() {
+        return healthCheckInitialDelay;
     }
 
     private String buildInstanceId() {

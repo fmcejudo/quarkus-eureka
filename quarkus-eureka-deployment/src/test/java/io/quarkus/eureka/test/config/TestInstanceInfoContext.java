@@ -33,9 +33,10 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
     private final String statusPageUrl;
     private final String healthCheckUrl;
     private final Map<String, String> metadata;
+    private final long healthCheckInitialDelay;
 
     private TestInstanceInfoContext(String name, int port, String vipAddress, String hostName,
-        String homePageUrl, String contextPath, String statusPageUrl, String healthCheckUrl) {
+        String homePageUrl, String contextPath, String statusPageUrl, String healthCheckUrl, long healthCheckInitialDelay) {
         this.name = name;
         this.port = port;
         this.vipAddress = vipAddress;
@@ -45,18 +46,19 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
         this.hostName = hostName;
         this.instanceId = buildInstanceId();
         this.metadata = Map.of("context", contextPath);
+        this.healthCheckInitialDelay = healthCheckInitialDelay;
     }
 
     public static InstanceInfoContext of(final String name, final int port, final String hostName) {
 
-        return new TestInstanceInfoContext(name, port, name, hostName, "/", "/", "/info/status", "/info/health");
+        return new TestInstanceInfoContext(name, port, name, hostName, "/", "/", "/info/status", "/info/health", 3L);
     }
 
     public static InstanceInfoContext of(final String name, final int port, final String vipAddress,
         final String hostName, final String homePageUrl, final String contextPath,
-        final String statusPageUrl, final String healthCheckUrl) {
+        final String statusPageUrl, final String healthCheckUrl, final long healthCheckInitialDelay) {
         return new TestInstanceInfoContext(
-            name, port, vipAddress, hostName, homePageUrl, contextPath, statusPageUrl, healthCheckUrl
+            name, port, vipAddress, hostName, homePageUrl, contextPath, statusPageUrl, healthCheckUrl, healthCheckInitialDelay
         );
     }
 
@@ -106,5 +108,10 @@ public class TestInstanceInfoContext implements InstanceInfoContext {
 
     private String buildInstanceId() {
         return join(":", this.getHostName(), this.getName(), String.valueOf(this.getPort())).toLowerCase();
+    }
+
+    @Override
+    public long getHealthCheckInitialDelay() {
+        return healthCheckInitialDelay;
     }
 }

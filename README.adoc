@@ -77,7 +77,7 @@ your quarkus `application.properties`:
 
 [source,properties]
 ----
-quarkus.eureka.enable=<boolean to tell the application wheter register or not in Eureka. Default to true>
+quarkus.eureka.enable=<boolean to tell the application wether to register or not in Eureka. Default to true>
 quarkus.eureka.port= <your application port, it should match with quarkus.http.port. If it does not exist,it takes quarkus.http.port>
 quarkus.eureka.hostname= <your application address. By default the host where the application has started up>
 quarkus.eureka.context-path= <your application context path, using the default one ${quarkus.http.root-path:/}>
@@ -91,6 +91,7 @@ quarkus.eureka.region=default
 quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
 quarkus.eureka.metadata.<tag-key>=<tag value> #These keys values will be shown in Eureka registry if available i.e.: jhipster-registry
+quarkus.eureka.health-check-initial-delay= <delay in seconds before initially checking health before registration. Default 3>
 ----
 
 i.e: Given a `sample` application, your configuration properties to work with quarkus-eureka looks like:
