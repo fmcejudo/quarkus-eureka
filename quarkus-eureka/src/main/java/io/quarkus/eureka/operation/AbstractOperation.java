@@ -16,11 +16,11 @@
 
 package io.quarkus.eureka.operation;
 
+import io.quarkus.eureka.config.Location;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
-
-import io.quarkus.eureka.config.Location;
 
 
 public abstract class AbstractOperation implements Operation {

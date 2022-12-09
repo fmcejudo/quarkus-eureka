@@ -1,8 +1,5 @@
 package io.quarkus.eureka.util;
 
-import javax.inject.Inject;
-import javax.ws.rs.client.WebTarget;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.EurekaClient;
 import io.quarkus.test.QuarkusUnitTest;
@@ -13,6 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
+import javax.inject.Inject;
+import javax.ws.rs.client.WebTarget;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;

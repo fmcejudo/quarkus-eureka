@@ -19,7 +19,6 @@ package io.quarkus.eureka.operation.query;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
 import org.apache.http.HttpStatus;

@@ -19,7 +19,6 @@ package io.quarkus.eureka.operation.query;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.config.Location;
-
 import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
