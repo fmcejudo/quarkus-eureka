@@ -16,12 +16,12 @@
 
 package io.quarkus.eureka.operation.query;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.eureka.client.Status;
+
+import java.util.Map;
 
 import static io.quarkus.eureka.client.Status.UNKNOWN;
 import static io.quarkus.eureka.client.Status.UP;

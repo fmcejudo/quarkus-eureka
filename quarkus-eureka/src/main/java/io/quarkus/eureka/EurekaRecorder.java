@@ -16,9 +16,6 @@
 
 package io.quarkus.eureka;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
@@ -33,6 +30,8 @@ import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
 
 import javax.ws.rs.ProcessingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static io.quarkus.eureka.config.DefaultInstanceInfoContext.withConfiguration;
 import static java.util.Arrays.asList;
@@ -44,29 +43,31 @@ public class EurekaRecorder {
 
     public void registerServiceInEureka(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
                                         final BeanContainer beanContainer) {
-        if(eurekaRuntimeConfiguration.enable) {
-            try {
-                logger.info("registering eurekaService");
-                InstanceInfo instanceInfo = InstanceInfo
+        if(!eurekaRuntimeConfiguration.enable) {
+            return;
+        }
+        try {
+            logger.info("registering eurekaService");
+            InstanceInfo instanceInfo = InstanceInfo
                     .of(withConfiguration(eurekaRuntimeConfiguration));
-                ServiceLocationConfig serviceLocationConfig = new ServiceLocationConfig(
+            ServiceLocationConfig serviceLocationConfig = new ServiceLocationConfig(
                     eurekaRuntimeConfiguration);
 
-                OperationFactory operationFactory = createOperationFactory();
+            OperationFactory operationFactory = createOperationFactory();
 
-                beanContainer.instance(EurekaProducer.class).setOperationFactory(operationFactory);
-                beanContainer.instance(EurekaProducer.class).setInstanceInfo(instanceInfo);
-                beanContainer.instance(EurekaProducer.class)
+            beanContainer.instance(EurekaProducer.class).setOperationFactory(operationFactory);
+            beanContainer.instance(EurekaProducer.class).setInstanceInfo(instanceInfo);
+            beanContainer.instance(EurekaProducer.class)
                     .setServiceLocationConfig(serviceLocationConfig);
-                new EurekaRegistrationService(serviceLocationConfig, instanceInfo, operationFactory)
+            new EurekaRegistrationService(serviceLocationConfig, instanceInfo, operationFactory)
                     .register();
 
-            } catch (ProcessingException ex) {
-                logger.log(Level.SEVERE, "error connecting with eureka registry service", ex);
-            } catch (Exception ex) {
-                logger.log(Level.SEVERE, "error registering eureka", ex);
-                throw new RuntimeException(ex);
-            }
+        } catch (ProcessingException ex) {
+            logger.log(Level.SEVERE, "error connecting with eureka registry service", ex);
+            throw new RuntimeException(ex);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "error registering eureka", ex);
+            throw new RuntimeException(ex);
         }
     }
 

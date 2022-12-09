@@ -39,7 +39,7 @@ public class EurekaClient {
         return client.target(target);
     }
 
-    private Supplier<EurekaServiceNotFoundException> serviceNotFound(String appId) {
+    private Supplier<EurekaServiceNotFoundException> serviceNotFound(final String appId) {
         return () -> new EurekaServiceNotFoundException(appId.toUpperCase());
     }
 }

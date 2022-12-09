@@ -16,8 +16,6 @@
 
 package io.quarkus.eureka;
 
-import java.util.ArrayList;
-
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.BeanContainerListenerBuildItem;
@@ -32,14 +30,10 @@ import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.client.PortEnableInfo;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 
+import java.util.ArrayList;
+
 
 public class EurekaInfoProcessor {
-
-    @Record(ExecutionTime.RUNTIME_INIT)
-    @BuildStep
-    public void eurekaStep(final EurekaInfoRecorder eurekaInfoRecorder) {
-        eurekaInfoRecorder.eurekaIsPlaying();
-    }
 
     @Record(ExecutionTime.RUNTIME_INIT)
     @BuildStep

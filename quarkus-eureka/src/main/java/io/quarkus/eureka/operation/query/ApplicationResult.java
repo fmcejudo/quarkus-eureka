@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 
@@ -36,7 +37,7 @@ public class ApplicationResult extends QueryResponse<ApplicationResult> {
     public ApplicationResult(@JsonProperty("name") final String name,
                              @JsonProperty("instance") final List<InstanceResult> instanceResults) {
         this.name = name;
-        this.instanceResults = instanceResults;
+        this.instanceResults = Optional.ofNullable(instanceResults).orElse(List.of());
     }
 
     public static ApplicationResult error() {

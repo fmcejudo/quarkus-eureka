@@ -19,7 +19,6 @@ package io.quarkus.eureka.client;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.quarkus.eureka.config.InstanceInfoContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 

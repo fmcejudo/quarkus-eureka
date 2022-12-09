@@ -20,7 +20,6 @@ import io.quarkus.eureka.client.EurekaClient;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.client.loadBalancer.LoadBalanced;
 import io.quarkus.eureka.client.loadBalancer.LoadBalancer;
-import io.quarkus.eureka.client.loadBalancer.LoadBalancerType;
 import io.quarkus.eureka.client.loadBalancer.Random;
 import io.quarkus.eureka.client.loadBalancer.RoundRobin;
 import io.quarkus.eureka.config.ServiceLocationConfig;
@@ -33,8 +32,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
-
 import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.loadBalancer.LoadBalancerType.ROUND_ROBIN;

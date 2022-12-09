@@ -18,20 +18,23 @@ package io.quarkus.eureka.registration;
 
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.client.Status;
+import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.config.ServiceLocationConfig;
 import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.heartbeat.HeartBeatOperation;
+import io.quarkus.eureka.operation.query.ApplicationResult;
 import io.quarkus.eureka.operation.query.InstanceResult;
 import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class EurekaRegistrationService {
 
@@ -64,32 +67,42 @@ public class EurekaRegistrationService {
 
     public void register() {
 
-        //TODO shall I first check the application has the defined endpoint up and running before
-        // registering with failing parameters
-
         serviceLocationConfig.getLocations()
-                .forEach(location -> executorService.scheduleWithFixedDelay(() -> RegistrationFlow.instanceHealthCheck(
-                        () -> instanceHealthCheckService.healthCheck(instanceInfo.getHealthCheckUrl())
-                ).eurekaHealthCheck(
-                        () -> operationFactory.get(MultipleInstanceQueryOperation.class)
-                                .findInstance(location, instanceInfo.getApp())
-                                .getInstanceResults().stream().filter(instanceResult ->
-                                        instanceInfo.getInstanceId().equals(instanceResult.getInstanceId()))
-                                .findFirst().orElse(InstanceResult.error())
-                ).isRegistered(
-                        queryResponse ->
-                                operationFactory.get(HeartBeatOperation.class).heartbeat(location, instanceInfo)
-                ).isNotRegistered(
-                        queryResponse ->
-                                operationFactory.get(RegisterOperation.class).register(location, instanceInfo)
-                ), instanceInfo.getHealthCheckInitialDelay(), 40L, TimeUnit.SECONDS));
+                .forEach(location -> executorService.scheduleWithFixedDelay(
+                        this.registerSingleLocation(location), instanceInfo.getHealthCheckInitialDelay(), 40L, SECONDS
+                ));
+    }
+
+    private Runnable registerSingleLocation(final Location location) {
+        return () -> RegistrationFlow.instanceHealthCheck(
+                () -> instanceHealthCheckService.healthCheck(instanceInfo.getHealthCheckUrl())
+        ).eurekaHealthCheck(() ->
+                this.getApplicationStatus(location)
+        ).isRegistered(
+                queryResponse ->
+                        operationFactory.get(HeartBeatOperation.class).heartbeat(location, instanceInfo)
+        ).isNotRegistered(
+                queryResponse ->
+                        operationFactory.get(RegisterOperation.class).register(location, instanceInfo)
+        );
+    }
+
+    private InstanceResult getApplicationStatus(final Location location) {
+        ApplicationResult applicationResult = operationFactory.get(MultipleInstanceQueryOperation.class)
+                .findInstance(location, instanceInfo.getApp());
+
+        List<InstanceResult> instanceResults = applicationResult.getInstanceResults();
+
+        return instanceResults.stream()
+                .filter(instanceResult -> instanceInfo.getInstanceId().equals(instanceResult.getInstanceId()))
+                .findFirst().orElse(InstanceResult.error());
     }
 
     private static class RegistrationFlow {
 
         private static final Logger LOGGER = Logger.getLogger(RegistrationFlow.class.getName());
 
-        private Status status;
+        private final Status status;
 
         private RegistrationFlow(final Status status) {
             this.status = status;

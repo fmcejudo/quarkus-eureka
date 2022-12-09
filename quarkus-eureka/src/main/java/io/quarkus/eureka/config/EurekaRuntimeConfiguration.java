@@ -65,9 +65,9 @@ public class EurekaRuntimeConfiguration {
     @ConfigItem
     String hostName;
 
-	/**
-	 * Determines if the local ip address should be used instead of the hostName.
-	 */
+    /**
+     * Determines if the local ip address should be used instead of the hostName.
+     */
     @ConfigItem
     boolean preferIpAddress;
 
@@ -120,9 +120,9 @@ public class EurekaRuntimeConfiguration {
     long healthCheckInitialDelay;
 
     public static class NetworkConverter implements Converter<String> {
-		private static final long serialVersionUID = -423310887944694372L;
+        private static final long serialVersionUID = -423310887944694372L;
 
-		@Override
+        @Override
         public String convert(final String hostname) {
             if (hostname != null && !hostname.trim().isEmpty()) {
                 return hostname;
