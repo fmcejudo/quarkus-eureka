@@ -16,9 +16,9 @@
 
 package io.quarkus.eureka.test.config;
 
-import java.util.Map;
-
 import io.quarkus.eureka.config.InstanceInfoContext;
+
+import java.util.Map;
 
 import static java.lang.String.join;
 

@@ -130,6 +130,7 @@ public class EurekaRuntimeConfigurationTest {
                         .withStatus(200)
                         .withBodyFile("downInstancesByAppId.json")));
 
+
         assertThatThrownBy(() -> eurekaClient.app("OTHER"))
                 .isInstanceOf(EurekaServiceNotFoundException.class)
                 .hasMessage("service OTHER not found");

@@ -17,11 +17,10 @@
 package io.quarkus.eureka.operation.remove;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import io.quarkus.eureka.config.Location;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import io.quarkus.eureka.config.Location;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;

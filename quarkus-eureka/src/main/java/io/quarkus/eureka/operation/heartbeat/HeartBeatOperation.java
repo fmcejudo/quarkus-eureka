@@ -16,8 +16,8 @@
 
 package io.quarkus.eureka.operation.heartbeat;
 
-import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.client.InstanceInfo;
+import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 

@@ -16,11 +16,10 @@
 
 package io.quarkus.eureka.config;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;

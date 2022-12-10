@@ -150,13 +150,15 @@ class DefaultInstanceInfoContextTest {
 
     @Test
     void shouldRegisterDefaultHealthCheckInitialDelay() {
-        final long expected = HEALTH_CHECK_INITIAL_DELAY_DEFAULT;
 
         //When
         InstanceInfoContext instanceInfoContext = new DefaultInstanceInfoContext(eurekaRuntimeConfiguration);
 
         //Then
         assertThat(instanceInfoContext.getHealthCheckInitialDelay())
-                .isEqualTo(expected);
+                .isEqualTo(HEALTH_CHECK_INITIAL_DELAY_DEFAULT);
+
+        assertThat(EurekaRuntimeConfiguration$$accessor.get_healthCheckInitialDelay(eurekaRuntimeConfiguration))
+                .isEqualTo(HEALTH_CHECK_INITIAL_DELAY_DEFAULT);
     }
 }
