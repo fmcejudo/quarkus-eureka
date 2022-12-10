@@ -237,6 +237,10 @@
                         <version>0.8.4</version>
                         <configuration>
                             <outputDirectory>target/jacoco-ut</outputDirectory>
+                            <excludes>
+                                <exclude>**/generated-source/**</exclude>
+                                <exclude>**/io/quarkus/eureka/EurekaRecorder*</exclude>
+                            </excludes>
                         </configuration>
                         <executions>
                             <execution>
@@ -266,7 +270,8 @@
                         </dependencies>
                         <configuration>
                             <jacocoReports>
-                                <jacocoReport>${project.basedir}/quarkus-eureka-deployment/target/jacoco-ut/jacoco.xml
+                                <jacocoReport>
+                                    ${project.basedir}/quarkus-eureka-deployment/target/jacoco-ut/jacoco.xml
                                 </jacocoReport>
                             </jacocoReports>
                         </configuration>
