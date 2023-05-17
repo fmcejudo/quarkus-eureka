@@ -24,8 +24,8 @@ import io.quarkus.eureka.operation.AbstractOperation;
 import org.apache.http.HttpStatus;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 
 abstract class QueryOperation extends AbstractOperation {

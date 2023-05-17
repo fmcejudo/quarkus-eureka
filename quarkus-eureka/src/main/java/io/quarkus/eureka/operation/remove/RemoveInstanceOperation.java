@@ -20,8 +20,8 @@ import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;

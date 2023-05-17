@@ -21,7 +21,7 @@ import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.WebTarget;
 import java.util.function.Supplier;
 
 public class EurekaClient {

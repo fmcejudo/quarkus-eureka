@@ -29,7 +29,7 @@ import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.registration.EurekaRegistrationService;
 import io.quarkus.runtime.annotations.Recorder;
 
-import javax.ws.rs.ProcessingException;
+import jakarta.ws.rs.ProcessingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
