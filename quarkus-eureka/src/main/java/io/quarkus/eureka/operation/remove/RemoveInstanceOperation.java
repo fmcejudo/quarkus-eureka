@@ -18,10 +18,11 @@ package io.quarkus.eureka.operation.remove;
 
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -33,7 +34,7 @@ public class RemoveInstanceOperation extends AbstractOperation {
     public void remove(final Location location, final String appId, final String instanceId) {
         logger.info(format("Deregistering %s from %s", appId, location));
         final String path = String.join("/", "apps", appId, instanceId);
-        Client client = ResteasyClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
 
         try {
             this.restClientBuilder(client, location, path)

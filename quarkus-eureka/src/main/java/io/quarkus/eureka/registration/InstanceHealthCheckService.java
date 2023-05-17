@@ -18,10 +18,11 @@ package io.quarkus.eureka.registration;
 
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.Map;
@@ -35,8 +36,7 @@ import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 class InstanceHealthCheckService {
 
     Status healthCheck(final String healthCheckUrl) {
-        Client client = ResteasyClientBuilder.newClient();
-        try (Response response = client.target(healthCheckUrl)
+        try (Client client = ClientBuilder.newClient(); Response response = client.target(healthCheckUrl)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
             if (response.getStatusInfo().getFamily().equals(CLIENT_ERROR)) {
@@ -48,8 +48,6 @@ class InstanceHealthCheckService {
 
         } catch (ProcessingException ex) {
             throw new HealthCheckException(format("Health check not reachable: %s", healthCheckUrl), ex);
-        } finally {
-            client.close();
         }
     }
 

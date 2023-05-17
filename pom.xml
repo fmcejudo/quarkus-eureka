@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka-parent</artifactId>
-    <version>0.0.17-SNAPSHOT</version>
+    <version>0.0.18-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>quarkus-eureka-parent</name>
     <description>Quarkus plugin to integrate with Eureka Server</description>
@@ -16,13 +16,14 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <quarkus.version>3.0.3.Final</quarkus.version>
-        <quarkus.bootstrap.plugin>3.0.0.Beta1</quarkus.bootstrap.plugin>
+        <quarkus.bootstrap.plugin>2.16.7.Final</quarkus.bootstrap.plugin>
         <wiremock.version>2.27.2</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
         <guava.version>30.0-jre</guava.version>
         <assertj.version>3.22.0</assertj.version>
         <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+        <resteasy-core.version>6.2.4.Final</resteasy-core.version>
     </properties>
 
     <modules>
@@ -86,6 +87,11 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-core</artifactId>
+                <version>${resteasy-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

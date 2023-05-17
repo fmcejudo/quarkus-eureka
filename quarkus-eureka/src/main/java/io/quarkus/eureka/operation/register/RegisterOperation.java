@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
@@ -45,7 +45,7 @@ public class RegisterOperation extends AbstractOperation {
     public void register(final Location location, final InstanceInfo instanceInfo) {
         String path = String.join("/", "apps", instanceInfo.getApp());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
-        Client client = ResteasyClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
 
         try {
             Response response = this.restClientBuilder(client, location, path)

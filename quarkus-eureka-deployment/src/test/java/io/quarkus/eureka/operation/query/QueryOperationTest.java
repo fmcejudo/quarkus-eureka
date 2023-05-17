@@ -19,7 +19,7 @@ package io.quarkus.eureka.operation.query;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.config.Location;
-import org.jboss.resteasy.spi.NotImplementedYetException;
+import io.quarkus.eureka.exception.EurekaOperationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,11 +65,17 @@ public class QueryOperationTest {
 
     @Test
     public void shouldFindAllInstances() {
+
+        //Given
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("allInstances.json")));
+
+        //When
         ApplicationsResult applicationsResult = multipleInstanceQueryOperation.findAllInstances(location);
+
+        //Then
         assertThat(applicationsResult)
                 .isInstanceOf(ApplicationsResult.class)
                 .isNotNull();
@@ -98,12 +104,12 @@ public class QueryOperationTest {
     @Test
     public void shouldFindInstanceByAppIDAndInstanceId() {
         assertThatThrownBy(() -> singleInstanceQueryOperation.findInstance(location, "SAMPLE", "10.34.37.227"))
-                .isInstanceOf(NotImplementedYetException.class);
+                .isInstanceOf(EurekaOperationException.class);
     }
 
     @Test
     public void shouldFindInstanceById() {
         assertThatThrownBy(() -> singleInstanceQueryOperation.findInstanceById(location, "10.34.37.227"))
-                .isInstanceOf(NotImplementedYetException.class);
+                .isInstanceOf(EurekaOperationException.class);
     }
 }
