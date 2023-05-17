@@ -12,10 +12,11 @@
 
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
-        <quarkus.version>2.14.2.Final</quarkus.version>
+        <quarkus.version>3.0.3.Final</quarkus.version>
+        <quarkus.bootstrap.plugin>3.0.0.Beta1</quarkus.bootstrap.plugin>
         <wiremock.version>2.27.2</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
@@ -95,7 +96,7 @@
                 <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-bootstrap-maven-plugin</artifactId>
-                    <version>${quarkus.version}</version>
+                    <version>${quarkus.bootstrap.plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

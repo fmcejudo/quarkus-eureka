@@ -30,12 +30,12 @@ public abstract class AbstractOperation implements Operation {
         Builder builder = client.target(String.join("/", location.getUrl(), path))
                 .request(MediaType.APPLICATION_JSON_TYPE);
 
-        setAuthHeaderIfNessary(builder, location);
+        setAuthHeaderIfNeeded(builder, location);
 
         return builder;
     }
 
-    private void setAuthHeaderIfNessary(Builder builder, Location location) {
+    private void setAuthHeaderIfNeeded(Builder builder, Location location) {
     
         if (location.hasBasicAuthToken()) {
             builder.header("Authorization", "Basic " + location.getBasicAuthToken());
