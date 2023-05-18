@@ -24,6 +24,7 @@
         <assertj.version>3.22.0</assertj.version>
         <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
         <resteasy-core.version>6.2.4.Final</resteasy-core.version>
+        <nexus.plugin.version>1.6.13</nexus.plugin.version>
     </properties>
 
     <modules>
@@ -167,7 +168,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>${nexus.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
