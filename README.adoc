@@ -26,9 +26,12 @@ link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your ow
 
 The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
 
-The most recent quarkus version at the time, from which this extension has been built, is `2.4.1.Final`.
+The most recent quarkus version at the time, from which this extension has been built, is `3.0.3.Final`.
 
-The java version used to implement such plugin is java 11.
+The java version used to implement such plugin is java 17.
+
+NOTE: Versions up to `0.0.16` of the software are compatible with Quarkus 2 and java 11.
+Starting from version `0.0.18`, it is compatible with Quarkus 3.
 
 = How?
 
@@ -54,13 +57,13 @@ Including the extension in your application, the next dependency needs to be add
 <dependency>
     <groupId>com.github.fmcejudo</groupId>
     <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.14</version>
+    <version>0.0.18</version>
 </dependency>
 ----
 
 An alternative way to do this is through `maven` quarkus tool as:
 
-`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.14"`
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.18"`
 
 
 [NOTE]
@@ -221,5 +224,6 @@ and the way to keep fit learning other new technologies which spread around the 
 This is nothing, but a way to connect Quarkus to the world easily with the guides provided and hopefully one of the
 multiple integrations with the services we use as developers to monitoring, tracing and scaling our application,
 letting be more reliable for the future of our work.
+
 
 
