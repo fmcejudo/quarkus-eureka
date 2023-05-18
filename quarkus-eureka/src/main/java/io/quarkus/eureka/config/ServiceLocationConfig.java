@@ -16,7 +16,6 @@
 
 package io.quarkus.eureka.config;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class ServiceLocationConfig {
 
     private final Collection<Location> locations;
 
-    public ServiceLocationConfig(@NotNull final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+    public ServiceLocationConfig(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         this(ofNullable(eurekaRuntimeConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
     }
 

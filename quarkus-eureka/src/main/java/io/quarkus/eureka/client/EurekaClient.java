@@ -16,21 +16,22 @@
 
 package io.quarkus.eureka.client;
 
+import java.util.concurrent.Executors;
+import java.util.function.Supplier;
+
 import io.quarkus.eureka.client.loadBalancer.LoadBalancer;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
-import javax.ws.rs.client.WebTarget;
-import java.util.function.Supplier;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 
 public class EurekaClient {
 
     private final LoadBalancer loadBalancer;
-    private final ResteasyClient client;
+    private final Client client;
 
     public EurekaClient(final LoadBalancer loadBalancer) {
-        this.client = ((ResteasyClientBuilder) ResteasyClientBuilder.newBuilder()).connectionPoolSize(50).build();
+        this.client =  ClientBuilder.newBuilder().executorService(Executors.newFixedThreadPool(50)).build();
         this.loadBalancer = loadBalancer;
     }
 

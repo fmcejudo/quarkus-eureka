@@ -21,22 +21,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
-import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
-import static javax.ws.rs.core.Response.Status.Family.SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
+import static jakarta.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
+import static jakarta.ws.rs.core.Response.Status.Family.SERVER_ERROR;
+import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 public class RegisterOperation extends AbstractOperation {
 
@@ -45,7 +45,7 @@ public class RegisterOperation extends AbstractOperation {
     public void register(final Location location, final InstanceInfo instanceInfo) {
         String path = String.join("/", "apps", instanceInfo.getApp());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
-        Client client = ResteasyClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
 
         try {
             Response response = this.restClientBuilder(client, location, path)

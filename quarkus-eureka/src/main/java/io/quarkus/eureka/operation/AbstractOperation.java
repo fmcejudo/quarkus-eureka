@@ -18,9 +18,9 @@ package io.quarkus.eureka.operation;
 
 import io.quarkus.eureka.config.Location;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.core.MediaType;
 
 
 public abstract class AbstractOperation implements Operation {
@@ -30,12 +30,12 @@ public abstract class AbstractOperation implements Operation {
         Builder builder = client.target(String.join("/", location.getUrl(), path))
                 .request(MediaType.APPLICATION_JSON_TYPE);
 
-        setAuthHeaderIfNessary(builder, location);
+        setAuthHeaderIfNeeded(builder, location);
 
         return builder;
     }
 
-    private void setAuthHeaderIfNessary(Builder builder, Location location) {
+    private void setAuthHeaderIfNeeded(Builder builder, Location location) {
     
         if (location.hasBasicAuthToken()) {
             builder.header("Authorization", "Basic " + location.getBasicAuthToken());

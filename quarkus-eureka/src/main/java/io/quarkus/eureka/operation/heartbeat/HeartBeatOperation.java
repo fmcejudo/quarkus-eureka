@@ -19,12 +19,12 @@ package io.quarkus.eureka.operation.heartbeat;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -41,7 +41,7 @@ public class HeartBeatOperation extends AbstractOperation {
         logger.info(format("%s heartbeat to %s", appId, location));
         final String path = String.join("/", "apps", appId, instanceInfo.getInstanceId());
         Map<String, InstanceInfo> instance = singletonMap("instance", instanceInfo.withStatus(UP));
-        Client client = ResteasyClientBuilder.newClient();
+        Client client = ClientBuilder.newClient();
 
         try {
             this.restClientBuilder(client, location, path)
