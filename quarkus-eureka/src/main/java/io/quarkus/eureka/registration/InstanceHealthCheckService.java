@@ -18,20 +18,19 @@ package io.quarkus.eureka.registration;
 
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
-
-
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.Map;
 
 import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
-import static java.lang.String.format;
 import static jakarta.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
 import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
+import static java.lang.String.format;
 
 class InstanceHealthCheckService {
 

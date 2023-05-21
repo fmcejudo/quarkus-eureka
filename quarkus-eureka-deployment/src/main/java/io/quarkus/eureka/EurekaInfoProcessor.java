@@ -19,7 +19,6 @@ package io.quarkus.eureka;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.BeanContainerListenerBuildItem;
-import io.quarkus.builder.item.BuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -32,6 +31,7 @@ import io.quarkus.eureka.client.PortEnableInfo;
 import io.quarkus.eureka.config.EurekaBuildTimeConfiguration;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 import io.quarkus.eureka.heartbeat.HealthCheckController;
+import io.quarkus.eureka.heartbeat.StatusCheckController;
 import io.quarkus.undertow.deployment.ServletBuildItem;
 
 import java.util.ArrayList;
@@ -71,10 +71,18 @@ public class EurekaInfoProcessor {
     }
 
     @BuildStep(onlyIf = IsHealthEnabled.class)
-    ServletBuildItem servletBuildItem(final EurekaBuildTimeConfiguration eurekaBuildTimeConfiguration) {
+    ServletBuildItem healthCheckBuildItem(final EurekaBuildTimeConfiguration eurekaBuildTimeConfiguration) {
 
         return ServletBuildItem.builder("quarkus-eureka-health", HealthCheckController.class.getName())
                 .addMapping(eurekaBuildTimeConfiguration.heartBeat().healthPath())
+                .build();
+    }
+
+    @BuildStep(onlyIf = IsHealthEnabled.class)
+    ServletBuildItem statusCheckBuildItem(final EurekaBuildTimeConfiguration eurekaBuildTimeConfiguration) {
+
+        return ServletBuildItem.builder("quarkus-eureka-status", StatusCheckController.class.getName())
+                .addMapping("/info/status")
                 .build();
     }
 
