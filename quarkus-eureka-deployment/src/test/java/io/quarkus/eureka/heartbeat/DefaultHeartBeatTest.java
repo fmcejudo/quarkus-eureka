@@ -5,7 +5,7 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-class HeartBeatQuarkusEurekaTest {
+class DefaultHeartBeatTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
