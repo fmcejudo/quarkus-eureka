@@ -1,0 +1,145 @@
+:source-highlighter: rouge
+:rouge-style: thankful_eyes
+
+= QUARKUS EUREKA EXTENSION
+
+
+== Project Description
+
+This Quarkus extension, named "quarkus-eureka," allows seamless integration with Eureka,
+a service discovery and registration server. With this extension, Quarkus applications
+can easily register themselves with Eureka and utilize service discovery to connect with other registered services.
+
+=== Features
+
+- *Service Registration*: The extension enables Quarkus applications to register themselves in Eureka,
+providing a straightforward way to announce their availability and metadata.
+
+- *Service Discovery*: By leveraging the client provided by this extension, Quarkus applications can
+effortlessly discover and connect with other services registered in Eureka using their names.
+No manual IP or port configuration required.
+
+- *Heartbeat Endpoint*: The extension includes a heartbeat endpoint that Quarkus applications can
+expose. This endpoint informs Eureka that the application is healthy, ensuring proper monitoring and fault tolerance.
+By using this extension, developers can benefit from the capabilities of Eureka for service
+discovery and registration without the need for complex configuration or manual service lookups.
+
+
+== Installation
+
+To use the Quarkus Eureka Extension, you need to include the following dependency in your project's Maven configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>com.github.fmcejudo</groupId>
+  <artifactId>quarkus-eureka</artifactId>
+  <version>1.0.0</version>
+</dependency>
+----
+
+
+== Configuration
+
+The Quarkus Eureka Extension makes use of two configuration types: build-time configuration and runtime configuration.
+
+=== Build-Time Configuration
+
+The build-time configuration properties for the Quarkus Eureka Extension are prefixed with `quarkus.eureka`. The following properties are available for build-time configuration:
+
+* `quarkus.eureka.heartbeat.enabled`:: Set this property to `true` to enable the heartbeat endpoints used by Eureka for monitoring the health of the instance.
+* `quarkus.eureka.heartbeat.health-path`:: Specify the endpoint path where the extension should check the health of the instance. This path is used by the heartbeat endpoints.
+* `quarkus.eureka.heartbeat.status-path`:: Define the endpoint path where the extension exposes the status of the instance. This path is used by the heartbeat endpoints.
+
+Please configure these build-time properties in your Quarkus project's configuration file or through your preferred configuration method.
+
+=== Runtime Configuration
+
+The Quarkus Eureka Extension provides the following runtime configuration properties:
+
+[options="header"]
+|===
+| Property Key | Description | Default Value
+
+| quarkus.eureka.enable
+| A boolean value to determine whether the application should register with Eureka.
+| true
+
+| quarkus.eureka.port
+| The port of your application. It should match `quarkus.http.port`. If not specified, it takes the value of `quarkus.http.port`.
+|
+
+| quarkus.eureka.hostname
+| The address of your application. By default, it is the host where the application started up.
+|
+
+| quarkus.eureka.context-path
+| The context path of your application. It uses the default value `${quarkus.http.root-path:/}`.
+| if exists, it takes `${quarkus.http.root-path}`, else `/`
+
+| quarkus.eureka.prefer-ip-address
+| Whether or not to override the hostname with the application's LAN IP address.
+| false
+
+| quarkus.eureka.name
+| The name of your application in Eureka. It takes `quarkus.application.name` if not specified.
+| `${quarkus.application.name}`
+
+| quarkus.eureka.vip-address
+| How your application is recognized by clients.
+|
+
+| quarkus.eureka.home-page-url
+| The home path of your application.
+| `/`
+
+| quarkus.eureka.status-page-url
+| The path where the application's status can be checked.
+| if exists, it takes `${quarkus.eureka.heartbeat.status-path}`, otherwise `/info/status`
+
+| quarkus.eureka.health-check-url
+| The endpoint to check if your application is alive and kicking. It should return `{ "status": "up" }`.
+| if exists, it takes `${quarkus.eureka.heartbeat.health-path}`, otherwise `/info/health`
+
+| quarkus.eureka.region
+| The region for Eureka registration.
+| default
+
+| quarkus.eureka.prefer-same-zone
+| Whether to prefer the same zone for Eureka registration.
+| true
+
+| quarkus.eureka.service-url.default
+| The URLs of your Eureka instances. For example: `http://localhost:8761/eureka`.
+
+The eureka locations are comma separated
+|
+
+| quarkus.eureka.metadata.<tag-key>
+| The key-value pairs of metadata to be shown in the Eureka registry if available. For example: `jhipster-registry`.
+|
+
+| quarkus.eureka.health-check-initial-delay
+| The delay in seconds before initially checking health before registration.
+| 3
+|===
+
+as an example of working configuration
+
+[source,properties]
+----
+# Configuration file: application.properties
+
+quarkus.http.port=8001
+quarkus.application.name=sample
+quarkus.eureka.region=default
+## configuration related to reaching the eureka servers
+quarkus.eureka.prefer-same-zone=true
+quarkus.eureka.should-use-dns=false
+quarkus.eureka.service-url.default=http://localhost:8761/eureka
+quarkus.eureka.metadata.app-key=my-quarkus-app
+
+quarkus.eureka.heartbeat.enabled=true
+quarkus.eureka.heartbeat.health-path=/info/health
+quarkus.eureka.heartbeat.status-path=/info/status
+----
