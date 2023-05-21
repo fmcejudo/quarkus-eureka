@@ -28,6 +28,12 @@ public interface EurekaBuildTimeConfiguration {
          */
         @WithDefault(value = "/info/health")
         public String healthPath();
+
+        /**
+         * path to hit for status check.
+         */
+        @WithDefault(value = "/info/status")
+        public String statusPath();
     }
 
 }

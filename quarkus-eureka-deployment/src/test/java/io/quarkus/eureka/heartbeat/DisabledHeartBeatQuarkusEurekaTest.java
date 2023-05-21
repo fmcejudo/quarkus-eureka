@@ -5,7 +5,7 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-class DisabledHealthQuarkusEurekaTest {
+class DisabledHeartBeatQuarkusEurekaTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
@@ -13,7 +13,12 @@ class DisabledHealthQuarkusEurekaTest {
             .withEmptyApplication();
 
     @Test
-    public void shouldEnableHealth() {
+    public void shouldNotEnableHealthCheck() {
         RestAssured.when().get("/info/health").then().statusCode(404);
+    }
+
+    @Test
+    public void shouldNotEnableStatusCheck() {
+        RestAssured.when().get("/info/status").then().statusCode(404);
     }
 }

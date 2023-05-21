@@ -104,13 +104,13 @@ public class EurekaRuntimeConfiguration {
     /**
      * Check the application state
      */
-    @ConfigItem(defaultValue = "/info/status")
+    @ConfigItem(defaultValue = "${quarkus.eureka.heartbeat.status-path:/info/status}")
     String statusPageUrl;
 
     /**
      * Heartbeats which ensure the application is alive
      */
-    @ConfigItem(defaultValue = "/info/health")
+    @ConfigItem(defaultValue = "${quarkus.eureka.heartbeat.health-path:/info/health}")
     String healthCheckUrl;
 
     /**

@@ -82,7 +82,7 @@ public class EurekaInfoProcessor {
     ServletBuildItem statusCheckBuildItem(final EurekaBuildTimeConfiguration eurekaBuildTimeConfiguration) {
 
         return ServletBuildItem.builder("quarkus-eureka-status", StatusCheckController.class.getName())
-                .addMapping("/info/status")
+                .addMapping(eurekaBuildTimeConfiguration.heartBeat().statusPath())
                 .build();
     }
 
