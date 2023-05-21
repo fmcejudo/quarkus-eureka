@@ -17,7 +17,6 @@
 package io.quarkus.eureka.operation;
 
 import io.quarkus.eureka.config.Location;
-
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.core.MediaType;

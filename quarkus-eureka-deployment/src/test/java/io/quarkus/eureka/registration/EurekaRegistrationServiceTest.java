@@ -52,7 +52,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.when;
 
 class EurekaRegistrationServiceTest {

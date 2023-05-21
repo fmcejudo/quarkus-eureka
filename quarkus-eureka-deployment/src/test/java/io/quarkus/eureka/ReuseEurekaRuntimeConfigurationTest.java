@@ -3,6 +3,8 @@ package io.quarkus.eureka;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.EurekaClient;
 import io.quarkus.test.QuarkusUnitTest;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.client.WebTarget;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.AfterEach;
@@ -10,9 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import jakarta.inject.Inject;
-import jakarta.ws.rs.client.WebTarget;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;

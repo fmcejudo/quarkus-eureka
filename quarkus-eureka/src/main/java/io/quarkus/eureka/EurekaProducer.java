@@ -27,11 +27,11 @@ import io.quarkus.eureka.operation.OperationFactory;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.util.ServiceDiscovery;
 import io.quarkus.runtime.ShutdownEvent;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
+
 import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.loadBalancer.LoadBalancerType.ROUND_ROBIN;
