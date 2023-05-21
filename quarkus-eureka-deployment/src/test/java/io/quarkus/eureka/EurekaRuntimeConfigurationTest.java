@@ -52,10 +52,9 @@ public class EurekaRuntimeConfigurationTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
-            .setArchiveProducer(() -> ShrinkWrap
-                    .create(JavaArchive.class)
-                    .addAsResource("eureka-config.properties", "application.properties")
-            );
+            .withConfigurationResource("eureka-config.properties")
+            .withEmptyApplication();
+
 
     private WireMockServer wireMockServer;
 
