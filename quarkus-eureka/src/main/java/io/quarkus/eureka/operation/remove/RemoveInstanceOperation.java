@@ -18,7 +18,6 @@ package io.quarkus.eureka.operation.remove;
 
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;

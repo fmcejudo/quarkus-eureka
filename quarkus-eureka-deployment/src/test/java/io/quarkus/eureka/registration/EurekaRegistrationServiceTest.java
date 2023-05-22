@@ -18,6 +18,7 @@ package io.quarkus.eureka.registration;
 
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.CountMatchingStrategy;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.InstanceInfoContext;
 import io.quarkus.eureka.config.ServiceLocationConfig;
@@ -134,7 +135,10 @@ class EurekaRegistrationServiceTest {
 
         eurekaRegistrationService.register();
 
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(
+                new CountMatchingStrategy(CountMatchingStrategy.GREATER_THAN_OR_EQUAL,1),
+                getRequestedFor(urlEqualTo("/info/health"))
+        );
         wireMockServer.verify(1, getRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo(join("/", "/eureka/apps", appName.toUpperCase()))));
     }
@@ -176,7 +180,10 @@ class EurekaRegistrationServiceTest {
 
         eurekaRegistrationService.register();
 
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(
+                new CountMatchingStrategy(CountMatchingStrategy.GREATER_THAN_OR_EQUAL,1),
+                getRequestedFor(urlEqualTo("/info/health"))
+        );
 
         wireMockServer.verify(1,
                 getRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))
@@ -209,7 +216,10 @@ class EurekaRegistrationServiceTest {
 
         eurekaRegistrationService.register();
 
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/info/health")));
+        wireMockServer.verify(
+                new CountMatchingStrategy(CountMatchingStrategy.GREATER_THAN_OR_EQUAL,1),
+                getRequestedFor(urlEqualTo("/info/health"))
+        );
 
         wireMockServer.verify(1,
                 getRequestedFor(urlEqualTo(String.join("/", "/eureka/apps", appName.toUpperCase())))

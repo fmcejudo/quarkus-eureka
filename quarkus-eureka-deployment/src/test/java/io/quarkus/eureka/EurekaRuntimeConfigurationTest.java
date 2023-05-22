@@ -22,16 +22,13 @@ import io.quarkus.eureka.client.loadBalancer.LoadBalanced;
 import io.quarkus.eureka.client.loadBalancer.LoadBalancerType;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
 import io.quarkus.test.QuarkusUnitTest;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.client.WebTarget;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import jakarta.inject.Inject;
-import jakarta.ws.rs.client.WebTarget;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -52,10 +49,9 @@ public class EurekaRuntimeConfigurationTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
-            .setArchiveProducer(() -> ShrinkWrap
-                    .create(JavaArchive.class)
-                    .addAsResource("eureka-config.properties", "application.properties")
-            );
+            .withConfigurationResource("eureka-config.properties")
+            .withEmptyApplication();
+
 
     private WireMockServer wireMockServer;
 

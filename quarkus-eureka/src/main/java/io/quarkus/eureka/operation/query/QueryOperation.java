@@ -21,10 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import jakarta.ws.rs.client.ClientBuilder;
-
-
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 

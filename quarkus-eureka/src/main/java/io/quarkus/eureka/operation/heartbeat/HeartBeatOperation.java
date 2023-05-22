@@ -19,12 +19,12 @@ package io.quarkus.eureka.operation.heartbeat;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import jakarta.ws.rs.client.ClientBuilder;
-
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 import java.util.logging.Logger;
 

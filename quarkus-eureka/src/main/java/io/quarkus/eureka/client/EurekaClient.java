@@ -16,14 +16,14 @@
 
 package io.quarkus.eureka.client;
 
-import java.util.concurrent.Executors;
-import java.util.function.Supplier;
-
 import io.quarkus.eureka.client.loadBalancer.LoadBalancer;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
+
+import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 
 public class EurekaClient {
 

@@ -21,22 +21,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.InstanceInfo;
 import io.quarkus.eureka.config.Location;
 import io.quarkus.eureka.operation.AbstractOperation;
-import jakarta.ws.rs.client.ClientBuilder;
-
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.Map;
 import java.util.logging.Logger;
 
 import static io.quarkus.eureka.client.Status.UP;
-import static java.lang.String.format;
-import static java.util.Collections.singletonMap;
 import static jakarta.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
 import static jakarta.ws.rs.core.Response.Status.Family.SERVER_ERROR;
 import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
+import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 
 public class RegisterOperation extends AbstractOperation {
 
