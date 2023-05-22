@@ -1,110 +1,142 @@
-= QUARKUS - EUREKA EXTENSION
+:source-highlighter: rouge
+:rouge-style: thankful_eyes
 
-image:https://travis-ci.com/fmcejudo/quarkus-eureka.svg?branch=master["Build Status", link="https://travis-ci.com/fmcejudo/quarkus-eureka"]
-
-image:https://coveralls.io/repos/github/fmcejudo/quarkus-eureka/badge.svg?branch=master["Build Status", link="https://coveralls.io/github/fmcejudo/quarkus-eureka?branch=master"]
-
-image:https://maven-badges.herokuapp.com/maven-central/com.github.fmcejudo/quarkus-eureka-parent/badge.svg["Build Status", link="https://maven-badges.herokuapp.com/maven-central/com.github.fmcejudo/quarkus-eureka-parent"]
+= QUARKUS EUREKA EXTENSION
 
 
-= What?
+== Project Description
+
+This Quarkus extension, named "quarkus-eureka," allows seamless integration with Eureka,
+a service discovery and registration server. With this extension, Quarkus applications
+can easily register themselves with Eureka and utilize service discovery to connect with other registered services.
+
+=== Features
+
+- *Service Registration*: The extension enables Quarkus applications to register themselves in Eureka,
+providing a straightforward way to announce their availability and metadata.
+
+- *Service Discovery*: By leveraging the client provided by this extension, Quarkus applications can
+effortlessly discover and connect with other services registered in Eureka using their names.
+No manual IP or port configuration required.
+
+- *Heartbeat Endpoint*: The extension includes a heartbeat endpoint that Quarkus applications can
+expose. This endpoint informs Eureka that the application is healthy, ensuring proper monitoring and fault tolerance.
+By using this extension, developers can benefit from the capabilities of Eureka for service
+discovery and registration without the need for complex configuration or manual service lookups.
 
 
-Given Quarkus being a framework to develop quick start applications running not just
-in the Hotspot JVM but also in GraalVM natively, with a relative new lifespan, there
-are some shortage of integrations with some other services working for the cloud.
+== Installation
 
-With this extension the aim is registering a Quarkus service in Eureka Registry to expose its responsibility to other
-services in a high availability environment in which the service is reached by loadbalancers to any of their instances.
-
-From the client side point of view, the plugin connects to the Eureka Server to retrieve the bridge which brings the link
-to the actual application to consume their services. That connections are made through their application id or application name rather a static ip.
-
-The implementation of this extension is built based in the documentation at:
-
-link:https://quarkus.io/guides/extension-authors-guide[Quarkus - writing your own extension, window=_blank].
-
-The dependencies that this extension uses are just quarkus extensions and some other dependencies for testing.
-
-The most recent quarkus version at the time, from which this extension has been built, is `3.0.3.Final`.
-
-The java version used to implement such plugin is java 17.
-
-NOTE: Versions up to `0.0.16` of the software are compatible with Quarkus 2 and java 11.
-Starting from version `0.0.18`, it is compatible with Quarkus 3.
-
-= How?
-
-To use the plugin, other quarkus extensions need to be provided `*quarkus-rest-client*` and `*quarkus-resteasy-jackson*`
-which are used to communicate with the other end where is the registry.
+To use the Quarkus Eureka Extension, you need to include the following dependency in your project's Maven configuration:
 
 [source,xml]
 ----
 <dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-rest-client</artifactId>
-</dependency>
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-resteasy-jackson</artifactId>
+  <groupId>com.github.fmcejudo</groupId>
+  <artifactId>quarkus-eureka</artifactId>
+  <version>1.0.0</version>
 </dependency>
 ----
 
-Including the extension in your application, the next dependency needs to be added to your `pom.xml`:
 
-[source,xml]
-----
-<dependency>
-    <groupId>com.github.fmcejudo</groupId>
-    <artifactId>quarkus-eureka</artifactId>
-    <version>0.0.18</version>
-</dependency>
-----
+An alternative way to install it is through `maven` quarkus tool as:
 
-An alternative way to do this is through `maven` quarkus tool as:
-
-`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:0.0.18"`
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:1.0.0"`
 
 
-[NOTE]
-====
-This dependency is in `maven central`
-====
+== Configuration
 
-== REGISTRATION
+The Quarkus Eureka Extension makes use of two configuration types: build-time configuration and runtime configuration.
 
-=== PARAMETERS WHICH PLUGIN DEALS WITH
+=== Build-Time Configuration
 
-Configuring connection with the registry, exposing the name of your service, requires adding the next properties to
-your quarkus `application.properties`:
+The build-time configuration properties for the Quarkus Eureka Extension are prefixed with `quarkus.eureka`. The following properties are available for build-time configuration:
+
+* `quarkus.eureka.heartbeat.enabled`:: Set this property to `true` to enable the heartbeat endpoints used by Eureka for monitoring the health of the instance.
+* `quarkus.eureka.heartbeat.health-path`:: Specify the endpoint path where the extension should check the health of the instance. This path is used by the heartbeat endpoints.
+* `quarkus.eureka.heartbeat.status-path`:: Define the endpoint path where the extension exposes the status of the instance. This path is used by the heartbeat endpoints.
+
+Please configure these build-time properties in your Quarkus project's configuration file or through your preferred configuration method.
+
+=== Runtime Configuration
+
+The Quarkus Eureka Extension provides the following runtime configuration properties:
+
+[options="header"]
+|===
+| Property Key | Description | Default Value
+
+| quarkus.eureka.enable
+| A boolean value to determine whether the application should register with Eureka.
+| true
+
+| quarkus.eureka.port
+| The port of your application. It should match `quarkus.http.port`. If not specified, it takes the value of `quarkus.http.port`.
+|
+
+| quarkus.eureka.hostname
+| The address of your application. By default, it is the host where the application started up.
+|
+
+| quarkus.eureka.context-path
+| The context path of your application. It uses the default value `${quarkus.http.root-path:/}`.
+| if exists, it takes `${quarkus.http.root-path}`, else `/`
+
+| quarkus.eureka.prefer-ip-address
+| Whether or not to override the hostname with the application's LAN IP address.
+| false
+
+| quarkus.eureka.name
+| The name of your application in Eureka. It takes `quarkus.application.name` if not specified.
+| `${quarkus.application.name}`
+
+| quarkus.eureka.vip-address
+| How your application is recognized by clients.
+|
+
+| quarkus.eureka.home-page-url
+| The home path of your application.
+| `/`
+
+| quarkus.eureka.status-page-url
+| The path where the application's status can be checked.
+| if exists, it takes `${quarkus.eureka.heartbeat.status-path}`, otherwise `/info/status`
+
+| quarkus.eureka.health-check-url
+| The endpoint to check if your application is alive and kicking. It should return `{ "status": "up" }`.
+| if exists, it takes `${quarkus.eureka.heartbeat.health-path}`, otherwise `/info/health`
+
+| quarkus.eureka.region
+| The region for Eureka registration.
+| default
+
+| quarkus.eureka.prefer-same-zone
+| Whether to prefer the same zone for Eureka registration.
+| true
+
+| quarkus.eureka.service-url.default
+| The URLs of your Eureka instances. For example: `http://localhost:8761/eureka`.
+
+The eureka locations are comma separated
+|
+
+| quarkus.eureka.metadata.<tag-key>
+| The key-value pairs of metadata to be shown in the Eureka registry if available. For example: `jhipster-registry`.
+|
+
+| quarkus.eureka.health-check-initial-delay
+| The delay in seconds before initially checking health before registration.
+| 3
+|===
+
+as an example of working configuration
 
 [source,properties]
 ----
-quarkus.eureka.enable=<boolean to tell the application wether to register or not in Eureka. Default to true>
-quarkus.eureka.port= <your application port, it should match with quarkus.http.port. If it does not exist,it takes quarkus.http.port>
-quarkus.eureka.hostname= <your application address. By default the host where the application has started up>
-quarkus.eureka.context-path= <your application context path, using the default one ${quarkus.http.root-path:/}>
-quarkus.eureka.prefer-ip-address= <whether or not to override hostname with the application LAN IP address. By default this is set to false>
-quarkus.eureka.name= <name of your application in Eureka. It takes quarkus.application.name if it does not exist>
-quarkus.eureka.vip-address= <how your application is recognised by clients>
-quarkus.eureka.home-page-url= <home path of your application>
-quarkus.eureka.status-page-url= <where we can check your status>
-quarkus.eureka.health-check-url= <saying if you application is alive and kicking. { "status": "up" }>
-quarkus.eureka.region=default
-quarkus.eureka.prefer-same-zone=true
-quarkus.eureka.service-url.default=<urls of your Eureka instances. ie: http://localhost:8761/eureka>
-quarkus.eureka.metadata.<tag-key>=<tag value> #These keys values will be shown in Eureka registry if available i.e.: jhipster-registry
-quarkus.eureka.health-check-initial-delay= <delay in seconds before initially checking health before registration. Default 3>
-----
+# Configuration file: application.properties
 
-i.e: Given a `sample` application, your configuration properties to work with quarkus-eureka looks like:
-
-[source,properties]
-----
-# Configuration file
-# key = value
-
-quarkus.http.port=8001
+quarkus.http.port=8003
+quarkus.http.host=0.0.0.0
 quarkus.application.name=sample
 quarkus.eureka.region=default
 ## configuration related to reaching the eureka servers
@@ -112,73 +144,67 @@ quarkus.eureka.prefer-same-zone=true
 quarkus.eureka.should-use-dns=false
 quarkus.eureka.service-url.default=http://localhost:8761/eureka
 quarkus.eureka.metadata.app-key=my-quarkus-app
+
+quarkus.eureka.heartbeat.enabled=true
+quarkus.eureka.heartbeat.health-path=/info/health
+quarkus.eureka.heartbeat.status-path=/info/status
 ----
 
-Having as default values for remaining properties the following:
+==== CONNECTING TO SECURED EUREKA-SERVERS
+
+In case your Eureka Server is secured with basic authentication, you can configure `service-url` as follow:
+
 [source,properties]
 ----
-quarkus.eureka.host-name=<host address>
-quarkus.eureka.prefer-ip-address=false
-quarkus.eureka.port=${quarkus.http.port}
-quarkus.eureka.name=${quarkus.application.name}
-quarkus.eureka.context-path=${quarkus.http.root-path:/}
-quarkus.eureka.home-page-url=/
-quarkus.eureka.status-page-url=/info/status
-quarkus.eureka.health-check-url=/info/health
+quarkus.eureka.service-url.default=http://user:pass@eureka-server/eureka
 ----
 
-=== HEALTH INSTANCES
+The credentials are added to the request headers in the `Authorization` field with the value encoded as `Basic <base64 value>`
 
-In case you don't want to implement the heartbeat of your application, you might make use of:
+== Usage
 
-link:https://quarkus.io/guides/health-guide[Quarkus - Microprofile Health]
+To use the Quarkus Eureka Extension, ensure the following prerequisites are met:
 
-Other alternative is creating your own controller to attend them, a simple approach for this might be:
+* Quarkus 3 is installed and set up in your development environment.
+* The necessary configuration properties for the extension are properly defined.
+
+=== Registration in Eureka
+
+The Quarkus Eureka Extension provides the capability to register your Quarkus application in Eureka. Once registered, your application becomes discoverable by other services and can participate in service discovery and load balancing.
+
+To register your application in Eureka, make sure you have properly configured the runtime properties, including `quarkus.eureka.enable` set to `true`. This enables the registration functionality provided by the extension.
+
+=== Instance Health Check Endpoint
+
+Eureka requires an endpoint to check the health of instances. You have the following options to provide this endpoint:
+
+1. **Custom Endpoint**: You can create a custom endpoint in your Quarkus application specifically for health checks. Implement an endpoint that returns the appropriate health information based on your application's requirements. This gives you full control over the health check logic and response format.
+
+2. **SmallRye Health**: You can leverage the SmallRye Health framework (https://quarkus.io/guides/smallrye-health) to expose health information about your application. SmallRye Health provides a flexible and extensible way to define health checks and expose them as an endpoint. This option allows you to use predefined health checks and customize them as needed.
+
+3. **Quarkus Eureka Heartbeat Feature**: The Quarkus Eureka Extension also provides a built-in heartbeat feature. By setting the `quarkus.eureka.heartbeat.enabled` property to `true`, the extension automatically exposes a heartbeat endpoint that can be used by Eureka to check the health of your application. This eliminates the need for creating a separate endpoint or using SmallRye Health, as the extension takes care of the health check implementation.
+
+Choose the method that best suits your application's requirements for providing a health check endpoint, and ensure it is properly configured and functioning.
+
+=== Using the REST Client to Connect to Services in Eureka
+
+The Quarkus Eureka Extension allows you to use a REST client to connect to other services registered in Eureka. You can connect to a service by its registered service name, and optionally, you can select the instance selection strategy.
+
+To connect to a service in Eureka, follow these steps:
+
+* Ensure that the Quarkus Eureka Extension is properly configured and running in your application.
+
+* Use the `@Inject` annotation to inject the `EurekaClient` instance into your code:
+
 [source,java]
 ----
-@Path("/info")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class HealthCheckController {
-
-    @GET
-    @Path("/health")
-    public Response health() {
-        return Response.ok(Map.of("STATUS", "UP")).build();
-    }
-
-    @GET
-    @Path("/status")
-    public Response status() {
-        return Response.ok(Map.of()).build();
-    }
-
-}
+@Inject
+EurekaClient eurekaClient;
 ----
 
-applying the endpoints where match.
+* Use the `eurekaClient.app(serviceName)` method to obtain a JAX-RS `WebTarget` instance for the desired service. Replace `serviceName` with the name of the service you want to connect to.
 
-Eureka registry seems to be ready to work in cloud platforms such as AWS and the API so recognise it. But in this
-first approach it just connects with Eureka instances in by whole urls.
-
-=== WRAPPING UP WITH CONFIG
-With this configuration, once you start up you application, it should register itself in the list of locations
-provided, checking the healthy of its own in the network and the state of the Eureka service where it is registered.
-It keeps checking at the moment every 40 seconds the availability of them, updating the state if feasible.
-
-Bare in mind that Eureka Server is a service which instances need to teach, Eureka Server itself does not ask to instances
-about their states.
-
-== EUREKA CLIENT
-
-=== USING `EASILY` THE CLIENT
-
-As client to consume the services posted in Eureka Server, there is a `EurekaClient` class which requests
-for services in Eureka Server, bringing one of the `UP` status available and presenting the `WebTarget` configured with
-the actual url to the service to link with.
-
-A mechanism has been implemented to select one instance amongst the available ones for the given service, this can be done
-as:
+* Add a *Load Balancer* strategy to the `EurekaClient` by adding it as annotation to the instance;
 
 [source,java]
 ----
@@ -189,41 +215,42 @@ as:
 
 ----
 
-Being the available ones `ROUND_ROBIN` or `RANDOM`.
+Available *LoadBalancerType* options are: `ROUND_ROBIN` or `RANDOM`.
 
-This `WebTarget` instance comes from `RestEasy` implementation which is Quarkus compatible.
+* Use the api to retrieve information from remote services:
 
-To request for an endpoint in `sample` application, results in:
 
 [source,java]
 ----
- return eurekaClient.app("sample")
-                .path("/actuator/health")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get()
-                .readEntity(String.class);
+  eurekaClient.app("service")
+              .path("/path/to/get")
+              .request(MediaType.APPLICATION_JSON_TYPE)
+              .get()
+              .readEntity(String.class);
 ----
 
-== CONNECTING TO SECURED EUREKA-SERVERS
+== Contributing
 
-In the use case in which your Eureka Server is secure with basic authentication, the way to proceed in your
-`application.properties` file is adding the credential as:
+Contributions to this project are welcome and appreciated. To ensure a positive and collaborative community, please adhere to the following guidelines when contributing:
 
-[source,properties]
-----
-quarkus.eureka.service-url.default=http://user:pass@eureka-server/eureka
-----
+* Be respectful and considerate towards other contributors. Everyone's ideas and opinions matter.
+* Follow the project's coding conventions, style guidelines, and best practices.
+* Before starting work on a new feature or bug fix, check the project's issue tracker to see if it has been discussed or assigned to someone else. If not, consider creating a new issue to discuss your proposal.
+* When submitting a pull request, provide a clear and descriptive explanation of the changes made, along with any relevant supporting documentation or tests.
+* Respect the existing codebase and seek feedback from other contributors if you plan to make significant changes.
+* Be responsive to feedback and open to collaboration. Discussions and constructive criticism can lead to better outcomes for everyone.
+* Give credit to other contributors for their ideas, code contributions, or support.
 
-The credentials are added to the request headers in the `Authorization` field with the value encoded as `Basic <base64 value>`
+Remember that this project thrives on the contributions of its users. By respecting and collaborating with other contributors, we can create a welcoming and inclusive community that fosters innovation and growth.
 
-= Why?
+Thank you for considering contributing to this project!
 
-The reason to create the extension have been to have other way to make Quarkus openness to use within other services
-and the way to keep fit learning other new technologies which spread around the business.
+== Support
 
-This is nothing, but a way to connect Quarkus to the world easily with the guides provided and hopefully one of the
-multiple integrations with the services we use as developers to monitoring, tracing and scaling our application,
-letting be more reliable for the future of our work.
+If you encounter any issues, have questions, or would like to provide feedback or suggestions for improvement, please use the following resources:
 
+* **GitHub Issues**: For bug reports, feature requests, or any specific tasks related to the project, please use the [GitHub Issues](https://github.com/fmcejudo/quarkus-eureka/issues) tab. Open a new issue and provide as much detail as possible to help us understand and address the problem or request.
 
+* **Discussions**: For broader discussions, improvement ideas, or general feedback about the project, you can visit the [Discussions](https://github.com/fmcejudo/quarkus-eureka/discussions) section on GitHub. Feel free to start a new discussion or participate in existing ones.
 
+We appreciate your engagement and feedback! Your contributions and input are valuable in making this project better for everyone.
