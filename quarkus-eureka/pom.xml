@@ -20,14 +20,14 @@
     <parent>
         <artifactId>quarkus-eureka-parent</artifactId>
         <groupId>com.github.fmcejudo</groupId>
-        <version>0.0.16</version>
+        <version>0.0.19-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>quarkus-eureka</artifactId>
 
     <name>quarkus-eureka</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
