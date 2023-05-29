@@ -120,16 +120,4 @@ public class EurekaRuntimeConfiguration {
     @ConfigItem(defaultValue = "3")
     long healthCheckInitialDelay;
 
-    public static class NetworkConverter implements Converter<String> {
-        private static final long serialVersionUID = -423310887944694372L;
-
-        @Override
-        public String convert(final String hostname) {
-            if (hostname != null && !hostname.trim().isEmpty()) {
-                return hostname;
-            }
-            return HostNameDiscovery.getHostname();
-        }
-    }
-
 }

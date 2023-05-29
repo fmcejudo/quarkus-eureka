@@ -50,11 +50,6 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
         this.healthCheckInitialDelay = eurekaRuntimeConfiguration.healthCheckInitialDelay;
     }
 
-    private String selectedHostname(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
-        if (eurekaRuntimeConfiguration.preferIpAddress) return HostNameDiscovery.getLocalHost();
-        return eurekaRuntimeConfiguration.hostName;
-    }
-
     private Map<String, String> composeMetadata(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         Map<String, String> result = new LinkedHashMap<>();
         if (eurekaRuntimeConfiguration.metadata != null) {
