@@ -55,9 +55,9 @@ public class EurekaRecorder {
 
             OperationFactory operationFactory = createOperationFactory();
 
-            beanContainer.instance(EurekaProducer.class).setOperationFactory(operationFactory);
-            beanContainer.instance(EurekaProducer.class).setInstanceInfo(instanceInfo);
-            beanContainer.instance(EurekaProducer.class)
+            beanContainer.beanInstance(EurekaProducer.class).setOperationFactory(operationFactory);
+            beanContainer.beanInstance(EurekaProducer.class).setInstanceInfo(instanceInfo);
+            beanContainer.beanInstance(EurekaProducer.class)
                     .setServiceLocationConfig(serviceLocationConfig);
             new EurekaRegistrationService(serviceLocationConfig, instanceInfo, operationFactory)
                     .register();
