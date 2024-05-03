@@ -16,47 +16,47 @@
 
 package io.quarkus.eureka.registration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Map;
 
-import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
-import static jakarta.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
-import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 class InstanceHealthCheckService {
 
     Status healthCheck(final String healthCheckUrl) {
-        try (Client client = ClientBuilder.newClient(); Response response = client.target(healthCheckUrl)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get()) {
-            if (response.getStatusInfo().getFamily().equals(CLIENT_ERROR)) {
-                throw new HealthCheckException(
-                        "Instance can't reach own application health check. Ensure this has been implemented"
-                );
-            }
-            return getStatusFromResponse(response);
 
-        } catch (ProcessingException ex) {
+        try (HttpClient httpClient = HttpClient.newBuilder().build()) {
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(healthCheckUrl)).GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(UTF_8));
+
+            if ((response.statusCode() & 200) == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, String> result = mapper.readValue(response.body(), Map.class);
+                return getStatusFromResponse(result);
+            }
+
+            throw new HealthCheckException(
+                    "Instance can't reach own application health check. Ensure this has been implemented"
+            );
+        } catch (HealthCheckException e) {
+            throw e;
+        } catch (Exception ex) {
             throw new HealthCheckException(format("Health check not reachable: %s", healthCheckUrl), ex);
         }
+
     }
 
-    private Status getStatusFromResponse(final Response response) {
+    private Status getStatusFromResponse(final Map<String, String> body) {
 
-        if (!response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {
-            return DOWN;
-        }
-
-        final Map<String, String> body = response.readEntity(Map.class);
         return body.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equalsIgnoreCase("status"))

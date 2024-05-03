@@ -70,7 +70,7 @@ public class InstanceHealthCheckServiceTest {
                         .withStatus(200)
                         .withBody("{\"status\": \"UP\"}")));
 
-        Status status = instanceHealthCheckService.healthCheck(join("/", hostName, healthPath));
+        Status status = instanceHealthCheckService.healthCheck(hostName.concat(healthPath));
         assertThat(status).isEqualTo(Status.UP);
 
     }
