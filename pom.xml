@@ -12,16 +12,15 @@
 
     <properties>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
-        <quarkus.version>3.0.3.Final</quarkus.version>
-        <wiremock.version>2.27.2</wiremock.version>
+        <quarkus.version>3.10.0</quarkus.version>
+        <wiremock.version>3.3.1</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
-        <assertj.version>3.22.0</assertj.version>
+        <assertj.version>3.25.3</assertj.version>
         <surefire-plugin.version>3.0.0</surefire-plugin.version>
-        <resteasy-core.version>6.2.4.Final</resteasy-core.version>
         <nexus.plugin.version>1.6.13</nexus.plugin.version>
     </properties>
 
@@ -73,12 +72,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-core</artifactId>
-                <version>${resteasy-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
+                <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
                 <version>${wiremock.version}</version>
             </dependency>
@@ -107,6 +101,11 @@
                             <arg>-parameters</arg>
                         </compilerArgs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>io.quarkus</artifactId>
+                    <groupId>quarkus-extension-maven-plugin</groupId>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>

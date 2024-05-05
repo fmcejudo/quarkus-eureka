@@ -61,15 +61,6 @@ public class EurekaInfoProcessor {
         return eurekaBuildItem;
     }
 
-    @BuildStep
-    public ReflectiveClassBuildItem registerForReflection() {
-        ArrayList<String> dtos = new ArrayList<>();
-        dtos.add(InstanceInfo.class.getName());
-        dtos.add(DataCenterInfo.class.getName());
-        dtos.add(PortEnableInfo.class.getName());
-        return new ReflectiveClassBuildItem(true, true, dtos.toArray(new String[dtos.size()]));
-    }
-
     @BuildStep(onlyIf = IsHealthEnabled.class)
     ServletBuildItem healthCheckBuildItem(final EurekaBuildTimeConfiguration eurekaBuildTimeConfiguration) {
 

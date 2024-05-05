@@ -19,60 +19,61 @@ package io.quarkus.eureka.registration;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
-import org.junit.jupiter.api.AfterEach;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static java.lang.String.format;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class InstanceHealthCheckServiceTest {
 
-    private final int port = 10099;
-
-    private final String hostName;
     private final String healthPath;
 
     {
-        hostName = format("http://localhost:%d", port);
         healthPath = "/info/health";
     }
 
     private InstanceHealthCheckService instanceHealthCheckService;
 
-    private WireMockServer wireMockServer;
+    private static WireMockServer wireMockServer;
 
-    @BeforeEach
-    public void setUp() {
-        wireMockServer = new WireMockServer(port);
+    @BeforeAll
+    static void onInit() {
+        wireMockServer = new WireMockServer(0);
         wireMockServer.start();
-
-        instanceHealthCheckService = new InstanceHealthCheckService();
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    static void onFinish() {
         wireMockServer.stop();
     }
 
+    @BeforeEach
+    public void setUp() {
+        instanceHealthCheckService = new InstanceHealthCheckService();
+    }
 
     @Test
     public void shouldReachHealthCheck() {
 
         wireMockServer.stubFor(get(urlEqualTo(healthPath))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(200)
-                        .withBody("{\"status\": \"UP\"}")));
+                        .withBody("""
+                          {"status": "UP"}
+                        """)));
 
-        Status status = instanceHealthCheckService.healthCheck(join("/", hostName, healthPath));
+        Status status = instanceHealthCheckService.healthCheck(wireMockServer.baseUrl().concat(healthPath));
         assertThat(status).isEqualTo(Status.UP);
-
     }
 
     @Test
@@ -83,7 +84,7 @@ public class InstanceHealthCheckServiceTest {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(404)));
 
-        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(join("", hostName, healthPath)))
+        assertThatThrownBy(() -> instanceHealthCheckService.healthCheck(wireMockServer.baseUrl().concat(healthPath)))
                 .isInstanceOf(HealthCheckException.class)
                 .hasMessageContaining("Instance can't reach own application health check.");
 

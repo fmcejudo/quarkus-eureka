@@ -16,23 +16,33 @@
 
 package io.quarkus.eureka.registration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.eureka.client.Status;
 import io.quarkus.eureka.exception.HealthCheckException;
+import io.quarkus.runtime.util.StringUtil;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.Map;
 
-import static io.quarkus.eureka.client.Status.DOWN;
 import static io.quarkus.eureka.client.Status.UNKNOWN;
+import static io.quarkus.eureka.client.Status.UP;
 import static jakarta.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
-import static jakarta.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 import static java.lang.String.format;
 
 class InstanceHealthCheckService {
+
+    private final ObjectMapper objectMapper;
+
+    public InstanceHealthCheckService() {
+        this.objectMapper = new ObjectMapper();
+    }
 
     Status healthCheck(final String healthCheckUrl) {
         try (Client client = ClientBuilder.newClient(); Response response = client.target(healthCheckUrl)
@@ -52,18 +62,21 @@ class InstanceHealthCheckService {
 
     private Status getStatusFromResponse(final Response response) {
 
-        if (!response.getStatusInfo().getFamily().equals(SUCCESSFUL)) {
-            return DOWN;
-        }
+        final String body = response.readEntity(String.class);
+        try {
+            Map<String, String> result = objectMapper.readValue(body, new TypeReference<Map<String, String>>() {
+            });
 
-        final Map<String, String> body = response.readEntity(Map.class);
-        return body.entrySet()
-                .stream()
-                .filter(e -> e.getKey().equalsIgnoreCase("status"))
-                .map(Map.Entry::getValue)
-                .map(String::toUpperCase)
-                .map(Status::valueOf)
-                .findFirst().orElse(UNKNOWN);
+            String status = result.get("status");
+            if (StringUtil.isNullOrEmpty(status)) {
+                return UNKNOWN;
+            }
+            return Status.valueOf(status.toUpperCase());
+        } catch (JsonProcessingException e) {
+            return UNKNOWN;
+        }
     }
+
+
 
 }
