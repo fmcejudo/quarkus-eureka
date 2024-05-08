@@ -3,14 +3,14 @@
     "name": "SAMPLE",
     "instance": [
       {
-        "instanceId": "127.0.0.1:sample:8002",
+        "instanceId": "127.0.0.1:sample:{{port}}",
         "hostName": "127.0.0.1",
         "app": "SAMPLE",
         "ipAddr": "127.0.0.1",
         "status": "UP",
         "overriddenStatus": "UNKNOWN",
         "port": {
-          "$": 8002,
+          "$": "{{port}}",
           "@enabled": "true"
         },
         "securePort": {
@@ -31,11 +31,11 @@
           "serviceUpTimestamp": 1567070512396
         },
         "metadata": {
-          "management.port": "8002"
+          "management.port": "{{port}}"
         },
-        "homePageUrl": "http://127.0.0.1:8002/",
-        "statusPageUrl": "http://127.0.0.1:8002/actuator/info",
-        "healthCheckUrl": "http://127.0.0.1:8002/actuator/health",
+        "homePageUrl": "http://127.0.0.1:{{port}}/",
+        "statusPageUrl": "http://127.0.0.1:{{port}}/actuator/info",
+        "healthCheckUrl": "http://127.0.0.1:{{port}}/actuator/health",
         "vipAddress": "SAMPLE",
         "secureVipAddress": "SAMPLE",
         "isCoordinatingDiscoveryServer": "false",
