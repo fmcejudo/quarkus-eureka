@@ -26,10 +26,11 @@ import io.quarkus.eureka.operation.query.MultipleInstanceQueryOperation;
 import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
-import io.quarkus.eureka.registration.EurekaRegistrationService;
+import io.quarkus.eureka.registration.EurekaInstancesRegistration;
 import io.quarkus.runtime.annotations.Recorder;
 import jakarta.ws.rs.ProcessingException;
 
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,8 +60,9 @@ public class EurekaRecorder {
             beanContainer.beanInstance(EurekaProducer.class).setInstanceInfo(instanceInfo);
             beanContainer.beanInstance(EurekaProducer.class)
                     .setServiceLocationConfig(serviceLocationConfig);
-            new EurekaRegistrationService(serviceLocationConfig, instanceInfo, operationFactory)
-                    .register();
+            EurekaInstancesRegistration.createRegistration(
+                    serviceLocationConfig, instanceInfo, operationFactory
+            ).register(Executors.newScheduledThreadPool(3));
 
         } catch (ProcessingException ex) {
             logger.log(Level.SEVERE, "error connecting with eureka registry service", ex);

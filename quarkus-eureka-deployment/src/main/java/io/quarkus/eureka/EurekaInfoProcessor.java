@@ -18,23 +18,16 @@ package io.quarkus.eureka;
 
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
-import io.quarkus.arc.deployment.BeanContainerListenerBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkus.eureka.client.DataCenterInfo;
-import io.quarkus.eureka.client.InstanceInfo;
-import io.quarkus.eureka.client.PortEnableInfo;
 import io.quarkus.eureka.config.EurekaBuildTimeConfiguration;
 import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 import io.quarkus.eureka.heartbeat.HealthCheckController;
 import io.quarkus.eureka.heartbeat.StatusCheckController;
 import io.quarkus.undertow.deployment.ServletBuildItem;
-
-import java.util.ArrayList;
 
 
 public class EurekaInfoProcessor {
@@ -50,7 +43,6 @@ public class EurekaInfoProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     @BuildStep
     public AdditionalBeanBuildItem stepConfiguration(BuildProducer<AdditionalBeanBuildItem> additionalBeanProducer,
-                                       BuildProducer<BeanContainerListenerBuildItem> containerListenerProducer,
                                        BuildProducer<FeatureBuildItem> featureProducer,
                                        final EurekaRecorder eurekaRecorder) {
 
@@ -59,15 +51,6 @@ public class EurekaInfoProcessor {
         AdditionalBeanBuildItem eurekaBuildItem = AdditionalBeanBuildItem.unremovableOf(EurekaProducer.class);
         additionalBeanProducer.produce(eurekaBuildItem);
         return eurekaBuildItem;
-    }
-
-    @BuildStep
-    public ReflectiveClassBuildItem registerForReflection() {
-        ArrayList<String> dtos = new ArrayList<>();
-        dtos.add(InstanceInfo.class.getName());
-        dtos.add(DataCenterInfo.class.getName());
-        dtos.add(PortEnableInfo.class.getName());
-        return new ReflectiveClassBuildItem(true, true, dtos.toArray(new String[dtos.size()]));
     }
 
     @BuildStep(onlyIf = IsHealthEnabled.class)
