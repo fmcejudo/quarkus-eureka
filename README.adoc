@@ -39,14 +39,14 @@ To use the Quarkus Eureka Extension, you need to include the following dependenc
 <dependency>
   <groupId>com.github.fmcejudo</groupId>
   <artifactId>quarkus-eureka</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ----
 
 
 An alternative way to install it is through `maven` quarkus tool as:
 
-`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:1.0.1"`
+`mvn quarkus:add-extension -Dextension="com.github.fmcejudo:quarkus-eureka:1.1.0"`
 
 
 == Configuration
