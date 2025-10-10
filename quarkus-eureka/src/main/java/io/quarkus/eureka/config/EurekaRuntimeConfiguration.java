@@ -16,111 +16,109 @@
 
 package io.quarkus.eureka.config;
 
-import io.quarkus.eureka.util.HostNameDiscovery;
-import io.quarkus.runtime.annotations.ConfigItem;
-import io.quarkus.runtime.annotations.ConfigPhase;
-import io.quarkus.runtime.annotations.ConfigRoot;
-import io.quarkus.runtime.annotations.ConvertWith;
-import org.eclipse.microprofile.config.spi.Converter;
-
 import java.util.Map;
 
+import io.quarkus.eureka.util.HostNameDiscovery;
+import io.quarkus.runtime.annotations.ConfigPhase;
+import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithConverter;
+import io.smallrye.config.WithDefault;
+import org.eclipse.microprofile.config.spi.Converter;
+
+@ConfigMapping(prefix = "quarkus.eureka")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
-public class EurekaRuntimeConfiguration {
+public interface EurekaRuntimeConfiguration {
 
     /**
      * enable the eureka client
      */
-    @ConfigItem(defaultValue = "true")
-    public boolean enable;
+    @WithDefault("true")
+    boolean enable();
 
     /**
      * port where eureka server will redirect to attend the service
      */
-    @ConfigItem(defaultValue = "${quarkus.http.port}")
-    Integer port;
+    @WithDefault("${quarkus.http.port}")
+    Integer port();
 
     /**
      * name of the service as it will turn up in Eureka
      */
-    @ConfigItem(defaultValue = "${quarkus.application.name}")
-    String name;
+    @WithDefault("${quarkus.application.name}")
+    String name();
 
     /**
      * base-path where the application resides
      */
-    @ConfigItem(defaultValue = "${quarkus.http.root-path:/}")
-    String contextPath;
+    @WithDefault("${quarkus.http.root-path:/}")
+    String contextPath();
 
     /**
      * Name used by load balancer to redirect to the service
      */
-    @ConfigItem(defaultValue = "${quarkus.application.name}")
-    String vipAddress;
+    @WithDefault("${quarkus.application.name}")
+    String vipAddress();
 
     /**
      * The hostname, otherwise it will be guest from OS primitives
      */
-    @ConvertWith(NetworkConverter.class)
-    @ConfigItem
-    String hostName;
+    @WithConverter(NetworkConverter.class)
+    String hostName();
 
     /**
      * Determines if the local ip address should be used instead of the hostName.
      */
-    @ConfigItem
-    boolean preferIpAddress;
+    @WithDefault("true")
+    boolean preferIpAddress();
 
     /**
      * if AWS environment, in which region this registry service is
      */
-    @ConfigItem(defaultValue = "default")
-    String region;
+    @WithDefault("default")
+    String region();
 
     /**
      * instances of registry services in which the application will publish itself
      */
-    @ConfigItem
-    Map<String, String> serviceUrl;
+    Map<String, String> serviceUrl();
 
     /**
      * Defining zone in which client should fetch for other services
      */
-    @ConfigItem(defaultValue = "true")
-    boolean preferSameZone;
+    @WithDefault("true")
+    boolean preferSameZone();
 
     /**
      * default page
      */
-    @ConfigItem(defaultValue = "/")
-    String homePageUrl;
+    @WithDefault("/")
+    String homePageUrl();
 
     /**
      * some extra tags which identifies app
      */
-    @ConfigItem
-    Map<String, String> metadata;
+    Map<String, String> metadata();
 
     /**
      * Check the application state
      */
-    @ConfigItem(defaultValue = "${quarkus.eureka.heartbeat.status-path:/info/status}")
-    String statusPageUrl;
+    @WithDefault("${quarkus.eureka.heartbeat.status-path:/info/status}")
+    String statusPageUrl();
 
     /**
      * Heartbeats which ensure the application is alive
      */
-    @ConfigItem(defaultValue = "${quarkus.eureka.heartbeat.health-path:/info/health}")
-    String healthCheckUrl;
+    @WithDefault("${quarkus.eureka.heartbeat.health-path:/info/health}")
+    String healthCheckUrl();
 
     /**
      * Initial delay in seconds for health check before eureka registration
      */
-    @ConfigItem(defaultValue = "3")
-    long healthCheckInitialDelay;
+    @WithDefault("3")
+    long healthCheckInitialDelay();
 
     public static class NetworkConverter implements Converter<String> {
-        private static final long serialVersionUID = -423310887944694372L;
 
         @Override
         public String convert(final String hostname) {

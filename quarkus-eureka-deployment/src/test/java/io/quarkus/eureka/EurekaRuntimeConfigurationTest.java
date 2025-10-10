@@ -16,19 +16,23 @@
 
 package io.quarkus.eureka;
 
+import java.util.Map;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
+import io.quarkus.eureka.EurekaRuntimeConfigurationTest.EurekaRuntimeConfigurationTestProfile;
 import io.quarkus.eureka.client.EurekaClient;
 import io.quarkus.eureka.client.loadBalancer.LoadBalanced;
 import io.quarkus.eureka.client.loadBalancer.LoadBalancerType;
 import io.quarkus.eureka.exception.EurekaServiceNotFoundException;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.client.WebTarget;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -38,7 +42,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class EurekaRuntimeConfigurationTest {
+@QuarkusTest
+@TestProfile(EurekaRuntimeConfigurationTestProfile.class)
+class EurekaRuntimeConfigurationTest {
 
     @Inject
     public EurekaClient eurekaClient;
@@ -47,30 +53,25 @@ public class EurekaRuntimeConfigurationTest {
     @LoadBalanced(type = LoadBalancerType.ROUND_ROBIN)
     public EurekaClient eurekaClientRB;
 
-    @RegisterExtension
-    static final QuarkusUnitTest config = new QuarkusUnitTest()
-            .withConfigurationResource("eureka-config.properties")
-            .withEmptyApplication();
-
 
     private WireMockServer wireMockServer;
 
     private static final int PORT = 10034;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         wireMockServer = new WireMockServer(PORT);
         wireMockServer.start();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         wireMockServer.stop();
     }
 
     @Test
     @DisplayName(value = "reading configuration properties for eureka")
-    public void shouldLoadEurekaConfigAndRegisterBeans() {
+    void shouldLoadEurekaConfigAndRegisterBeans() {
 
         String instanceId = String.join(":", "localhost", "sample", String.valueOf(wireMockServer.port()));
         wireMockServer.stubFor(delete(urlEqualTo("/eureka/apps/SAMPLE/".concat(instanceId)))
@@ -94,7 +95,7 @@ public class EurekaRuntimeConfigurationTest {
 
     @Test
     @DisplayName(value = "reading configuration properties for eureka with LB")
-    public void shouldLoadEurekaConfigAndRegisterBeansWithLB() {
+    void shouldLoadEurekaConfigAndRegisterBeansWithLB() {
 
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/SAMPLE"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -119,7 +120,7 @@ public class EurekaRuntimeConfigurationTest {
     }
 
     @Test
-    public void shouldFailWhenServiceNotFoundInEureka() {
+    void shouldFailWhenServiceNotFoundInEureka() {
 
         wireMockServer.stubFor(get(urlEqualTo("/eureka/apps/OTHER"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
@@ -132,5 +133,13 @@ public class EurekaRuntimeConfigurationTest {
                 .hasMessage("service OTHER not found");
 
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/eureka/apps/OTHER")));
+    }
+
+    public static class EurekaRuntimeConfigurationTestProfile implements QuarkusTestProfile {
+
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            return Map.of("quarkus.config.locations", "eureka-config.properties");
+        }
     }
 }

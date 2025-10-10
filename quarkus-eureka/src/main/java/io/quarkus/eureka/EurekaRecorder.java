@@ -44,7 +44,7 @@ public class EurekaRecorder {
 
     public void registerServiceInEureka(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
                                         final BeanContainer beanContainer) {
-        if(!eurekaRuntimeConfiguration.enable) {
+        if(!eurekaRuntimeConfiguration.enable()) {
             return;
         }
         try {
