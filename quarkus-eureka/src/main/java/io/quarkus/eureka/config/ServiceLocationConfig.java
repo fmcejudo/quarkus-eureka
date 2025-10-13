@@ -18,7 +18,6 @@ package io.quarkus.eureka.config;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -28,11 +27,11 @@ public class ServiceLocationConfig {
     private final Collection<Location> locations;
 
     public ServiceLocationConfig(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
-        this(ofNullable(eurekaRuntimeConfiguration.serviceUrl).map(Map::values).orElse(emptyList()));
+        this(ofNullable(eurekaRuntimeConfiguration.serviceUrl()).map(Map::values).orElse(emptyList()));
     }
 
     public ServiceLocationConfig(Collection<String> locationsAsString) {
-        this.locations = locationsAsString.stream().map(Location::new).collect(Collectors.toList());
+        this.locations = locationsAsString.stream().map(Location::new).toList();
     }
 
     public Collection<Location> getLocations() {

@@ -36,30 +36,30 @@ public class DefaultInstanceInfoContext implements InstanceInfoContext {
     private final Map<String, String> metadata;
     private final long healthCheckInitialDelay;
 
-    DefaultInstanceInfoContext(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
-        this.name = eurekaRuntimeConfiguration.name;
-        this.port = eurekaRuntimeConfiguration.port;
-        this.vipAddress = eurekaRuntimeConfiguration.vipAddress;
-        this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl;
-        this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl;
-        this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl;
+    public DefaultInstanceInfoContext(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
+        this.name = eurekaRuntimeConfiguration.name();
+        this.port = eurekaRuntimeConfiguration.port();
+        this.vipAddress = eurekaRuntimeConfiguration.vipAddress();
+        this.homePageUrl = eurekaRuntimeConfiguration.homePageUrl();
+        this.statusPageUrl = eurekaRuntimeConfiguration.statusPageUrl();
+        this.healthCheckUrl = eurekaRuntimeConfiguration.healthCheckUrl();
         this.hostName = selectedHostname(eurekaRuntimeConfiguration);
         this.instanceId = buildInstanceId();
         this.metadata = composeMetadata(eurekaRuntimeConfiguration);
-        this.healthCheckInitialDelay = eurekaRuntimeConfiguration.healthCheckInitialDelay;
+        this.healthCheckInitialDelay = eurekaRuntimeConfiguration.healthCheckInitialDelay();
     }
 
     private String selectedHostname(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
-        if (eurekaRuntimeConfiguration.preferIpAddress) return HostNameDiscovery.getLocalHost();
-        return eurekaRuntimeConfiguration.hostName;
+        if (eurekaRuntimeConfiguration.preferIpAddress()) return HostNameDiscovery.getLocalHost();
+        return eurekaRuntimeConfiguration.hostName();
     }
 
     private Map<String, String> composeMetadata(EurekaRuntimeConfiguration eurekaRuntimeConfiguration) {
         Map<String, String> result = new LinkedHashMap<>();
-        if (eurekaRuntimeConfiguration.metadata != null) {
-            result.putAll(eurekaRuntimeConfiguration.metadata);
+        if (eurekaRuntimeConfiguration.metadata() != null) {
+            result.putAll(eurekaRuntimeConfiguration.metadata());
         }
-        result.putIfAbsent("context", eurekaRuntimeConfiguration.contextPath);
+        result.putIfAbsent("context", eurekaRuntimeConfiguration.contextPath());
         return result;
     }
 
