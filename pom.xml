@@ -282,17 +282,6 @@
         </profile>
     </profiles>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
-
     <scm>
         <url>https://github.com/fmcejudo/quarkus-eureka</url>
         <developerConnection>scm:git:git@github.com:fmcejudo/quarkus-eureka.git</developerConnection>
