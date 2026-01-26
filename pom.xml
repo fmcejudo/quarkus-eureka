@@ -19,7 +19,7 @@
         <wiremock.version>3.3.1</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <surefire-plugin.version>3.0.0</surefire-plugin.version>
         <nexus.plugin.version>1.7.0</nexus.plugin.version>
     </properties>
