@@ -11,16 +11,16 @@
     <url>https://github.com/fmcejudo/quarkus-eureka</url>
 
     <properties>
-        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <java.version>21</java.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
-        <quarkus.version>3.28.3</quarkus.version>
-        <wiremock.version>3.3.1</wiremock.version>
+        <quarkus.version>3.32.2</quarkus.version>
+        <wiremock.version>3.13.2</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <checkstyle.config.location>./checkstyle.xml</checkstyle.config.location>
-        <assertj.version>3.25.3</assertj.version>
-        <surefire-plugin.version>3.0.0</surefire-plugin.version>
+        <assertj.version>3.27.7</assertj.version>
+        <surefire-plugin.version>3.5.5</surefire-plugin.version>
         <nexus.plugin.version>1.7.0</nexus.plugin.version>
     </properties>
 
@@ -105,7 +105,7 @@
                 <plugin>
                     <artifactId>io.quarkus</artifactId>
                     <groupId>quarkus-extension-maven-plugin</groupId>
-                    <version>3.10.0</version>
+                    <version>${quarkus.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -121,12 +121,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.6.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>9.2</version>
+                            <version>13.3.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -136,7 +136,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.3.1</version>
                 <configuration>
                     <localCheckout>true</localCheckout>
                     <pushChanges>false</pushChanges>
@@ -147,14 +147,14 @@
                     <dependency>
                         <groupId>org.apache.maven.scm</groupId>
                         <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>1.9.5</version>
+                        <version>2.2.1</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
+                <version>0.10.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -163,7 +163,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -206,9 +206,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
-                    <configLocation>./checkstyle.xml</configLocation>
+                    <configLocation>${checkstyle.config.location}</configLocation>
                 </configuration>
             </plugin>
         </plugins>
@@ -284,7 +283,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

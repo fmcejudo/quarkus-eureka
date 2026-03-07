@@ -27,6 +27,7 @@ import io.quarkus.eureka.operation.query.SingleInstanceQueryOperation;
 import io.quarkus.eureka.operation.register.RegisterOperation;
 import io.quarkus.eureka.operation.remove.RemoveInstanceOperation;
 import io.quarkus.eureka.registration.EurekaInstancesRegistration;
+import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import jakarta.ws.rs.ProcessingException;
 
@@ -41,9 +42,16 @@ import static java.util.Arrays.asList;
 public class EurekaRecorder {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final RuntimeValue<EurekaRuntimeConfiguration> eurekaRuntimeConfigurationValue;
 
-    public void registerServiceInEureka(final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
-                                        final BeanContainer beanContainer) {
+    public EurekaRecorder(
+            final RuntimeValue<EurekaRuntimeConfiguration> eurekaRuntimeConfigurationValue) {
+        this.eurekaRuntimeConfigurationValue = eurekaRuntimeConfigurationValue;
+    }
+
+    public void registerServiceInEureka(final BeanContainer beanContainer) {
+        EurekaRuntimeConfiguration eurekaRuntimeConfiguration =
+                eurekaRuntimeConfigurationValue.getValue();
         if(!eurekaRuntimeConfiguration.enable()) {
             return;
         }
