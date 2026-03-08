@@ -73,6 +73,7 @@
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-extension-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
                 <!-- Executions configuration can be inherited from quarkus-build-parent -->
                 <executions>
                     <execution>
