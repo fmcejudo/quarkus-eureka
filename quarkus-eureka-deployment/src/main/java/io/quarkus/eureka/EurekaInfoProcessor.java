@@ -24,7 +24,6 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.eureka.config.EurekaBuildTimeConfiguration;
-import io.quarkus.eureka.config.EurekaRuntimeConfiguration;
 import io.quarkus.eureka.heartbeat.HealthCheckController;
 import io.quarkus.eureka.heartbeat.StatusCheckController;
 import io.quarkus.undertow.deployment.ServletBuildItem;
@@ -35,9 +34,8 @@ public class EurekaInfoProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     @BuildStep
     public void applyConfiguration(final EurekaRecorder eurekaRecorder,
-        final EurekaRuntimeConfiguration eurekaRuntimeConfiguration,
         final BeanContainerBuildItem beanContainer) {
-        eurekaRecorder.registerServiceInEureka(eurekaRuntimeConfiguration, beanContainer.getValue());
+        eurekaRecorder.registerServiceInEureka(beanContainer.getValue());
     }
 
     @Record(ExecutionTime.STATIC_INIT)
